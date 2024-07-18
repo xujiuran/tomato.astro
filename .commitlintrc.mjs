@@ -31,7 +31,7 @@ module.exports = {
       { value: 'revert', name: 'revert:   回退代码 | Revert to a commit' },
       { value: 'chore', name: 'chore:    其他修改 | Other changes that do not modify src or test files' },
     ],
-    useEmoji: false,
+    useEmoji: true,
     emojiAlign: 'center',
     useAI: false,
     aiNumber: 1,
