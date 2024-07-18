@@ -10,6 +10,6 @@ import UnoCSS from 'unocss/astro'
 export default defineConfig({
 	site: 'https://xujiuran.github.io',
   base: '/tomato.astro/',
-	publicDir: '/tomato.astro/',
+	publicDir: './tomato.astro/',
 	integrations: [mdx(), sitemap(), UnoCSS({ injectReset: true })],
 });
