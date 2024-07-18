@@ -8,8 +8,11 @@ import UnoCSS from 'unocss/astro'
 
 // https://astro.build/config
 export default defineConfig({
-	site: 'https://xujiuran.github.io',
-  base: '/tomato.astro',
-	publicDir: '/tomato.astro',
+	site: 'https://xujiuran.github.io/tomato.astro',
+  // base: '/',
+	// publicDir: '/',
+	build: {
+		format: 'preserve'
+	},
 	integrations: [mdx(), sitemap(), UnoCSS({ injectReset: true })],
 });
