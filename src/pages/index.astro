@@ -72,9 +72,22 @@ const projects = [
   <!-- Hero Section (Viki-style warmth) -->
   <section class="space-y-4">
     <div class="flex items-center gap-4">
-      <div class="relative flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-tr from-rose-600 via-orange-500 to-amber-400 text-3xl font-bold text-white shadow-md">
-        🍅
-        <span class="absolute bottom-0 right-0 h-4 w-4 rounded-full border-2 border-[var(--bg-primary)] bg-emerald-500" title="在线"></span>
+      <div class="relative flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-tr from-rose-500/10 via-orange-500/10 to-amber-500/10 border border-[var(--border-primary)] shadow-md p-2 overflow-hidden">
+        <svg class="h-full w-full" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="avatar-tomato" x1="20" y1="20" x2="100" y2="105" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#FF4D4D"/>
+              <stop offset="60%" stop-color="#F43F5E"/>
+              <stop offset="100%" stop-color="#BE123C"/>
+            </linearGradient>
+          </defs>
+          <path d="M60 32C35 32 20 48 20 72C20 95 38 108 60 108C82 108 100 95 100 72C100 48 85 32 60 32Z" fill="url(#avatar-tomato)"/>
+          <ellipse cx="44" cy="52" rx="14" ry="7" transform="rotate(-32 44 52)" fill="white" fill-opacity="0.25"/>
+          <path d="M40 18C52 24 64 36 78 44C62 44 50 36 40 18Z" fill="#10B981"/>
+          <path d="M80 18C68 24 56 36 42 44C58 44 70 36 80 18Z" fill="#34D399"/>
+          <circle cx="60" cy="33" r="4.5" fill="#065F46"/>
+        </svg>
+        <span class="absolute bottom-1 right-1 h-3.5 w-3.5 rounded-full border-2 border-[var(--bg-primary)] bg-emerald-500" title="在线"></span>
       </div>
       <div>
         <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-[var(--text-primary)]">

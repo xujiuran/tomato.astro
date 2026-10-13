@@ -20,8 +20,21 @@ const navItems = [
   <div class="mx-auto flex max-w-3xl items-center justify-between px-4 py-3 sm:px-6">
     <!-- Brand / Title -->
     <a href="/" class="group flex items-center gap-2.5">
-      <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--accent)] font-semibold text-white shadow-sm transition-transform group-hover:scale-105">
-        🍅
+      <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--surface-subtle)] border border-[var(--border-primary)] shadow-xs transition-transform group-hover:scale-105 overflow-hidden p-0.5">
+        <svg class="h-full w-full" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="hdr-tomato" x1="20" y1="20" x2="100" y2="105" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#FF4D4D"/>
+              <stop offset="60%" stop-color="#F43F5E"/>
+              <stop offset="100%" stop-color="#BE123C"/>
+            </linearGradient>
+          </defs>
+          <path d="M60 32C35 32 20 48 20 72C20 95 38 108 60 108C82 108 100 95 100 72C100 48 85 32 60 32Z" fill="url(#hdr-tomato)"/>
+          <ellipse cx="44" cy="52" rx="14" ry="7" transform="rotate(-32 44 52)" fill="white" fill-opacity="0.25"/>
+          <path d="M40 18C52 24 64 36 78 44C62 44 50 36 40 18Z" fill="#10B981"/>
+          <path d="M80 18C68 24 56 36 42 44C58 44 70 36 80 18Z" fill="#34D399"/>
+          <circle cx="60" cy="33" r="4.5" fill="#065F46"/>
+        </svg>
       </div>
       <div>
         <div class="text-sm font-semibold tracking-tight text-[var(--text-primary)] sm:text-base">

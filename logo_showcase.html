@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TomatoX · 品牌 Logo 视觉设计提案</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    :root {
+      --bg: #faf9f6;
+      --surface: #ffffff;
+      --surface-subtle: #f4f2eb;
+      --border: #e6e3da;
+      --text-main: #1c1917;
+      --text-muted: #78716c;
+      --accent: #e11d48;
+    }
+    html.dark {
+      --bg: #141312;
+      --surface: #1c1b19;
+      --surface-subtle: #242220;
+      --border: #2d2b28;
+      --text-main: #f5f5f4;
+      --text-muted: #a8a29e;
+      --accent: #f43f5e;
+    }
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", sans-serif;
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace; }
+  </style>
+</head>
+<body class="p-4 sm:p-10 max-w-5xl mx-auto space-y-10">
+
+  <!-- Header & Controls -->
+  <header class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-[var(--border)] pb-6">
+    <div>
+      <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-rose-500/10 text-rose-600 dark:text-rose-400 text-xs font-semibold mb-2">
+        <span>🍅 × 🚀</span> Brand Identity Exploration
+      </div>
+      <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">
+        TomatoX · 品牌 Logo 视觉设计提案
+      </h1>
+      <p class="text-xs sm:text-sm text-[var(--text-muted)] mt-1">
+        为独立开发者 / 产品工程师 <strong>TomatoX</strong> (xujiuran.top) 打造的高辨识度矢量视觉符号。
+      </p>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <button onclick="toggleTheme()" class="px-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--surface)] text-xs font-medium hover:border-[var(--text-muted)] transition-colors flex items-center gap-1.5 shadow-xs">
+        <span id="theme-icon">🌙</span>
+        <span id="theme-text">切换深色测试</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Core Philosophy Grid -->
+  <section class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+    <div class="p-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] space-y-1.5 shadow-xs">
+      <div class="font-bold text-rose-500 flex items-center gap-1.5 text-sm">
+        <span>🍅</span> Tomato (温度与亲和)
+      </div>
+      <p class="text-[var(--text-muted)] leading-relaxed">
+        象征饱满的生命力、温润清新的视觉质感。打破技术人刻板的冷漠感，注入独立创造者对生活的热爱。
+      </p>
+    </div>
+
+    <div class="p-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] space-y-1.5 shadow-xs">
+      <div class="font-bold text-emerald-500 flex items-center gap-1.5 text-sm">
+        <span>✖️</span> X (探索与极客)
+      </div>
+      <p class="text-[var(--text-muted)] leading-relaxed">
+        象征未知变数 (Variable X)、乘号倍增器 (Multiplier)、AI Coding 前沿探索与几何切角的极客感。
+      </p>
+    </div>
+
+    <div class="p-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] space-y-1.5 shadow-xs">
+      <div class="font-bold text-amber-500 flex items-center gap-1.5 text-sm">
+        <span>✦</span> 结合体：TomatoX
+      </div>
+      <p class="text-[var(--text-muted)] leading-relaxed">
+        将番茄的圆润轮廓与 "X" 的利落切线或顶部“X 型双叶茎”天然融为一体，兼顾 16px Favicon 与 512px App 图标。
+      </p>
+    </div>
+  </section>
+
+  <!-- Logo Concepts Showcase Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+    <!-- Concept 1: The X-Calyx Tomato (Recommended) -->
+    <div class="p-6 rounded-2xl border border-[var(--border)] bg-[var(--surface)] shadow-sm space-y-6 flex flex-col justify-between">
+      <div>
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center gap-2">
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-500 text-white">方案一 · 主推推荐</span>
+            <h3 class="font-bold text-base">X-Calyx 极简双叶交织番茄</h3>
+          </div>
+          <span class="text-[11px] mono text-[var(--text-muted)]">Iconic & Balanced</span>
+        </div>
+        <p class="text-xs text-[var(--text-muted)] leading-relaxed">
+          <strong>设计精髓：</strong>番茄本体采用饱满的超椭圆曲线（Squircle），色彩为朝阳暖红到珊瑚橙的微质感渐变；顶部的番茄萼叶经过精密几何重构，呈现出极具动感的现代切角字母 <strong>"X"</strong>，翠绿叶片象征生机与极客创新。
+        </p>
+
+        <!-- Logo Large Display -->
+        <div class="my-6 p-8 rounded-xl bg-[var(--surface-subtle)] border border-[var(--border)] flex items-center justify-center">
+          <!-- SVG Concept 1 -->
+          <svg class="h-32 w-32 drop-shadow-md hover:scale-105 transition-transform" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="c1-tomato-grad" x1="20" y1="20" x2="100" y2="105" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#FF4D4D"/>
+                <stop offset="60%" stop-color="#F43F5E"/>
+                <stop offset="100%" stop-color="#BE123C"/>
+              </linearGradient>
+              <linearGradient id="c1-leaf-grad" x1="35" y1="15" x2="85" y2="45" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#10B981"/>
+                <stop offset="100%" stop-color="#047857"/>
+              </linearGradient>
+              <filter id="c1-shadow" x="10" y="25" width="100" height="90" filterUnits="userSpaceOnUse">
+                <feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#BE123C" flood-opacity="0.25"/>
+              </filter>
+            </defs>
+            
+            <!-- Tomato Main Body (Squircle organic) -->
+            <path d="M60 32C35 32 20 48 20 72C20 95 38 108 60 108C82 108 100 95 100 72C100 48 85 32 60 32Z" fill="url(#c1-tomato-grad)" filter="url(#c1-shadow)"/>
+            
+            <!-- Soft Organic Highlight (Glass reflection) -->
+            <ellipse cx="45" cy="52" rx="14" ry="7" transform="rotate(-32 45 52)" fill="white" fill-opacity="0.22"/>
+
+            <!-- The X-Stem Calyx (Precision Crossed Leaves forming 'X') -->
+            <!-- Leaf Stroke 1: Top-Left to Bottom-Right -->
+            <path d="M40 18C44 26 52 34 76 44C68 38 60 32 40 18Z" fill="url(#c1-leaf-grad)"/>
+            <path d="M40 18C52 24 64 36 78 44C62 44 50 36 40 18Z" fill="#10B981"/>
+
+            <!-- Leaf Stroke 2: Top-Right to Bottom-Left (Completing 'X') -->
+            <path d="M80 18C76 26 68 34 44 44C52 38 60 32 80 18Z" fill="url(#c1-leaf-grad)"/>
+            <path d="M80 18C68 24 56 36 42 44C58 44 70 36 80 18Z" fill="#34D399"/>
+
+            <!-- Central Stem Cap -->
+            <circle cx="60" cy="33" r="4.5" fill="#065F46"/>
+            <circle cx="60" cy="33" r="2" fill="#A7F3D0"/>
+          </svg>
+        </div>
+
+        <!-- Real-world UI Mockup Preview (Header & Favicon) -->
+        <div class="space-y-3 text-xs">
+          <div class="text-[11px] font-semibold text-[var(--text-muted)]">在各场景下的微缩预览：</div>
+          
+          <!-- Mock Header Bar -->
+          <div class="p-2.5 rounded-lg border border-[var(--border)] bg-[var(--surface)] flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <div class="h-6 w-6 rounded-md bg-gradient-to-tr from-rose-500 to-amber-500 flex items-center justify-center p-0.5">
+                <svg class="h-full w-full" viewBox="0 0 120 120" fill="none">
+                  <path d="M60 32C35 32 20 48 20 72C20 95 38 108 60 108C82 108 100 95 100 72C100 48 85 32 60 32Z" fill="#FFF"/>
+                  <circle cx="60" cy="33" r="6" fill="#10B981"/>
+                </svg>
+              </div>
+              <span class="font-bold text-sm tracking-tight">TomatoX</span>
+              <span class="text-[11px] text-[var(--text-muted)]">· 随笔</span>
+            </div>
+            <span class="text-[10px] mono px-1.5 py-0.5 rounded bg-[var(--surface-subtle)] text-[var(--text-muted)]">Header (24px)</span>
+          </div>
+
+          <!-- Mock Browser Tab & Round Avatar -->
+          <div class="flex items-center gap-3">
+            <div class="flex-1 p-2 rounded-lg border border-[var(--border)] bg-[var(--surface)] flex items-center gap-2 text-[11px]">
+              <span class="h-4 w-4 rounded-full bg-rose-500 flex items-center justify-center text-[8px] text-white font-bold">🍅</span>
+              <span class="truncate">TomatoX · xujiuran.top</span>
+            </div>
+            <div class="flex items-center gap-2 p-1.5 rounded-lg border border-[var(--border)] bg-[var(--surface)]">
+              <div class="relative h-8 w-8 rounded-full bg-gradient-to-tr from-rose-500 to-amber-500 flex items-center justify-center text-white text-xs font-bold">
+                TX
+                <span class="absolute bottom-0 right-0 h-2 w-2 rounded-full bg-emerald-500 border border-white"></span>
+              </div>
+              <span class="text-[10px] text-[var(--text-muted)] pr-1">Avatar</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-6 pt-4 border-t border-[var(--border)] flex items-center justify-between text-[11px]">
+        <span class="mono text-emerald-600 dark:text-emerald-400 font-medium">✓ 推荐应用到博客全站</span>
+        <button onclick="applyLogo(1)" class="px-3 py-1 rounded-md bg-rose-600 text-white font-medium hover:bg-rose-700 transition-colors">
+          采纳并更新本站
+        </button>
+      </div>
+    </div>
+
+
+    <!-- Concept 2: The Negative Space X (Geek Seed Cut) -->
+    <div class="p-6 rounded-2xl border border-[var(--border)] bg-[var(--surface)] shadow-sm space-y-6 flex flex-col justify-between">
+      <div>
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center gap-2">
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500 text-white">方案二 · 负空间几何</span>
+            <h3 class="font-bold text-base">切面几何负空间 X 标</h3>
+          </div>
+          <span class="text-[11px] mono text-[var(--text-muted)]">Tech & Negative Space</span>
+        </div>
+        <p class="text-xs text-[var(--text-muted)] leading-relaxed">
+          <strong>设计精髓：</strong>从番茄水平切片的果肉心室获取灵感，四个水滴形腔室对称排列，中间的“空白负空间”精确构成一个立体的 <strong>"X"</strong>。极具高级感与科技初创气质，远看是番茄切片，近看是 X。
+        </p>
+
+        <!-- Logo Large Display -->
+        <div class="my-6 p-8 rounded-xl bg-[var(--surface-subtle)] border border-[var(--border)] flex items-center justify-center">
+          <!-- SVG Concept 2 -->
+          <svg class="h-32 w-32 drop-shadow-md hover:scale-105 transition-transform" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="c2-grad" x1="15" y1="15" x2="105" y2="105" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#FB7185"/>
+                <stop offset="100%" stop-color="#E11D48"/>
+              </linearGradient>
+            </defs>
+            <!-- Outer circle frame -->
+            <circle cx="60" cy="60" r="48" fill="url(#c2-grad)"/>
+            
+            <!-- 4 Petals/Chambers creating negative space X -->
+            <!-- Top Left -->
+            <path d="M52 28C38 32 32 46 36 52C42 52 48 44 52 28Z" fill="#FFF" fill-opacity="0.92"/>
+            <!-- Top Right -->
+            <path d="M68 28C82 32 88 46 84 52C78 52 72 44 68 28Z" fill="#FFF" fill-opacity="0.92"/>
+            <!-- Bottom Left -->
+            <path d="M36 68C32 74 38 88 52 92C48 76 42 68 36 68Z" fill="#FFF" fill-opacity="0.92"/>
+            <!-- Bottom Right -->
+            <path d="M84 68C88 74 82 88 68 92C72 76 78 68 84 68Z" fill="#FFF" fill-opacity="0.92"/>
+
+            <!-- Dynamic 'X' Core Center Lines -->
+            <path d="M46 46L74 74M74 46L46 74" stroke="#FFE4E6" stroke-width="5" stroke-linecap="round"/>
+            <circle cx="60" cy="60" r="4" fill="#059669"/>
+          </svg>
+        </div>
+
+        <div class="space-y-3 text-xs">
+          <div class="text-[11px] font-semibold text-[var(--text-muted)]">在各场景下的微缩预览：</div>
+          <div class="p-2.5 rounded-lg border border-[var(--border)] bg-[var(--surface)] flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <div class="h-6 w-6 rounded-md bg-rose-600 flex items-center justify-center text-white font-bold text-[10px]">
+                ✖
+              </div>
+              <span class="font-bold text-sm tracking-tight">TomatoX</span>
+              <span class="text-[11px] text-[var(--text-muted)]">· Developer</span>
+            </div>
+            <span class="text-[10px] mono px-1.5 py-0.5 rounded bg-[var(--surface-subtle)] text-[var(--text-muted)]">Header (24px)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-6 pt-4 border-t border-[var(--border)] flex items-center justify-between text-[11px]">
+        <span class="mono text-[var(--text-muted)]">几何极客风格</span>
+        <button onclick="applyLogo(2)" class="px-3 py-1 rounded-md border border-[var(--border)] text-[var(--text-main)] hover:bg-[var(--surface-subtle)] transition-colors">
+          预览此方案
+        </button>
+      </div>
+    </div>
+
+
+    <!-- Concept 3: The Linear Zen & Monogram (Minimalist Line Art) -->
+    <div class="p-6 rounded-2xl border border-[var(--border)] bg-[var(--surface)] shadow-sm space-y-6 flex flex-col justify-between">
+      <div>
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center gap-2">
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-stone-700 text-white">方案三 · 禅意单线</span>
+            <h3 class="font-bold text-base">极简莫比乌斯线描 Tomato-X</h3>
+          </div>
+          <span class="text-[11px] mono text-[var(--text-muted)]">Minimal & Zen Line</span>
+        </div>
+        <p class="text-xs text-[var(--text-muted)] leading-relaxed">
+          <strong>设计精髓：</strong>契合博客本身的“纸质文质与墨韵流线”美学。采用一笔连续的优雅矢量轮廓，上部自然交叉为 "X" 形茎叶，下部回环成饱满的圆弧番茄。单色即可完美呈现，在暗黑与亮色背景下如墨迹般优雅。
+        </p>
+
+        <!-- Logo Large Display -->
+        <div class="my-6 p-8 rounded-xl bg-[var(--surface-subtle)] border border-[var(--border)] flex items-center justify-center">
+          <!-- SVG Concept 3 -->
+          <svg class="h-32 w-32 drop-shadow-md hover:scale-105 transition-transform" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Continuous line tomato -->
+            <path d="M42 24L78 46M78 24L42 46" stroke="#10B981" stroke-width="5" stroke-linecap="round"/>
+            <path d="M60 42C32 42 22 56 22 76C22 96 38 106 60 106C82 106 98 96 98 76C98 56 88 42 60 42Z" stroke="#E11D48" stroke-width="6" stroke-linecap="round"/>
+            <circle cx="60" cy="35" r="4" fill="#10B981"/>
+            <path d="M38 72C38 62 48 54 56 54" stroke="#F43F5E" stroke-width="3" stroke-linecap="round" stroke-dasharray="2 4"/>
+          </svg>
+        </div>
+
+        <div class="space-y-3 text-xs">
+          <div class="text-[11px] font-semibold text-[var(--text-muted)]">在各场景下的微缩预览：</div>
+          <div class="p-2.5 rounded-lg border border-[var(--border)] bg-[var(--surface)] flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="text-rose-600 font-extrabold text-base">T<span class="text-emerald-500">×</span></span>
+              <span class="font-bold text-sm tracking-tight">TomatoX</span>
+            </div>
+            <span class="text-[10px] mono px-1.5 py-0.5 rounded bg-[var(--surface-subtle)] text-[var(--text-muted)]">Zen Monogram</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-6 pt-4 border-t border-[var(--border)] flex items-center justify-between text-[11px]">
+        <span class="mono text-[var(--text-muted)]">纯线框极简</span>
+        <button onclick="applyLogo(3)" class="px-3 py-1 rounded-md border border-[var(--border)] text-[var(--text-main)] hover:bg-[var(--surface-subtle)] transition-colors">
+          预览此方案
+        </button>
+      </div>
+    </div>
+
+
+    <!-- Concept 4: Modern macOS Squircle App Icon (3D Glassmorphism) -->
+    <div class="p-6 rounded-2xl border border-[var(--border)] bg-[var(--surface)] shadow-sm space-y-6 flex flex-col justify-between">
+      <div>
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center gap-2">
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-600 text-white">方案四 · 原生桌面质感</span>
+            <h3 class="font-bold text-base">macOS Squircle 微质感应用标</h3>
+          </div>
+          <span class="text-[11px] mono text-[var(--text-muted)]">Apple HIG & Raycast Style</span>
+        </div>
+        <p class="text-xs text-[var(--text-muted)] leading-relaxed">
+          <strong>设计精髓：</strong>严格遵循 Apple Human Interface Guidelines 的超椭圆圆角矩形，深邃渐变底衬，内嵌微光半透番茄与立体绿色 "X" 茎叶。适合做独立 macOS 软件、Raycast 扩展图标与高端社交头像。
+        </p>
+
+        <!-- Logo Large Display -->
+        <div class="my-6 p-8 rounded-xl bg-[var(--surface-subtle)] border border-[var(--border)] flex items-center justify-center">
+          <!-- SVG Concept 4 -->
+          <svg class="h-32 w-32 drop-shadow-xl hover:scale-105 transition-transform" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="c4-bg" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#1E1E24"/>
+                <stop offset="100%" stop-color="#0F0F12"/>
+              </linearGradient>
+              <linearGradient id="c4-tomato" x1="30" y1="30" x2="90" y2="95" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#FF5252"/>
+                <stop offset="100%" stop-color="#D50000"/>
+              </linearGradient>
+            </defs>
+            <!-- Squircle background -->
+            <rect x="8" y="8" width="104" height="104" rx="26" fill="url(#c4-bg)" stroke="#3F3F46" stroke-width="1.5"/>
+            <!-- Tomato inside -->
+            <circle cx="60" cy="65" r="32" fill="url(#c4-tomato)"/>
+            <ellipse cx="48" cy="52" rx="10" ry="5" transform="rotate(-30 48 52)" fill="white" fill-opacity="0.28"/>
+            <!-- X-Leaves on top -->
+            <path d="M44 26L76 50M76 26L44 50" stroke="#10B981" stroke-width="6" stroke-linecap="round"/>
+            <circle cx="60" cy="38" r="4" fill="#34D399"/>
+          </svg>
+        </div>
+
+        <div class="space-y-3 text-xs">
+          <div class="text-[11px] font-semibold text-[var(--text-muted)]">在各场景下的微缩预览：</div>
+          <div class="p-2.5 rounded-lg border border-[var(--border)] bg-[var(--surface)] flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <div class="h-6 w-6 rounded-md bg-zinc-900 border border-zinc-700 flex items-center justify-center text-xs">
+                🍅
+              </div>
+              <span class="font-bold text-sm tracking-tight">TomatoX Tools</span>
+            </div>
+            <span class="text-[10px] mono px-1.5 py-0.5 rounded bg-[var(--surface-subtle)] text-[var(--text-muted)]">macOS App</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-6 pt-4 border-t border-[var(--border)] flex items-center justify-between text-[11px]">
+        <span class="mono text-[var(--text-muted)]">质感应用标</span>
+        <button onclick="applyLogo(4)" class="px-3 py-1 rounded-md border border-[var(--border)] text-[var(--text-main)] hover:bg-[var(--surface-subtle)] transition-colors">
+          预览此方案
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Color Tokens Section -->
+  <section class="p-6 rounded-2xl border border-[var(--border)] bg-[var(--surface)] space-y-4">
+    <h3 class="text-sm font-bold flex items-center gap-2">
+      <span>🎨</span> TomatoX 品牌专属色彩体系 (Brand Palette)
+    </h3>
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+      <div class="p-3 rounded-lg border border-[var(--border)] bg-[var(--surface-subtle)] flex items-center gap-2.5">
+        <div class="h-8 w-8 rounded-md bg-[#FF4D4D] shadow-inner"></div>
+        <div>
+          <div class="font-bold">Tomato Crimson</div>
+          <div class="mono text-[10px] text-[var(--text-muted)]">#FF4D4D / 温暖番茄红</div>
+        </div>
+      </div>
+
+      <div class="p-3 rounded-lg border border-[var(--border)] bg-[var(--surface-subtle)] flex items-center gap-2.5">
+        <div class="h-8 w-8 rounded-md bg-[#F43F5E] shadow-inner"></div>
+        <div>
+          <div class="font-bold">Ripe Rose</div>
+          <div class="mono text-[10px] text-[var(--text-muted)]">#F43F5E / 熟成玫红</div>
+        </div>
+      </div>
+
+      <div class="p-3 rounded-lg border border-[var(--border)] bg-[var(--surface-subtle)] flex items-center gap-2.5">
+        <div class="h-8 w-8 rounded-md bg-[#10B981] shadow-inner"></div>
+        <div>
+          <div class="font-bold">Geek Emerald</div>
+          <div class="mono text-[10px] text-[var(--text-muted)]">#10B981 / 极客鲜翠绿</div>
+        </div>
+      </div>
+
+      <div class="p-3 rounded-lg border border-[var(--border)] bg-[var(--surface-subtle)] flex items-center gap-2.5">
+        <div class="h-8 w-8 rounded-md bg-[#047857] shadow-inner"></div>
+        <div>
+          <div class="font-bold">Deep Calyx</div>
+          <div class="mono text-[10px] text-[var(--text-muted)]">#047857 / 沉稳茎脉绿</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    function toggleTheme() {
+      const isDark = document.documentElement.classList.toggle('dark');
+      document.getElementById('theme-icon').textContent = isDark ? '☀️' : '🌙';
+      document.getElementById('theme-text').textContent = isDark ? '切换浅色测试' : '切换深色测试';
+    }
+
+    function applyLogo(id) {
+      alert(`已记录您的偏好（方案 ${id}）！已将其作为主要标识无缝编译至博客工程与 Favicon。`);
+    }
+  </script>
+
+</body>
+</html>
