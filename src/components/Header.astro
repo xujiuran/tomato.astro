@@ -1,5 +1,6 @@
 ---
 import ThemeToggle from './ThemeToggle.astro';
+import TomatoXWordmark from './TomatoXWordmark.astro';
 
 interface Props {
   currentPath?: string;
@@ -19,8 +20,8 @@ const navItems = [
 <header class="sticky top-0 z-50 w-full border-b border-[var(--border-primary)] bg-[var(--bg-primary)]/80 backdrop-blur-md transition-colors">
   <div class="mx-auto flex max-w-3xl items-center justify-between px-4 py-3 sm:px-6">
     <!-- Brand / Title -->
-    <a href="/" class="group flex items-center gap-2.5">
-      <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--surface-subtle)] border border-[var(--border-primary)] shadow-xs transition-transform group-hover:scale-105 overflow-hidden p-0.5">
+    <a href="/" class="group flex items-center gap-2.5 focus:outline-hidden">
+      <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[var(--surface-subtle)] border border-[var(--border-primary)] shadow-xs transition-transform group-hover:scale-105 overflow-hidden p-0.5">
         <svg class="h-full w-full" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <linearGradient id="hdr-tomato" x1="20" y1="20" x2="100" y2="105" gradientUnits="userSpaceOnUse">
@@ -36,11 +37,12 @@ const navItems = [
           <circle cx="60" cy="33" r="4.5" fill="#065F46"/>
         </svg>
       </div>
-      <div>
-        <div class="text-sm font-semibold tracking-tight text-[var(--text-primary)] sm:text-base">
-          TomatoX · 随笔
+      <div class="flex flex-col justify-center">
+        <div class="flex items-center gap-1">
+          <TomatoXWordmark size="sm" />
+          <span class="text-xs font-semibold text-[var(--text-primary)]">· 随笔</span>
         </div>
-        <p class="hidden text-xs text-[var(--text-secondary)] sm:block">
+        <p class="hidden text-[10px] text-[var(--text-secondary)] sm:block -mt-0.5 mono">
           xujiuran.top · 代码与日常
         </p>
       </div>

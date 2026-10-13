@@ -4,6 +4,7 @@ import MottoBanner from '../components/MottoBanner.astro';
 import PostCard from '../components/PostCard.astro';
 import ThoughtCard from '../components/ThoughtCard.astro';
 import ProjectCard from '../components/ProjectCard.astro';
+import TomatoXWordmark from '../components/TomatoXWordmark.astro';
 
 const recentPosts = [
   {
@@ -90,11 +91,13 @@ const projects = [
         <span class="absolute bottom-1 right-1 h-3.5 w-3.5 rounded-full border-2 border-[var(--bg-primary)] bg-emerald-500" title="在线"></span>
       </div>
       <div>
-        <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-[var(--text-primary)]">
-          你好，我是 TomatoX 👋
+        <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-[var(--text-primary)] flex items-center gap-2 flex-wrap">
+          <span>你好，我是</span>
+          <TomatoXWordmark size="md" />
+          <span>👋</span>
         </h1>
-        <p class="text-xs sm:text-sm text-[var(--text-secondary)] mt-0.5">
-          全栈工程师 · 独立创作者 · <a href="https://xujiuran.top" class="text-[var(--accent)] hover:underline">xujiuran.top</a>
+        <p class="text-xs sm:text-sm text-[var(--text-secondary)] mt-1">
+          全栈工程师 · 独立创作者 · <a href="https://xujiuran.top" class="text-[var(--accent)] hover:underline mono font-medium">xujiuran.top</a>
         </p>
       </div>
     </div>
