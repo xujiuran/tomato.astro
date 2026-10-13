@@ -3,6 +3,7 @@ import tailwindcss from '@tailwindcss/vite';
 
 // https://astro.build/config
 export default defineConfig({
+  site: 'https://xujiuran.top',
   vite: {
     plugins: [tailwindcss()],
   },

@@ -11,8 +11,8 @@ interface Props {
 }
 
 const {
-  title = '墨羽 · 产品工程、AI Coding 与写作者',
-  description = '记录全栈开发、AI 编码工作流、开源工具、设计与生活琐思。',
+  title = 'TomatoX · 产品工程、AI Coding 与写作者',
+  description = 'TomatoX 的个人博客 (xujiuran.top)，记录全栈开发、AI 编码工作流、开源工具、设计与生活琐思。',
   currentPath = '/',
 } = Astro.props;
 ---
@@ -24,8 +24,9 @@ const {
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="description" content={description} />
     <title>{title}</title>
+    <link rel="canonical" href={`https://xujiuran.top${currentPath}`} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="alternate" type="application/rss+xml" title="墨羽随笔 RSS" href="/rss.xml" />
+    <link rel="alternate" type="application/rss+xml" title="TomatoX 随笔 RSS" href="/rss.xml" />
 
     <!-- Anti-flicker dark mode script -->
     <script is:inline>
