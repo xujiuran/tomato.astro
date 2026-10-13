@@ -1,6 +1,7 @@
 ---
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import ZenBackground from '../components/ZenBackground.astro';
 import '../styles/global.css';
 
 interface Props {
@@ -41,13 +42,18 @@ const {
       })();
     </script>
   </head>
-  <body class="min-h-screen flex flex-col bg-[var(--bg-primary)] text-[var(--text-primary)] antialiased transition-colors duration-200">
+  <body class="relative min-h-screen flex flex-col bg-[var(--bg-primary)] text-[var(--text-primary)] antialiased transition-colors duration-200">
+    <!-- Generative Zen Canvas Background (Ink Stream / Flow Field) -->
+    <ZenBackground />
+
     <Header currentPath={currentPath} />
 
-    <main id="main-content" class="flex-1 mx-auto w-full max-w-3xl px-4 sm:px-6 pt-6 sm:pt-10">
+    <main id="main-content" class="relative z-10 flex-1 mx-auto w-full max-w-3xl px-4 sm:px-6 pt-6 sm:pt-10">
       <slot />
     </main>
 
-    <Footer />
+    <div class="relative z-10">
+      <Footer />
+    </div>
   </body>
 </html>
