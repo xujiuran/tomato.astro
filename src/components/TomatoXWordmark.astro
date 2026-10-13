@@ -1,7 +1,7 @@
 ---
 // TomatoXWordmark.astro
-// 基于概念海报打造的 TomatoX 原创艺术字矢量组件
-// 融合：番茄暖红优雅流线 + 字母 X 翠绿缠绕藤叶 + xujiuran.top 副标
+// 硬朗、男性化、几何工业风的极客艺术字标 (Masculine Geometric Tech Wordmark)
+// 特征：45° 机械斜切倒角、粗壮扎实的工程字重、利刃张力 X 字符，彻底去除柔和卷曲藤蔓
 interface Props {
   size?: 'sm' | 'md' | 'lg';
   showSubtitle?: boolean;
@@ -12,97 +12,89 @@ interface Props {
 const {
   size = 'sm',
   showSubtitle = false,
-  subtitleText = 'xujiuran.top',
+  subtitleText = 'XUJIURAN.TOP · PRODUCT ENGINEER',
   class: className = '',
 } = Astro.props;
 
-// 尺寸映射 (保持与现有导航行高高度一致，绝不挤压排版)
+// 尺寸映射 (与 Header/Hero 行高完美对齐，不破坏任何原有排版)
 const heightClass = {
   sm: 'h-6 sm:h-7',
   md: 'h-9 sm:h-10',
-  lg: 'h-14 sm:h-16',
+  lg: 'h-13 sm:h-15',
 }[size];
 ---
 
 <div class:list={['inline-flex flex-col items-start leading-none', className]}>
   <svg
     class:list={[heightClass, 'w-auto max-w-full drop-shadow-xs transition-transform group-hover:scale-[1.02]']}
-    viewBox="0 0 320 80"
+    viewBox="0 0 350 76"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
     aria-label="TomatoX"
     role="img"
   >
     <defs>
-      <!-- Tomato Red Gradient -->
-      <linearGradient id="art-red" x1="0" y1="20" x2="280" y2="70" gradientUnits="userSpaceOnUse">
-        <stop offset="0%" stop-color="#E11D48" class="text-rose-600 dark:text-rose-500"/>
-        <stop offset="100%" stop-color="#BE123C" class="text-rose-700 dark:text-rose-400"/>
+      <!-- Industrial Racing Crimson Gradient -->
+      <linearGradient id="masc-red" x1="0" y1="10" x2="320" y2="70" gradientUnits="userSpaceOnUse">
+        <stop offset="0%" stop-color="#EF4444"/>
+        <stop offset="60%" stop-color="#DC2626"/>
+        <stop offset="100%" stop-color="#991B1B"/>
       </linearGradient>
 
-      <!-- Vine Leaf Green Gradient -->
-      <linearGradient id="art-green" x1="220" y1="15" x2="275" y2="65" gradientUnits="userSpaceOnUse">
-        <stop offset="0%" stop-color="#10B981"/>
-        <stop offset="100%" stop-color="#047857"/>
+      <!-- Stealth Carbon Dark / Edge Tint -->
+      <linearGradient id="masc-dark" x1="260" y1="10" x2="340" y2="70" gradientUnits="userSpaceOnUse">
+        <stop offset="0%" stop-color="#27272A"/>
+        <stop offset="100%" stop-color="#09090B"/>
       </linearGradient>
 
-      <!-- Highlight filter -->
-      <filter id="art-glow" x="-10%" y="-10%" width="120%" height="120%">
-        <feDropShadow dx="0" dy="1.5" stdDeviation="1.5" flood-color="#BE123C" flood-opacity="0.15"/>
-      </filter>
+      <!-- Cyber Neon Emerald Accent (Precision Cut) -->
+      <linearGradient id="masc-cyber" x1="260" y1="10" x2="340" y2="70" gradientUnits="userSpaceOnUse">
+        <stop offset="0%" stop-color="#34D399"/>
+        <stop offset="100%" stop-color="#059669"/>
+      </linearGradient>
     </defs>
 
-    <!-- 'Tomato' Bespoke Sculpted Lettering Group -->
-    <g filter="url(#art-glow)" fill="url(#art-red)">
-      <!-- T: Sculpted Bar with Soft Flared Terminals -->
-      <path d="M12 28C12 23 16 19 22 19H56C60 19 63 22 63 26V30C63 33 60 35 56 35H44V68C44 72 40 75 36 75H32C28 75 24 72 24 68V35H20C15 35 12 31 12 28Z"/>
-      <!-- Soft Leaf Crown on T -->
-      <path d="M34 11C38 6 45 5 50 8C45 12 41 17 36 18Z" fill="url(#art-green)"/>
-      <circle cx="34" cy="18" r="2.2" fill="#047857"/>
+    <!-- 'TOMATO' Bold Geometric Industrial Lettering -->
+    <g fill="url(#masc-red)">
+      <!-- T: 45° Precision Chamfer + Heavy Sturdy Stem -->
+      <path d="M12 28L22 18H58V30H41V68H29V30H12V28Z"/>
+      <!-- Sharp Geometric Diamond Accent on T (Hard-edged Calyx) -->
+      <polygon points="35,13 42,7 49,13 42,17" fill="url(#masc-cyber)"/>
 
-      <!-- o: Organic Oval -->
-      <path d="M84 32C68 32 58 42 58 55C58 68 68 76 84 76C100 76 110 68 110 55C110 42 100 32 84 32ZM84 43C91 43 96 48 96 55C96 61 91 65 84 65C77 65 72 61 72 55C72 48 77 43 84 43Z"/>
+      <!-- O: Industrial Squircle / Hexagonal Tension -->
+      <path d="M72 18H96L108 30V56L96 68H72L60 56V30L72 18ZM74 30V56H94V30H74Z"/>
 
-      <!-- m: Double Arch -->
-      <path d="M122 36C125 33 130 32 135 32C141 32 146 35 148 40C152 35 158 32 165 32C175 32 180 38 180 50V72C180 74 178 76 176 76H169C167 76 165 74 165 72V52C165 44 162 42 157 42C152 42 149 45 149 52V72C149 74 147 76 145 76H138C136 76 134 74 134 72V52C134 44 131 42 126 42C121 42 118 46 118 52V72C118 74 116 76 114 76H107C105 76 103 74 103 72V36C103 34 105 32 107 32H114C116 32 118 34 118 36V39C119 37 121 36 122 36Z"/>
+      <!-- M: Muscular Architecture with Sharp Chisel Center -->
+      <path d="M117 18H130L142 42L154 18H167V68H155V35L145 54H139L129 35V68H117V18Z"/>
 
-      <!-- a: Geometric Tear Drop -->
-      <path d="M208 35V72C208 74 206 76 204 76H197C195 76 193 74 193 72V68C190 73 184 76 177 76C166 76 159 68 159 58C159 47 168 39 182 39H193V37C193 30 188 28 182 28H174C171 28 169 26 169 24V21C169 19 171 18 174 18H184C198 18 208 24 208 35ZM193 48H182C175 48 171 52 171 58C171 63 174 67 180 67C187 67 193 62 193 55V48Z"/>
+      <!-- A: Trapezoidal Sturdy Frame with Cutout -->
+      <path d="M184 18H198L212 68H199L196 56H185L182 68H170L184 18ZM193 45L191 32L188 45H193Z"/>
 
-      <!-- t: Minimal Cross -->
-      <path d="M221 21C221 19 223 18 225 18H232C234 18 236 19 236 21V32H246C248 32 250 34 250 36V40C250 42 248 44 246 44H236V63C236 66 238 68 242 68H246C248 68 250 70 250 72V74C250 76 248 76 246 76H238C229 76 221 70 221 60V44H215C213 44 211 42 211 40V36C211 34 213 32 215 32H221V21Z"/>
+      <!-- T: Matching Chamfer Architecture -->
+      <path d="M218 18H252V30H241V68H229V30H218V18Z"/>
 
-      <!-- o: Matching Oval -->
-      <path d="M272 32C256 32 246 42 246 55C246 68 256 76 272 76C288 76 298 68 298 55C298 42 288 32 272 32ZM272 43C279 43 284 48 284 55C284 61 279 65 272 65C265 65 260 61 260 55C260 48 265 43 272 43Z"/>
+      <!-- O: Matching Heavy Squircle -->
+      <path d="M262 18H284L294 28V58L284 68H262L252 58V28L262 18ZM264 30V56H282V30H264Z"/>
     </g>
 
-    <!-- 'X' with Entwined Green Botanical Vine (Iconic concept from poster) -->
-    <g id="letter-x">
-      <!-- Main Red Diagonal (Top-Left to Bottom-Right) -->
-      <path d="M256 22C259 19 264 18 268 18H281C285 18 288 20 290 24L303 44L317 24C319 20 322 18 326 18H338C342 18 345 22 343 25L315 63C313 66 309 68 305 68H299L256 22Z" fill="url(#art-red)"/>
-      
-      <!-- Counter Red Diagonal (Bottom-Left to Top-Right) -->
-      <path d="M260 74C257 77 260 80 264 80H277C281 80 285 78 287 75L339 24C342 21 339 18 335 18H322C318 18 314 20 312 23L260 74Z" fill="url(#art-red)"/>
+    <!-- 'X': The Aggressive, Razor-Sharp Tech Emblem (利刃切角与锋芒交叉) -->
+    <g id="masc-x">
+      <!-- Primary Diagonal Blade (Top-Left to Bottom-Right) in Deep Crimson -->
+      <path d="M298 18H313L348 68H333L298 18Z" fill="url(#masc-red)"/>
 
-      <!-- Overlapping Green Botanical Vine Flourish (Weaving gracefully through the X) -->
-      <path d="M268 76C269 66 276 56 286 48C296 40 305 32 312 18" stroke="url(#art-green)" stroke-width="3.5" stroke-linecap="round"/>
-      
-      <!-- Botanical Leaves on the Vine -->
-      <!-- Leaf 1 (Left lower branch) -->
-      <path d="M272 58C265 56 261 50 263 44C269 46 274 51 274 58Z" fill="#10B981"/>
-      <path d="M274 50C268 49 265 44 266 39C271 41 275 45 275 50Z" fill="#059669"/>
-      
-      <!-- Leaf 2 (Right upper flourish) -->
-      <path d="M304 36C312 36 317 31 319 24C312 25 306 29 304 36Z" fill="#10B981"/>
-      <path d="M312 30C320 31 324 27 325 21C319 22 314 25 312 30Z" fill="#34D399"/>
-      
-      <!-- Tiny Vine Tendril Curl -->
-      <path d="M310 18C313 14 318 13 321 15C323 17 321 21 317 21" stroke="#059669" stroke-width="2" stroke-linecap="round" fill="none"/>
+      <!-- Counter Diagonal Blade (Bottom-Left to Top-Right) with 45° Stealth Facets -->
+      <path d="M298 68H313L328 47L322 38L298 68Z" fill="#B91C1C"/>
+      <path d="M327 31L333 22L348 18L334 38L327 31Z" fill="#EF4444"/>
+
+      <!-- Center Dynamic Laser Slice (Cyber Green Slit Cutting Through) -->
+      <polygon points="314,40 329,40 334,46 319,46" fill="url(#masc-cyber)"/>
+      <!-- Sharp Mechanical Arrow Notch -->
+      <polygon points="342,18 349,18 349,25" fill="#10B981"/>
     </g>
   </svg>
 
   {showSubtitle && (
-    <span class="mt-0.5 text-[10px] tracking-wider mono text-[var(--text-secondary)] font-medium pl-0.5 uppercase">
+    <span class="mt-1 text-[10px] tracking-widest mono text-[var(--text-secondary)] font-bold pl-0.5 uppercase">
       {subtitleText}
     </span>
   )}
