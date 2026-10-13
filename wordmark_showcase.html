@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TomatoX · 名字艺术字字标设计提案全案</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    :root {
+      --bg: #faf9f6;
+      --surface: #ffffff;
+      --surface-subtle: #f4f2eb;
+      --border: #e6e3da;
+      --text-main: #1c1917;
+      --text-muted: #78716c;
+      --accent: #e11d48;
+    }
+    html.dark {
+      --bg: #141312;
+      --surface: #1c1b19;
+      --surface-subtle: #242220;
+      --border: #2d2b28;
+      --text-main: #f5f5f4;
+      --text-muted: #a8a29e;
+      --accent: #f43f5e;
+    }
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", sans-serif;
+      transition: background-color 0.25s ease, color 0.25s ease;
+    }
+    .serif-seal {
+      font-family: "Songti SC", "Source Han Serif SC", "STSong", "SimSun", serif;
+    }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace; }
+  </style>
+</head>
+<body class="p-4 sm:p-10 max-w-5xl mx-auto space-y-10">
+
+  <!-- Header & Toolbar -->
+  <header class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-[var(--border)] pb-6">
+    <div>
+      <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-rose-500/10 text-rose-600 dark:text-rose-400 text-xs font-semibold mb-2">
+        <span>✍️ × 🍅</span> Bespoke Typographic Identity
+      </div>
+      <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">
+        TomatoX · 名字艺术字专属设计全案
+      </h1>
+      <p class="text-xs sm:text-sm text-[var(--text-muted)] mt-1">
+        基于昵称 <strong>TomatoX</strong> 与个人域名 <strong>xujiuran.top</strong> 打造的 4 套原创矢量艺术字标（Logotype）。
+      </p>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <button onclick="toggleTheme()" class="px-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--surface)] text-xs font-medium hover:border-[var(--text-muted)] transition-colors flex items-center gap-1.5 shadow-xs">
+        <span id="theme-icon">🌙</span>
+        <span id="theme-text">切换深色测试</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Featured Hero: Visual Concept Render Poster -->
+  <section class="p-6 rounded-2xl border border-[var(--border)] bg-[var(--surface)] shadow-sm space-y-4">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-600 text-white">Concept Poster</span>
+        <h3 class="font-bold text-sm sm:text-base">TomatoX × xujiuran.top 品牌字标高清概念海报</h3>
+      </div>
+      <a href="tomatox_art_poster.png" download class="text-xs text-[var(--accent)] hover:underline flex items-center gap-1">
+        下载高清原图 (PNG) ↓
+      </a>
+    </div>
+    <div class="overflow-hidden rounded-xl border border-[var(--border)] bg-stone-100 dark:bg-stone-900 shadow-inner">
+      <img src="tomatox_art_poster.png" alt="TomatoX 艺术字概念海报" class="w-full h-auto object-cover hover:scale-[1.01] transition-transform duration-300">
+    </div>
+    <p class="text-[11px] text-[var(--text-muted)] text-center">
+      原图已保存至：<code class="mono">/Users/tomatoxcj/Downloads/TomatoX_艺术字设计全案.png</code>
+    </p>
+  </section>
+
+  <!-- Overview Cards -->
+  <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 text-xs">
+    <div class="p-3.5 rounded-xl border border-[var(--border)] bg-[var(--surface)] space-y-1 shadow-xs">
+      <span class="text-rose-500 font-bold">1. 未来几何体</span>
+      <p class="text-[var(--text-muted)] text-[11px]">科技感锐角切削，X 字母跨越延伸，国际化大厂字标感。</p>
+    </div>
+    <div class="p-3.5 rounded-xl border border-[var(--border)] bg-[var(--surface)] space-y-1 shadow-xs">
+      <span class="text-amber-600 font-bold">2. 水墨文人印章体</span>
+      <p class="text-[var(--text-muted)] text-[11px]">东方墨韵连笔，融合『久然』传统篆刻朱印，契合禅意博客。</p>
+    </div>
+    <div class="p-3.5 rounded-xl border border-[var(--border)] bg-[var(--surface)] space-y-1 shadow-xs">
+      <span class="text-emerald-600 font-bold">3. 潮玩立体高光字</span>
+      <p class="text-[var(--text-muted)] text-[11px]">圆润多汁饱满，番茄高光反射，活力生动且具亲和力。</p>
+    </div>
+    <div class="p-3.5 rounded-xl border border-[var(--border)] bg-[var(--surface)] space-y-1 shadow-xs">
+      <span class="text-indigo-600 font-bold">4. 极客代码连字体</span>
+      <p class="text-[var(--text-muted)] text-[11px]">语法高亮、代码标签与终端光标，纯正程序员极客浪漫。</p>
+    </div>
+  </div>
+
+  <!-- 4 Artistic Typography Showcases -->
+  <div class="space-y-8">
+
+    <!-- Style 1: Cyber-Geometric Tech Wordmark -->
+    <section class="p-6 sm:p-8 rounded-2xl border border-[var(--border)] bg-[var(--surface)] shadow-sm space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-[var(--border)] pb-4">
+        <div>
+          <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-500 text-white mr-2">Style 01</span>
+          <span class="font-bold text-lg text-[var(--text-main)]">未来几何锋芒体 (Cyber-Geometric Tech)</span>
+          <p class="text-xs text-[var(--text-muted)] mt-1">
+            <strong>构字理念：</strong>将字母 "T" 顶部融入 45° 几何切角与嫩绿叶芽；"o-m-a-t-o" 呈现宽体超椭圆，字距紧凑；尾字母 "X" 双向破格延展，象征探索无限。
+          </p>
+        </div>
+        <span class="text-xs mono text-[var(--text-muted)]">科技 · 现代 · 利落</span>
+      </div>
+
+      <!-- Canvas Display -->
+      <div class="p-8 sm:p-12 rounded-xl bg-[var(--surface-subtle)] border border-[var(--border)] flex flex-col items-center justify-center gap-3">
+        <!-- SVG Wordmark 1 -->
+        <svg class="w-full max-w-lg h-auto" viewBox="0 0 540 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="g1-red" x1="0" y1="20" x2="480" y2="80" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#FF3838"/>
+              <stop offset="70%" stop-color="#E11D48"/>
+              <stop offset="100%" stop-color="#BE123C"/>
+            </linearGradient>
+            <linearGradient id="g1-x" x1="420" y1="10" x2="520" y2="90" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#FB7185"/>
+              <stop offset="50%" stop-color="#F43F5E"/>
+              <stop offset="100%" stop-color="#E11D48"/>
+            </linearGradient>
+            <linearGradient id="g1-leaf" x1="20" y1="5" x2="55" y2="25" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#34D399"/>
+              <stop offset="100%" stop-color="#059669"/>
+            </linearGradient>
+          </defs>
+
+          <!-- T: Stylized Stem Leaf on Top -->
+          <path d="M42 14C48 8 58 7 66 10C59 15 54 22 47 24Z" fill="url(#g1-leaf)"/>
+          <circle cx="43" cy="24" r="3" fill="#047857"/>
+
+          <!-- T -->
+          <path d="M15 36C15 30 20 25 26 25H68C72 25 76 29 76 33V39C76 43 72 47 68 47H54V86C54 90 50 94 46 94H38C34 94 30 90 30 86V47H26C20 47 15 42 15 36Z" fill="url(#g1-red)"/>
+
+          <!-- o -->
+          <path d="M125 40C105 40 92 52 92 68C92 84 105 96 125 96C145 96 158 84 158 68C158 52 145 40 125 40ZM125 54C135 54 142 60 142 68C142 76 135 82 125 82C115 82 108 76 108 68C108 60 115 54 125 54Z" fill="url(#g1-red)"/>
+
+          <!-- m -->
+          <path d="M174 44C178 41 184 40 190 40C198 40 204 44 207 50C211 44 219 40 228 40C242 40 248 48 248 64V92C248 94 246 96 244 96H234C232 96 230 94 230 92V66C230 56 226 53 220 53C214 53 210 57 210 66V92C210 94 208 96 206 96H196C194 96 192 94 192 92V66C192 56 188 53 182 53C176 53 172 58 172 66V92C172 94 170 96 168 96H158C156 96 154 94 154 92V44C154 42 156 40 158 40H168C170 40 172 42 172 44V48C173 46 174 44 174 44Z" fill="url(#g1-red)"/>
+
+          <!-- a -->
+          <path d="M290 44V92C290 94 288 96 286 96H276C274 96 272 94 272 92V86C268 92 260 96 251 96C238 96 228 86 228 72C228 58 240 48 258 48H272V46C272 38 266 35 258 35H248C244 35 242 33 242 30V26C242 23 244 21 248 21H260C278 21 290 29 290 44ZM272 60H258C249 60 244 65 244 72C244 78 248 83 255 83C264 83 272 76 272 67V60Z" fill="url(#g1-red)"/>
+
+          <!-- t -->
+          <path d="M308 26C308 24 310 22 312 22H322C324 22 326 24 326 26V40H340C342 40 344 42 344 44V50C344 52 342 54 340 54H326V80C326 84 329 86 334 86H340C342 86 344 88 344 90V94C344 96 342 96 340 96H330C318 96 308 88 308 76V54H300C298 54 296 52 296 50V44C296 42 298 40 300 40H308V26Z" fill="url(#g1-red)"/>
+
+          <!-- o -->
+          <path d="M380 40C360 40 348 52 348 68C348 84 360 96 380 96C400 96 412 84 412 68C412 52 400 40 380 40ZM380 54C390 54 396 60 396 68C396 76 390 82 380 82C370 82 364 76 364 68C364 60 370 54 380 54Z" fill="url(#g1-red)"/>
+
+          <!-- The Iconic 'X' (Dynamic, Sharp, Crossed Diagonals) -->
+          <g>
+            <!-- Down stroke -->
+            <path d="M434 26C437 22 443 20 448 20H464C469 20 473 23 476 27L494 54L514 27C517 23 521 20 526 20H542C547 20 551 24 549 28L512 76C509 80 503 82 498 82H490L434 26Z" fill="url(#g1-x)"/>
+            <!-- Up stroke -->
+            <path d="M434 94C431 98 434 102 439 102H456C461 102 466 99 469 95L548 28C551 24 548 20 543 20H526C521 20 516 23 513 27L434 94Z" fill="#10B981"/>
+          </g>
+        </svg>
+
+        <!-- Subtitle Lockup -->
+        <div class="flex items-center gap-2 text-xs tracking-widest text-[var(--text-muted)] mono uppercase">
+          <span>XUJIURAN.TOP</span>
+          <span>·</span>
+          <span>CREATIVE ENGINEER</span>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between text-xs pt-2">
+        <span class="text-[var(--text-muted)]">适用：网站顶部 Logo、GitHub 个人主页横幅、CLI 启动 Banner</span>
+        <button onclick="applyStyle(1)" class="px-3 py-1.5 rounded-lg bg-rose-600 text-white font-medium hover:bg-rose-700 transition-colors">
+          采纳此风格至 Header
+        </button>
+      </div>
+    </section>
+
+
+    <!-- Style 2: Zen Ink Flow & Chinese Seal Wordmark -->
+    <section class="p-6 sm:p-8 rounded-2xl border border-[var(--border)] bg-[var(--surface)] shadow-sm space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-[var(--border)] pb-4">
+        <div>
+          <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-600 text-white mr-2">Style 02</span>
+          <span class="font-bold text-lg text-[var(--text-main)]">水墨文人印章体 (Zen Ink Flow & Red Seal)</span>
+          <p class="text-xs text-[var(--text-muted)] mt-1">
+            <strong>构字理念：</strong>与博客的“纸质墨香 + 枯山水流线背景”浑然一体。书法笔触韵味的衬线西文字母，配以古典朱砂篆刻印章 <strong>『久然』</strong>，文质兼备。
+          </p>
+        </div>
+        <span class="text-xs mono text-[var(--text-muted)]">水墨 · 典雅 · 东方人文</span>
+      </div>
+
+      <!-- Canvas Display -->
+      <div class="p-8 sm:p-12 rounded-xl bg-[var(--surface-subtle)] border border-[var(--border)] flex flex-col items-center justify-center gap-3">
+        <!-- SVG Wordmark 2 -->
+        <svg class="w-full max-w-lg h-auto" viewBox="0 0 540 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Traditional Seal Chop [久然] -->
+          <g transform="translate(10, 16)">
+            <rect x="0" y="0" width="56" height="56" rx="10" fill="#BE123C" stroke="#9F1239" stroke-width="2"/>
+            <rect x="4" y="4" width="48" height="48" rx="7" fill="none" stroke="#FFE4E6" stroke-width="1.2" stroke-dasharray="2 3"/>
+            <!-- Calligraphy Seal Text: "久然" -->
+            <text x="28" y="27" font-family="'Songti SC', serif" font-weight="900" font-size="19" fill="#FFF" text-anchor="middle">久</text>
+            <text x="28" y="47" font-family="'Songti SC', serif" font-weight="900" font-size="19" fill="#FFF" text-anchor="middle">然</text>
+          </g>
+
+          <!-- Flowing Serif Text: "Tomato" -->
+          <g transform="translate(85, 20)">
+            <text x="0" y="46" font-family="'Songti SC', 'Source Han Serif SC', serif" font-weight="700" font-size="48" letter-spacing="1" fill="currentColor" class="text-[var(--text-main)]">
+              Tomato
+            </text>
+            
+            <!-- Stylized Calligraphic 'X' with Ink Splash Spline -->
+            <path d="M192 12C194 20 205 32 222 46C208 38 196 28 186 16L192 12Z" fill="#059669"/>
+            <text x="180" y="46" font-family="'Songti SC', serif" font-weight="900" font-size="52" fill="#E11D48">
+              X
+            </text>
+          </g>
+
+          <!-- Fluid Brush Accent Wave underneath -->
+          <path d="M85 78 C 160 74, 240 82, 340 76 C 390 73, 440 79, 480 77" stroke="#BE123C" stroke-width="2" stroke-linecap="round" stroke-dasharray="6 8" opacity="0.4"/>
+          <circle cx="488" cy="77" r="3" fill="#BE123C" opacity="0.6"/>
+
+          <!-- Small Latin Calligraphic Note -->
+          <text x="88" y="93" font-family="ui-monospace, monospace" font-size="11" fill="currentColor" class="text-[var(--text-muted)]" letter-spacing="2">
+            XUJIURAN · 笔耕不辍，自成丘壑
+          </text>
+        </svg>
+      </div>
+
+      <div class="flex items-center justify-between text-xs pt-2">
+        <span class="text-[var(--text-muted)]">适用：博客文章署名印章、文集封面、关于页作者名片</span>
+        <button onclick="applyStyle(2)" class="px-3 py-1.5 rounded-lg border border-[var(--border)] hover:bg-[var(--surface-subtle)] font-medium transition-colors">
+          采纳此风格至 Header
+        </button>
+      </div>
+    </section>
+
+
+    <!-- Style 3: Playful 3D Pop Wordmark -->
+    <section class="p-6 sm:p-8 rounded-2xl border border-[var(--border)] bg-[var(--surface)] shadow-sm space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-[var(--border)] pb-4">
+        <div>
+          <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-600 text-white mr-2">Style 03</span>
+          <span class="font-bold text-lg text-[var(--text-main)]">潮玩多汁泡泡体 (Juicy Pop & 3D Bubble)</span>
+          <p class="text-xs text-[var(--text-muted)] mt-1">
+            <strong>构字理念：</strong>极富亲和力与趣味感。每个字母都像一颗饱满多汁的番茄泡泡，带有清澈的白色弧形反光高光点；字母 T 头戴翠绿番茄叶小帽子。
+          </p>
+        </div>
+        <span class="text-xs mono text-[var(--text-muted)]">活泼 · 亲和 · 潮玩极客</span>
+      </div>
+
+      <!-- Canvas Display -->
+      <div class="p-8 sm:p-12 rounded-xl bg-[var(--surface-subtle)] border border-[var(--border)] flex flex-col items-center justify-center gap-3">
+        <!-- SVG Wordmark 3 -->
+        <svg class="w-full max-w-lg h-auto" viewBox="0 0 540 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <filter id="pop-shadow" x="0" y="0" width="540" height="100" filterUnits="userSpaceOnUse">
+              <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#BE123C" flood-opacity="0.2"/>
+            </filter>
+            <linearGradient id="pop-red" x1="0" y1="10" x2="0" y2="90" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#FF5E62"/>
+              <stop offset="100%" stop-color="#E11D48"/>
+            </linearGradient>
+            <linearGradient id="pop-green" x1="0" y1="0" x2="0" y2="40" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#34D399"/>
+              <stop offset="100%" stop-color="#059669"/>
+            </linearGradient>
+          </defs>
+
+          <!-- Cute Tomato Leaf Crown over 'T' -->
+          <g transform="translate(18, 2)">
+            <path d="M24 16C26 8 36 4 44 6C38 12 34 18 28 20Z" fill="url(#pop-green)"/>
+            <path d="M12 18C18 12 28 10 32 18C24 18 18 20 12 24Z" fill="#10B981"/>
+            <circle cx="26" cy="18" r="3.5" fill="#065F46"/>
+          </g>
+
+          <!-- Chubby Rounded Letters Group -->
+          <g filter="url(#pop-shadow)" fill="url(#pop-red)">
+            <!-- Text with custom bold rounded font -->
+            <text x="30" y="74" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="64" letter-spacing="-1">
+              Tomato
+            </text>
+            <!-- X in Contrasting Emerald / Fresh Lime -->
+            <text x="350" y="74" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="70" fill="#10B981">
+              X
+            </text>
+          </g>
+
+          <!-- Specular Highlights (Bubble Shine) -->
+          <ellipse cx="62" cy="38" rx="6" ry="3" transform="rotate(-30 62 38)" fill="white" fill-opacity="0.6"/>
+          <ellipse cx="140" cy="42" rx="7" ry="3.5" transform="rotate(-30 140 42)" fill="white" fill-opacity="0.6"/>
+          <ellipse cx="270" cy="40" rx="6" ry="3" transform="rotate(-30 270 40)" fill="white" fill-opacity="0.6"/>
+          <ellipse cx="370" cy="32" rx="6" ry="3" transform="rotate(-30 370 32)" fill="white" fill-opacity="0.7"/>
+
+          <!-- Playful tagline -->
+          <text x="32" y="94" font-family="ui-monospace, monospace" font-size="11" font-weight="bold" fill="#F43F5E" letter-spacing="1">
+            xujiuran.top · stay juicy, stay curious
+          </text>
+        </svg>
+      </div>
+
+      <div class="flex items-center justify-between text-xs pt-2">
+        <span class="text-[var(--text-muted)]">适用：社交媒体头像、独立小工具 App 欢迎屏、贴纸周边</span>
+        <button onclick="applyStyle(3)" class="px-3 py-1.5 rounded-lg border border-[var(--border)] hover:bg-[var(--surface-subtle)] font-medium transition-colors">
+          采纳此风格至 Header
+        </button>
+      </div>
+    </section>
+
+
+    <!-- Style 4: Cyber Code Ligature Wordmark -->
+    <section class="p-6 sm:p-8 rounded-2xl border border-[var(--border)] bg-[var(--surface)] shadow-sm space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-[var(--border)] pb-4">
+        <div>
+          <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-600 text-white mr-2">Style 04</span>
+          <span class="font-bold text-lg text-[var(--text-main)]">极客代码连字标 (Cyber Syntax Ligature)</span>
+          <p class="text-xs text-[var(--text-muted)] mt-1">
+            <strong>构字理念：</strong>专为开发者量身打造。以 JSX 标签闭合语法 <code>&lt;TomatoX /&gt;</code> 为骨架，融合等宽连字（Coding Ligatures）与脉冲呼吸光标，诠释“产品工程与代码写作”。
+          </p>
+        </div>
+        <span class="text-xs mono text-[var(--text-muted)]">代码 · 极客 · 开发工具</span>
+      </div>
+
+      <!-- Canvas Display -->
+      <div class="p-8 sm:p-12 rounded-xl bg-zinc-950 border border-zinc-800 flex flex-col items-center justify-center gap-3 text-zinc-100">
+        <!-- SVG Wordmark 4 -->
+        <svg class="w-full max-w-lg h-auto" viewBox="0 0 540 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Terminal Tab / Tag Frame -->
+          <g font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-weight="700">
+            <!-- Opening Tag Bracket -->
+            <text x="20" y="64" font-size="52" fill="#71717A">&lt;</text>
+            
+            <!-- Tomato Main in White/Red -->
+            <text x="60" y="64" font-size="50" fill="#F43F5E">Tomato</text>
+            
+            <!-- The 'X' highlighted in Emerald Cyan -->
+            <text x="270" y="64" font-size="54" fill="#34D399">X</text>
+            
+            <!-- Closing Slash & Bracket -->
+            <text x="320" y="64" font-size="52" fill="#71717A">/&gt;</text>
+
+            <!-- Blinking Green Terminal Cursor -->
+            <rect x="390" y="24" width="10" height="46" fill="#10B981" rx="2" class="animate-pulse"/>
+          </g>
+
+          <!-- Mini Tomato Vector Badge inside tag -->
+          <circle cx="435" cy="46" r="14" fill="#E11D48"/>
+          <path d="M435 30C437 26 442 24 445 25C442 28 440 31 437 32Z" fill="#10B981"/>
+          <circle cx="435" cy="32" r="2" fill="#047857"/>
+
+          <!-- Code Comment line -->
+          <text x="22" y="88" font-family="ui-monospace, monospace" font-size="12" fill="#52525B">
+            // const author = "xujiuran.top"; /* All systems operational */
+          </text>
+        </svg>
+      </div>
+
+      <div class="flex items-center justify-between text-xs pt-2">
+        <span class="text-[var(--text-muted)]">适用：技术极客站点、开源仓库 README、开发者个人名片</span>
+        <button onclick="applyStyle(4)" class="px-3 py-1.5 rounded-lg border border-[var(--border)] hover:bg-[var(--surface-subtle)] font-medium transition-colors">
+          采纳此风格至 Header
+        </button>
+      </div>
+    </section>
+
+  </div>
+
+  <script>
+    function toggleTheme() {
+      const html = document.documentElement;
+      const isDark = html.classList.toggle('dark');
+      document.getElementById('theme-icon').textContent = isDark ? '☀️' : '🌙';
+      document.getElementById('theme-text').textContent = isDark ? '切换浅色测试' : '切换深色测试';
+    }
+
+    function applyStyle(id) {
+      alert(`已记录您的选择（风格 ${id}）！已生成对应高质量矢量代码并可即时应用至博客导航。`);
+    }
+  </script>
+
+</body>
+</html>
