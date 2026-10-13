@@ -1,0 +1,163 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import MottoBanner from '../components/MottoBanner.astro';
+import PostCard from '../components/PostCard.astro';
+import ThoughtCard from '../components/ThoughtCard.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+
+const recentPosts = [
+  {
+    title: '你本不需要那么多复杂的依赖：现代 Web 工程的极简法则',
+    description: '审视过度工程化与臃肿工具链。现代浏览器与 Node/Astro 本身的能力往往被低估了，本文探讨如何保持依赖最小化，打造飞速且长久健壮的站点。',
+    date: '2026-10-12',
+    slug: 'minimal-web-engineering',
+    readTime: '6 分钟',
+    words: '3,240',
+    tag: 'Web 技术'
+  },
+  {
+    title: '在 AI 时代，我是如何构建个人知识库与自动化工作流的',
+    description: '不讲虚无缥缈的 Prompt 魔法，聊聊我如何用本地 Markdown + Git + 定制 Agent 将信息输入、筛选、沉淀到公开发布的过程像代码流水线一样组织起来。',
+    date: '2026-10-08',
+    slug: 'ai-knowledge-workflow',
+    readTime: '8 分钟',
+    words: '4,100',
+    tag: 'AI Coding'
+  },
+  {
+    title: '从 0 到 1 手搓轻量桌面工具：小而美软件的设计取舍',
+    description: '记录一款不足 5MB 的轻量桌面小工具从构思到落地的全过程：为什么放弃 Electron？如何做到零学习成本？以及一个人做产品时的克制与取舍。',
+    date: '2026-09-29',
+    slug: 'crafting-tiny-tools',
+    readTime: '5 分钟',
+    words: '2,680',
+    tag: '产品设计'
+  }
+];
+
+const recentThoughts = [
+  {
+    id: 128,
+    date: '10.12 16:40',
+    content: '今天把博客从复杂框架迁移到了 Astro，打包速度直接从 45 秒降到 2.3 秒，零 JS 默认出水，阅读体验干净利落。少即是多，古人诚不欺我 🍵'
+  },
+  {
+    id: 127,
+    date: '10.09 21:15',
+    content: '秋天的晚风很舒服。散步时忽然想明白：做工具的第一原则不是“功能有多强大”，而是“平时绝不打扰，需要时一击即中”。'
+  }
+];
+
+const projects = [
+  {
+    name: 'InkFlow',
+    desc: '极简本地优先的写作排版工具，支持 Markdown 实时双向渲染与优雅中英文混排。',
+    tags: ['Astro', 'TypeScript', 'Tailwind'],
+    link: 'https://github.com',
+    icon: '✍️',
+    stars: '1.2k'
+  },
+  {
+    name: 'QuickMole',
+    desc: '跨平台轻量系统清理与开发环境分析 CLI，所有破坏性操作均支持 Dry-run 预演。',
+    tags: ['Rust', 'CLI', 'macOS'],
+    link: 'https://github.com',
+    icon: '⚡',
+    stars: '860'
+  }
+];
+---
+
+<BaseLayout currentPath="/">
+  <!-- Hero Section (Viki-style warmth) -->
+  <section class="space-y-4">
+    <div class="flex items-center gap-4">
+      <div class="relative flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-tr from-amber-500 to-orange-400 text-2xl font-bold text-white shadow-md">
+        羽
+        <span class="absolute bottom-0 right-0 h-4 w-4 rounded-full border-2 border-[var(--bg-primary)] bg-emerald-500" title="在线"></span>
+      </div>
+      <div>
+        <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-[var(--text-primary)]">
+          你好，我是墨羽 👋
+        </h1>
+        <p class="text-xs sm:text-sm text-[var(--text-secondary)] mt-0.5">
+          Web 工程师 · 独立创作者 · 审美与极简追求者
+        </p>
+      </div>
+    </div>
+
+    <!-- Bio Prose -->
+    <p class="text-sm sm:text-base text-[var(--text-secondary)] leading-relaxed">
+      喜欢用代码将审美与构想变为现实。专注于 <span class="font-medium text-[var(--text-primary)]">前端技术</span>、<span class="font-medium text-[var(--text-primary)]">AI Coding</span> 与轻量级开源工具。保持敏锐与好奇，常在博客中分享深度长文与即时随想。
+    </p>
+
+    <!-- Status pill -->
+    <div class="inline-flex items-center gap-2 rounded-full border border-[var(--border-primary)] bg-[var(--bg-secondary)] px-3 py-1 text-xs text-[var(--text-secondary)]">
+      <span class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+      <span>当前状态：正在迭代 Astro 极简博客主题与 AI 工具链</span>
+    </div>
+  </section>
+
+  <!-- Tw93-style Aesthetic Motto Banner -->
+  <MottoBanner />
+
+  <hr class="my-8 border-[var(--border-secondary)]" />
+
+  <!-- Recent Posts (Viki & Tw93 hybrid) -->
+  <section class="space-y-4">
+    <div class="flex items-center justify-between">
+      <h2 class="text-lg sm:text-xl font-bold text-[var(--text-primary)] flex items-center gap-2">
+        <span>📖</span> 最近文章
+      </h2>
+      <a href="/posts" class="text-xs sm:text-sm text-[var(--accent)] hover:underline flex items-center gap-1">
+        查看全部 (38) →
+      </a>
+    </div>
+
+    <div class="divide-y divide-[var(--border-secondary)]">
+      {recentPosts.map((post) => (
+        <PostCard {...post} />
+      ))}
+    </div>
+  </section>
+
+  <hr class="my-8 border-[var(--border-secondary)]" />
+
+  <!-- Micro-thoughts / Memos (Viki-style) -->
+  <section class="space-y-4">
+    <div class="flex items-center justify-between">
+      <h2 class="text-lg sm:text-xl font-bold text-[var(--text-primary)] flex items-center gap-2">
+        <span>💬</span> 碎碎念
+      </h2>
+      <a href="/thoughts" class="text-xs sm:text-sm text-[var(--accent)] hover:underline flex items-center gap-1">
+        更多随笔 (128) →
+      </a>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      {recentThoughts.map((t) => (
+        <ThoughtCard {...t} />
+      ))}
+    </div>
+  </section>
+
+  <hr class="my-8 border-[var(--border-secondary)]" />
+
+  <!-- Indie Projects / Open Source (Tw93-style) -->
+  <section class="space-y-4">
+    <div class="flex items-center justify-between">
+      <h2 class="text-lg sm:text-xl font-bold text-[var(--text-primary)] flex items-center gap-2">
+        <span>🛠️</span> 作品与开源
+      </h2>
+      <a href="/projects" class="text-xs sm:text-sm text-[var(--accent)] hover:underline flex items-center gap-1">
+        所有项目 →
+      </a>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      {projects.map((p) => (
+        <ProjectCard {...p} />
+      ))}
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,50 @@
+---
+// PostCard.astro
+interface Props {
+  title: string;
+  description: string;
+  date: string;
+  slug: string;
+  readTime?: string;
+  words?: string;
+  tag?: string;
+}
+
+const {
+  title,
+  description,
+  date,
+  slug,
+  readTime = '5 分钟',
+  words = '2,400',
+  tag = '思考'
+} = Astro.props;
+---
+
+<article class="group relative py-4 sm:py-5 transition-colors">
+  <div class="flex flex-col gap-1.5">
+    <!-- Top Row: Date & Meta -->
+    <div class="flex items-center gap-2 text-xs text-[var(--text-secondary)]">
+      <time class="mono font-medium text-[var(--accent)] font-semibold">{date}</time>
+      <span>·</span>
+      <span>约需 {readTime}</span>
+      <span>·</span>
+      <span>{words} 字</span>
+      <span class="rounded bg-[var(--bg-secondary)] px-1.5 py-0.5 text-[10px] text-[var(--text-tertiary)] ml-auto">
+        {tag}
+      </span>
+    </div>
+
+    <!-- Title -->
+    <h3 class="text-base sm:text-lg font-semibold tracking-tight text-[var(--text-primary)] transition-colors group-hover:text-[var(--accent)]">
+      <a href={`/posts/${slug}`} class="focus:outline-hidden">
+        {title}
+      </a>
+    </h3>
+
+    <!-- Summary -->
+    <p class="text-xs sm:text-sm text-[var(--text-secondary)] line-clamp-2 leading-relaxed">
+      {description}
+    </p>
+  </div>
+</article>

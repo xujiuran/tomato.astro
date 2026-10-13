@@ -1,0 +1,45 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="关于我 · 墨羽随笔" currentPath="/about">
+  <article class="space-y-6 text-sm sm:text-base leading-relaxed text-[var(--text-secondary)]">
+    <div class="border-b border-[var(--border-secondary)] pb-4">
+      <h1 class="text-2xl font-bold tracking-tight text-[var(--text-primary)]">
+        关于墨羽
+      </h1>
+      <p class="mt-1 text-xs sm:text-sm text-[var(--text-secondary)]">
+        写代码、做工具、认真生活的数字手艺人。
+      </p>
+    </div>
+
+    <section class="space-y-3">
+      <h2 class="text-lg font-bold text-[var(--text-primary)]">我是谁</h2>
+      <p>
+        你好！我是墨羽，一名生活在杭州的全栈 Web 工程师与开源工具作者。我热衷于探究现代前端工程体系、本地优先（Local-first）应用与 AI 赋能的开发流。
+      </p>
+      <p>
+        我相信优雅的代码和克制的设计拥有长久的生命力。很多时候，我们不需要把简单的工具做成庞然大物。一个轻巧、快速、不打扰用户的程序往往最能打动人心。
+      </p>
+    </section>
+
+    <section class="space-y-3">
+      <h2 class="text-lg font-bold text-[var(--text-primary)]">常用技术与工具</h2>
+      <ul class="list-disc pl-5 space-y-1">
+        <li><strong class="text-[var(--text-primary)]">前端领域：</strong>TypeScript, Astro, React, Tailwind CSS, Vite</li>
+        <li><strong class="text-[var(--text-primary)]">系统与后端：</strong>Node.js, Rust, Go, SQLite</li>
+        <li><strong class="text-[var(--text-primary)]">日常利器：</strong>Neovim, Raycast, Claude / Gemini, Ghostty</li>
+      </ul>
+    </section>
+
+    <section class="space-y-3">
+      <h2 class="text-lg font-bold text-[var(--text-primary)]">关于本站</h2>
+      <p>
+        本站基于 <a href="https://astro.build" target="_blank" rel="noopener noreferrer" class="text-[var(--accent)] underline">Astro</a> 构建，采用极简纸质美学与纯净排版风格，融合了 Viki 的温润生活感与 Tw93 的文质极简理念。
+      </p>
+      <p>
+        无第三方追踪广告，默认服务端生成静态 HTML（SSG），追求极致的首屏秒开体验。
+      </p>
+    </section>
+  </article>
+</BaseLayout>

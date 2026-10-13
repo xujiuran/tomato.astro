@@ -1,0 +1,71 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+
+const allPosts = [
+  {
+    title: '你本不需要那么多复杂的依赖：现代 Web 工程的极简法则',
+    description: '审视过度工程化与臃肿工具链。现代浏览器与 Node/Astro 本身的能力往往被低估了，本文探讨如何保持依赖最小化，打造飞速且长久健壮的站点。',
+    date: '2026-10-12',
+    slug: 'minimal-web-engineering',
+    readTime: '6 分钟',
+    words: '3,240',
+    tag: 'Web 技术'
+  },
+  {
+    title: '在 AI 时代，我是如何构建个人知识库与自动化工作流的',
+    description: '不讲虚无缥缈的 Prompt 魔法，聊聊我如何用本地 Markdown + Git + 定制 Agent 将信息输入、筛选、沉淀到公开发布的过程像代码流水线一样组织起来。',
+    date: '2026-10-08',
+    slug: 'ai-knowledge-workflow',
+    readTime: '8 分钟',
+    words: '4,100',
+    tag: 'AI Coding'
+  },
+  {
+    title: '从 0 到 1 手搓轻量桌面工具：小而美软件的设计取舍',
+    description: '记录一款不足 5MB 的轻量桌面小工具从构思到落地的全过程：为什么放弃 Electron？如何做到零学习成本？以及一个人做产品时的克制与取舍。',
+    date: '2026-09-29',
+    slug: 'crafting-tiny-tools',
+    readTime: '5 分钟',
+    words: '2,680',
+    tag: '产品设计'
+  },
+  {
+    title: '重新审视 CSS：为什么现代原生 CSS 让诸多预处理器失去必要性',
+    description: '深入分析原生嵌套、CSS Variables、现代容器查询以及颜色函数如何重新定义现代样式编写习惯。',
+    date: '2026-09-15',
+    slug: 'modern-css-evolution',
+    readTime: '7 分钟',
+    words: '3,890',
+    tag: '前端探索'
+  },
+  {
+    title: '静心读写：一个独立开发者的数字游民生活与专注力系统',
+    description: '如何在算法喂养与信息洪流中保护专注力？建立自己的被动输入防火墙与主动产出系统。',
+    date: '2026-08-20',
+    slug: 'deep-work-system',
+    readTime: '9 分钟',
+    words: '4,650',
+    tag: '随笔反思'
+  }
+];
+---
+
+<BaseLayout title="全部文章 · 墨羽随笔" currentPath="/posts">
+  <div class="space-y-6">
+    <div class="border-b border-[var(--border-secondary)] pb-4">
+      <h1 class="text-2xl font-bold tracking-tight text-[var(--text-primary)]">
+        全部文章
+      </h1>
+      <p class="mt-1 text-xs sm:text-sm text-[var(--text-secondary)]">
+        技术探究、工具打造与思考沉淀，共 {allPosts.length} 篇。
+      </p>
+    </div>
+
+    <div class="divide-y divide-[var(--border-secondary)]">
+      {allPosts.map((post) => (
+        <PostCard {...post} />
+      ))}
+    </div>
+  </div>
+</BaseLayout>

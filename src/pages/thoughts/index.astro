@@ -1,0 +1,46 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ThoughtCard from '../../components/ThoughtCard.astro';
+
+const allThoughts = [
+  {
+    id: 128,
+    date: '2026.10.12 16:40',
+    content: '今天把博客从复杂框架迁移到了 Astro，打包速度直接从 45 秒降到 2.3 秒，零 JS 默认出水，阅读体验干净利落。少即是多，古人诚不欺我 🍵'
+  },
+  {
+    id: 127,
+    date: '2026.10.09 21:15',
+    content: '秋天的晚风很舒服。散步时忽然想明白：做工具的第一原则不是“功能有多强大”，而是“平时绝不打扰，需要时一击即中”。'
+  },
+  {
+    id: 126,
+    date: '2026.10.02 14:02',
+    content: '给终端配了一套温润的纸质米白色主题，看了一整天代码眼睛居然一点也不酸。高对比度的纯黑纯白果然不适合长时间阅读。'
+  },
+  {
+    id: 125,
+    date: '2026.09.28 09:30',
+    content: 'AI 时代最稀缺的不再是代码编写的吞吐量，而是对“什么才是好软件”的审美眼光与架构直觉。'
+  }
+];
+---
+
+<BaseLayout title="碎碎念 · 墨羽随笔" currentPath="/thoughts">
+  <div class="space-y-6">
+    <div class="border-b border-[var(--border-secondary)] pb-4">
+      <h1 class="text-2xl font-bold tracking-tight text-[var(--text-primary)]">
+        碎碎念
+      </h1>
+      <p class="mt-1 text-xs sm:text-sm text-[var(--text-secondary)]">
+        日常即刻闪念、开发微吐槽与生活切片，不拘形式。
+      </p>
+    </div>
+
+    <div class="space-y-4">
+      {allThoughts.map((t) => (
+        <ThoughtCard {...t} />
+      ))}
+    </div>
+  </div>
+</BaseLayout>

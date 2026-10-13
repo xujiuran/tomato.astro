@@ -1,0 +1,24 @@
+---
+// MottoBanner.astro
+interface Props {
+  enMotto?: string;
+  zhMotto?: string;
+}
+
+const {
+  enMotto = "Be yourself and don't go with the flow.",
+  zhMotto = "保持专注与敏锐，做有审美和价值的小事。"
+} = Astro.props;
+---
+
+<div class="relative overflow-hidden rounded-2xl border border-[var(--border-primary)] bg-[var(--bg-secondary)] px-6 py-6 sm:py-8 my-6 text-center shadow-xs">
+  <div class="pointer-events-none absolute -right-12 -top-12 h-36 w-36 rounded-full bg-[var(--accent)]/5 blur-2xl"></div>
+  <div class="pointer-events-none absolute -left-12 -bottom-12 h-36 w-36 rounded-full bg-[var(--accent)]/5 blur-2xl"></div>
+  
+  <p class="serif-title text-base sm:text-xl font-medium tracking-wider text-[var(--text-primary)]">
+    “ {enMotto} ”
+  </p>
+  <p class="mt-2 text-xs sm:text-sm text-[var(--text-secondary)] tracking-wide">
+    {zhMotto}
+  </p>
+</div>

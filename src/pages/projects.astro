@@ -1,0 +1,58 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+
+const allProjects = [
+  {
+    name: 'InkFlow',
+    desc: '极简本地优先的写作排版工具，支持 Markdown 实时双向渲染与优雅中英文混排。',
+    tags: ['Astro', 'TypeScript', 'Tailwind'],
+    link: 'https://github.com',
+    icon: '✍️',
+    stars: '1.2k'
+  },
+  {
+    name: 'QuickMole',
+    desc: '跨平台轻量系统清理与开发环境分析 CLI，所有破坏性操作均支持 Dry-run 预演。',
+    tags: ['Rust', 'CLI', 'macOS'],
+    link: 'https://github.com',
+    icon: '⚡',
+    stars: '860'
+  },
+  {
+    name: 'TabZen',
+    desc: '原生 macOS 菜单栏标签页收纳与低干扰专注工具，占用内存不到 10MB。',
+    tags: ['Swift', 'macOS', 'App'],
+    link: 'https://github.com',
+    icon: '🧘',
+    stars: '620'
+  },
+  {
+    name: 'PromptPilot',
+    desc: '本地 AI 编码辅助提示词脚手架与指令管理扩展。',
+    tags: ['Extension', 'Node.js'],
+    link: 'https://github.com',
+    icon: '🚀',
+    stars: '410'
+  }
+];
+---
+
+<BaseLayout title="项目与作品 · 墨羽随笔" currentPath="/projects">
+  <div class="space-y-6">
+    <div class="border-b border-[var(--border-secondary)] pb-4">
+      <h1 class="text-2xl font-bold tracking-tight text-[var(--text-primary)]">
+        作品与开源
+      </h1>
+      <p class="mt-1 text-xs sm:text-sm text-[var(--text-secondary)]">
+        独立开发的小软件、命令行利器与开源探索。
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      {allProjects.map((p) => (
+        <ProjectCard {...p} />
+      ))}
+    </div>
+  </div>
+</BaseLayout>

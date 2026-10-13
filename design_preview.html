@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>博客视觉设计稿原型 · 墨羽随笔</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    :root {
+      --bg: #faf9f6;
+      --surface: #ffffff;
+      --surface-subtle: #f4f2eb;
+      --border: #e6e3da;
+      --border-subtle: #eeece5;
+      --text-main: #1c1917;
+      --text-muted: #78716c;
+      --text-faint: #a8a29e;
+      --accent: #c2410c;
+      --accent-subtle: #ffedd5;
+    }
+    html.dark {
+      --bg: #141312;
+      --surface: #1c1b19;
+      --surface-subtle: #242220;
+      --border: #2d2b28;
+      --border-subtle: #22211f;
+      --text-main: #f5f5f4;
+      --text-muted: #a8a29e;
+      --text-faint: #78716c;
+      --accent: #f97316;
+      --accent-subtle: #431407;
+    }
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+    .serif-quote {
+      font-family: "Songti SC", "Source Han Serif SC", "STSong", "SimSun", serif;
+    }
+    .mono {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+    .design-tag {
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body class="p-4 sm:p-8">
+
+  <!-- Design Spec Toolbar -->
+  <div class="max-w-3xl mx-auto mb-6 p-3 rounded-xl border border-[var(--border)] bg-[var(--surface)] shadow-xs flex flex-wrap items-center justify-between gap-3 text-xs">
+    <div class="flex items-center gap-2">
+      <span class="inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+      <span class="font-semibold text-[var(--text-main)]">设计稿演示模式</span>
+      <span class="text-[var(--text-muted)]">| 融合 Viki (生活与温度) + Tw93 (文质与禅意极简)</span>
+    </div>
+    <div class="flex items-center gap-2">
+      <button onclick="toggleTheme()" class="px-2.5 py-1 rounded-md border border-[var(--border)] bg-[var(--surface-subtle)] text-[var(--text-main)] hover:border-[var(--text-muted)] transition-colors flex items-center gap-1.5 font-medium">
+        <span id="theme-icon">🌙</span>
+        <span id="theme-label">切换夜间模式</span>
+      </button>
+      <button onclick="toggleAnnotations()" class="px-2.5 py-1 rounded-md border border-[var(--border)] bg-[var(--surface-subtle)] text-[var(--text-main)] hover:border-[var(--text-muted)] transition-colors font-medium">
+        🏷️ <span id="anno-label">显示设计溯源标注</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Main Blog Frame -->
+  <div class="max-w-3xl mx-auto border border-[var(--border)] rounded-2xl bg-[var(--surface)] shadow-sm overflow-hidden transition-colors">
+    
+    <!-- 1. Header (Viki style sticky blur & Tw93 shortcuts) -->
+    <header class="border-b border-[var(--border)] bg-[var(--surface)]/90 backdrop-blur-md px-5 py-3.5 flex items-center justify-between sticky top-0 z-20">
+      <div class="flex items-center gap-3">
+        <div class="h-8 w-8 rounded-lg bg-[var(--accent)] text-white font-bold flex items-center justify-center text-sm shadow-xs">
+          ✦
+        </div>
+        <div>
+          <div class="font-bold text-sm tracking-tight text-[var(--text-main)]">墨羽 · 随笔</div>
+          <div class="text-[11px] text-[var(--text-muted)]">生活需要记录，代码需要沉淀</div>
+        </div>
+      </div>
+
+      <nav class="flex items-center gap-2">
+        <div class="flex items-center gap-1 text-xs font-medium">
+          <span class="px-2.5 py-1 rounded-md bg-[var(--surface-subtle)] text-[var(--accent)] font-semibold">首页</span>
+          <span class="px-2.5 py-1 rounded-md text-[var(--text-muted)] hover:text-[var(--text-main)] cursor-pointer">文章</span>
+          <span class="px-2.5 py-1 rounded-md text-[var(--text-muted)] hover:text-[var(--text-main)] cursor-pointer">碎碎念</span>
+          <span class="px-2.5 py-1 rounded-md text-[var(--text-muted)] hover:text-[var(--text-main)] cursor-pointer">项目</span>
+          <span class="px-2.5 py-1 rounded-md text-[var(--text-muted)] hover:text-[var(--text-main)] cursor-pointer">关于</span>
+        </div>
+
+        <div class="h-4 w-[1px] bg-[var(--border)] mx-1"></div>
+
+        <div class="flex items-center gap-1">
+          <span class="px-2 py-1 rounded-md border border-[var(--border)] bg-[var(--surface-subtle)] text-[var(--text-muted)] text-[11px] mono cursor-pointer flex items-center gap-1" title="按 / 键搜索">
+            🔍 <kbd class="px-1 py-0.2 bg-[var(--surface)] border border-[var(--border)] rounded text-[9px]">/</kbd>
+          </span>
+          <span class="h-7 w-7 rounded-md border border-[var(--border)] bg-[var(--surface-subtle)] flex items-center justify-center text-xs text-[var(--text-muted)] cursor-pointer">
+            RSS
+          </span>
+        </div>
+      </nav>
+    </header>
+
+    <!-- Annotation Pill for Header -->
+    <div class="anno hidden px-5 py-1.5 bg-amber-500/10 border-b border-amber-500/20 text-amber-700 dark:text-amber-300 text-[11px] flex items-center justify-between">
+      <span>💡 <strong>导航栏设计溯源：</strong>继承 Viki 的微型徽标 + 副标题结构；融入 Tw93 的快捷键 `/` 搜索唤起与极简功能图标。</span>
+      <span class="mono opacity-75">max-w-3xl / 768px</span>
+    </div>
+
+    <!-- Main Container Body -->
+    <div class="p-6 sm:p-8 space-y-8">
+
+      <!-- 2. Hero Section (Viki's friendly avatar & warm prose) -->
+      <section class="space-y-3">
+        <div class="flex items-center gap-4">
+          <div class="relative h-14 w-14 rounded-full bg-gradient-to-tr from-amber-600 to-orange-400 text-white font-bold text-xl flex items-center justify-center shadow-md">
+            羽
+            <span class="absolute bottom-0 right-0 h-3.5 w-3.5 rounded-full border-2 border-[var(--surface)] bg-emerald-500"></span>
+          </div>
+          <div>
+            <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-[var(--text-main)] flex items-center gap-2">
+              你好，我是墨羽 👋
+            </h1>
+            <p class="text-xs text-[var(--text-muted)] mt-0.5">Web 全栈工程师 · 独立产品作者 · 审美与极简追求者</p>
+          </div>
+        </div>
+
+        <p class="text-xs sm:text-sm text-[var(--text-muted)] leading-relaxed">
+          喜欢用代码将审美与构想变为现实。专注于 <span class="font-medium text-[var(--text-main)]">现代前端工程</span>、<span class="font-medium text-[var(--text-main)]">AI Coding 工作流</span> 与轻量级原生工具。相信克制的设计和清晰的文字具有超越周期的力量。
+        </p>
+
+        <div class="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface-subtle)] px-3 py-1 text-[11px] text-[var(--text-muted)]">
+          <span class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span>当前状态：正在构建 Astro 极简博客工程与个人知识底座</span>
+        </div>
+      </section>
+
+      <!-- Annotation Pill for Hero -->
+      <div class="anno hidden px-3 py-1 bg-amber-500/10 rounded-md border border-amber-500/20 text-amber-700 dark:text-amber-300 text-[11px]">
+        💡 <strong>Hero 区设计溯源：</strong>采用 Viki 的亲和第一人称视界，包含呼吸状态灯与自然流动的超链接叙事。
+      </div>
+
+      <!-- 3. Tw93-style Aesthetic Motto Banner -->
+      <div class="relative overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--surface-subtle)] px-6 py-6 text-center">
+        <p class="serif-quote text-base sm:text-lg font-medium tracking-wider text-[var(--text-main)]">
+          “ Be yourself and don't go with the flow. ”
+        </p>
+        <p class="mt-1 text-xs text-[var(--text-muted)] tracking-wide">
+          保持专注与敏锐，做有审美和长久价值的小事。
+        </p>
+      </div>
+
+      <!-- Annotation Pill for Motto -->
+      <div class="anno hidden px-3 py-1 bg-amber-500/10 rounded-md border border-amber-500/20 text-amber-700 dark:text-amber-300 text-[11px]">
+        💡 <strong>金句横幅设计溯源：</strong>致敬 Tw93 标志性的视觉锚点与文人哲思，给技术博客注入人文品味。
+      </div>
+
+      <hr class="border-[var(--border-subtle)]">
+
+      <!-- 4. Recent Posts (Hybrid layout) -->
+      <section class="space-y-4">
+        <div class="flex items-center justify-between">
+          <h2 class="text-base sm:text-lg font-bold text-[var(--text-main)] flex items-center gap-1.5">
+            <span>📖</span> 最近文章
+          </h2>
+          <span class="text-xs text-[var(--accent)] cursor-pointer hover:underline">全部 38 篇 →</span>
+        </div>
+
+        <div class="divide-y divide-[var(--border-subtle)]">
+          <!-- Post 1 -->
+          <article class="py-3.5 space-y-1 group cursor-pointer">
+            <div class="flex items-center gap-2 text-[11px] text-[var(--text-muted)]">
+              <span class="mono font-semibold text-[var(--accent)]">【2026-10-12】</span>
+              <span>·</span>
+              <span>约需 6 分钟</span>
+              <span>·</span>
+              <span>3,240 字</span>
+              <span class="ml-auto rounded bg-[var(--surface-subtle)] px-1.5 py-0.5 text-[10px] text-[var(--text-faint)]">Web 思考</span>
+            </div>
+            <h3 class="text-sm sm:text-base font-semibold text-[var(--text-main)] group-hover:text-[var(--accent)] transition-colors">
+              你本不需要那么多复杂的依赖：现代 Web 工程的极简法则
+            </h3>
+            <p class="text-xs text-[var(--text-muted)] line-clamp-2 leading-relaxed">
+              审视过度工程化与臃肿工具链。现代浏览器与 Node/Astro 本身的能力往往被低估了，探讨如何保持依赖最小化，打造飞速且长久健壮的站点。
+            </p>
+          </article>
+
+          <!-- Post 2 -->
+          <article class="py-3.5 space-y-1 group cursor-pointer">
+            <div class="flex items-center gap-2 text-[11px] text-[var(--text-muted)]">
+              <span class="mono font-semibold text-[var(--accent)]">【2026-10-08】</span>
+              <span>·</span>
+              <span>约需 8 分钟</span>
+              <span>·</span>
+              <span>4,100 字</span>
+              <span class="ml-auto rounded bg-[var(--surface-subtle)] px-1.5 py-0.5 text-[10px] text-[var(--text-faint)]">AI Coding</span>
+            </div>
+            <h3 class="text-sm sm:text-base font-semibold text-[var(--text-main)] group-hover:text-[var(--accent)] transition-colors">
+              在 AI 时代，我是如何构建个人知识库与自动化工作流的
+            </h3>
+            <p class="text-xs text-[var(--text-muted)] line-clamp-2 leading-relaxed">
+              不讲虚无缥缈的 Prompt 魔法，聊聊我如何用本地 Markdown + Git + 定制 Agent 将信息输入、筛选、沉淀到公开发布的过程像代码流水线一样组织起来。
+            </p>
+          </article>
+
+          <!-- Post 3 -->
+          <article class="py-3.5 space-y-1 group cursor-pointer">
+            <div class="flex items-center gap-2 text-[11px] text-[var(--text-muted)]">
+              <span class="mono font-semibold text-[var(--accent)]">【2026-09-29】</span>
+              <span>·</span>
+              <span>约需 5 分钟</span>
+              <span>·</span>
+              <span>2,680 字</span>
+              <span class="ml-auto rounded bg-[var(--surface-subtle)] px-1.5 py-0.5 text-[10px] text-[var(--text-faint)]">独立产品</span>
+            </div>
+            <h3 class="text-sm sm:text-base font-semibold text-[var(--text-main)] group-hover:text-[var(--accent)] transition-colors">
+              从 0 到 1 手搓轻量桌面工具：小而美软件的设计取舍
+            </h3>
+            <p class="text-xs text-[var(--text-muted)] line-clamp-2 leading-relaxed">
+              记录一款不足 5MB 的轻量桌面小工具从构思到落地的全过程：为什么放弃 Electron？如何做到零学习成本？以及一个人做产品时的克制与取舍。
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <!-- Annotation Pill for Posts -->
+      <div class="anno hidden px-3 py-1 bg-amber-500/10 rounded-md border border-amber-500/20 text-amber-700 dark:text-amber-300 text-[11px]">
+        💡 <strong>文章排版设计溯源：</strong>融合 Tw93 的日期方括号前缀 `【YYYY-MM-DD】` 与核心摘要直达；融入 Viki 的阅读时长与字数元数据，保证无卡片干扰的阅读流。
+      </div>
+
+      <hr class="border-[var(--border-subtle)]">
+
+      <!-- 5. Micro-thoughts (Viki style) -->
+      <section class="space-y-4">
+        <div class="flex items-center justify-between">
+          <h2 class="text-base sm:text-lg font-bold text-[var(--text-main)] flex items-center gap-1.5">
+            <span>💬</span> 碎碎念
+          </h2>
+          <span class="text-xs text-[var(--accent)] cursor-pointer hover:underline">随笔流水 (128) →</span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-3.5 space-y-1.5 hover:border-[var(--text-muted)] transition-colors">
+            <div class="flex items-center gap-2 text-[11px] text-[var(--text-muted)]">
+              <span class="mono font-semibold text-[var(--accent)]">#128</span>
+              <span>·</span>
+              <span>10.12 16:40</span>
+            </div>
+            <p class="text-xs text-[var(--text-main)] leading-relaxed">
+              今天把博客从复杂框架迁移到了 Astro，构建速度从 45 秒降到 2.3 秒，默认零 JS，首屏水灵灵的纯 HTML。少即是多，古人诚不欺我 🍵
+            </p>
+          </div>
+
+          <div class="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-3.5 space-y-1.5 hover:border-[var(--text-muted)] transition-colors">
+            <div class="flex items-center gap-2 text-[11px] text-[var(--text-muted)]">
+              <span class="mono font-semibold text-[var(--accent)]">#127</span>
+              <span>·</span>
+              <span>10.09 21:15</span>
+            </div>
+            <p class="text-xs text-[var(--text-main)] leading-relaxed">
+              散步时忽然想明白：做工具的第一原则不是“功能有多强大”，而是“平时绝不打扰，需要时一击即中”。极简不仅是代码，也是心境。
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Annotation Pill for Thoughts -->
+      <div class="anno hidden px-3 py-1 bg-amber-500/10 rounded-md border border-amber-500/20 text-amber-700 dark:text-amber-300 text-[11px]">
+        💡 <strong>碎碎念设计溯源：</strong>直接采纳 Viki 极具特色的轻量化 `#编号` + 短便签，打破只有大作才能发布的心理负担，增添个人真实温度。
+      </div>
+
+      <hr class="border-[var(--border-subtle)]">
+
+      <!-- 6. Side Projects Showcase (Tw93 style) -->
+      <section class="space-y-4">
+        <div class="flex items-center justify-between">
+          <h2 class="text-base sm:text-lg font-bold text-[var(--text-main)] flex items-center gap-1.5">
+            <span>🛠️</span> 独立作品与开源工具
+          </h2>
+          <span class="text-xs text-[var(--accent)] cursor-pointer hover:underline">项目矩阵 →</span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4 flex flex-col justify-between hover:-translate-y-0.5 hover:border-[var(--text-muted)] transition-all cursor-pointer">
+            <div>
+              <div class="flex items-center justify-between mb-1.5">
+                <div class="flex items-center gap-2">
+                  <span class="text-lg">✍️</span>
+                  <span class="font-bold text-sm text-[var(--text-main)]">InkFlow</span>
+                </div>
+                <span class="text-[11px] mono text-[var(--text-muted)]">★ 1.2k</span>
+              </div>
+              <p class="text-xs text-[var(--text-muted)] leading-relaxed">
+                极简本地优先的写作排版工具，支持 Markdown 实时双向渲染与优雅中英文混排。
+              </p>
+            </div>
+            <div class="mt-3 flex gap-1">
+              <span class="rounded bg-[var(--surface-subtle)] px-1.5 py-0.5 text-[10px] text-[var(--text-muted)]">Astro</span>
+              <span class="rounded bg-[var(--surface-subtle)] px-1.5 py-0.5 text-[10px] text-[var(--text-muted)]">TypeScript</span>
+            </div>
+          </div>
+
+          <div class="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4 flex flex-col justify-between hover:-translate-y-0.5 hover:border-[var(--text-muted)] transition-all cursor-pointer">
+            <div>
+              <div class="flex items-center justify-between mb-1.5">
+                <div class="flex items-center gap-2">
+                  <span class="text-lg">⚡</span>
+                  <span class="font-bold text-sm text-[var(--text-main)]">QuickMole</span>
+                </div>
+                <span class="text-[11px] mono text-[var(--text-muted)]">★ 860</span>
+              </div>
+              <p class="text-xs text-[var(--text-muted)] leading-relaxed">
+                跨平台轻量系统清理与开发环境分析 CLI，所有破坏性操作均支持 Dry-run 预演。
+              </p>
+            </div>
+            <div class="mt-3 flex gap-1">
+              <span class="rounded bg-[var(--surface-subtle)] px-1.5 py-0.5 text-[10px] text-[var(--text-muted)]">Rust</span>
+              <span class="rounded bg-[var(--surface-subtle)] px-1.5 py-0.5 text-[10px] text-[var(--text-muted)]">CLI</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Annotation Pill for Projects -->
+      <div class="anno hidden px-3 py-1 bg-amber-500/10 rounded-md border border-amber-500/20 text-amber-700 dark:text-amber-300 text-[11px]">
+        💡 <strong>作品矩阵设计溯源：</strong>汲取 Tw93 展示 Pake / MiaoYan / Mole 的产品工程师基因，展示不仅会写文章，更会做实实在在的产品。
+      </div>
+
+    </div>
+
+    <!-- 7. Footer -->
+    <footer class="border-t border-[var(--border)] bg-[var(--surface-subtle)] px-6 py-6 text-[11px] text-[var(--text-muted)] space-y-2">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+        <div class="flex items-center gap-2">
+          <span class="font-semibold text-[var(--text-main)]">✦ 墨羽 · 随笔</span>
+          <span>·</span>
+          <span>生活需要记录，代码需要沉淀</span>
+        </div>
+        <div class="flex items-center gap-3">
+          <span>© 2026 墨羽</span>
+          <span>·</span>
+          <span class="underline cursor-pointer">CC BY-SA 4.0</span>
+          <span>·</span>
+          <span>Astro 驱动</span>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    function toggleTheme() {
+      const html = document.documentElement;
+      const isDark = html.classList.toggle('dark');
+      document.getElementById('theme-icon').textContent = isDark ? '☀️' : '🌙';
+      document.getElementById('theme-label').textContent = isDark ? '切换浅色模式' : '切换夜间模式';
+    }
+
+    let showAnno = false;
+    function toggleAnnotations() {
+      showAnno = !showAnno;
+      document.querySelectorAll('.anno').forEach(el => {
+        el.classList.toggle('hidden', !showAnno);
+      });
+      document.getElementById('anno-label').textContent = showAnno ? '隐藏设计溯源标注' : '显示设计溯源标注';
+    }
+  </script>
+</body>
+</html>

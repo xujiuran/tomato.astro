@@ -1,0 +1,21 @@
+---
+// ThoughtCard.astro
+interface Props {
+  id: number;
+  date: string;
+  content: string;
+}
+
+const { id, date, content } = Astro.props;
+---
+
+<div class="relative rounded-xl border border-[var(--border-primary)] bg-[var(--card-bg)] p-4 transition-all hover:border-[var(--text-secondary)]">
+  <div class="flex items-center gap-2 text-xs text-[var(--text-secondary)] mb-2">
+    <span class="mono font-semibold text-[var(--accent)]">#{id}</span>
+    <span>·</span>
+    <time>{date}</time>
+  </div>
+  <p class="text-xs sm:text-sm text-[var(--text-primary)] leading-relaxed whitespace-pre-line">
+    {content}
+  </p>
+</div>

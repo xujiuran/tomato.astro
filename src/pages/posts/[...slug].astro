@@ -1,0 +1,110 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export function getStaticPaths() {
+  return [
+    {
+      params: { slug: 'minimal-web-engineering' },
+      props: {
+        title: '你本不需要那么多复杂的依赖：现代 Web 工程的极简法则',
+        date: '2026-10-12',
+        readTime: '6 分钟',
+        words: '3,240',
+        content: `
+在过去的几年中，前端社区经历了一轮又一轮的基础设施重构。从 Webpack 到 Vite，从各种繁杂的 CSS-in-JS 到原子化 CSS，从沉重的全功能客户端单页框架回流到 Islands 架构与纯 HTML 输出。
+
+### 为什么我们总是陷入依赖泥潭？
+
+当我们打开一个现代 Web 项目的 package.json 时，动辄几十甚至上百个第三方包。每次 \`npm install\`，都是数万个文件的下载与解析。
+很多时候，我们引入一个 200KB 的库，仅仅是为了格式化一个日期，或者做一次深拷贝。
+
+### 现代 Web 平台本身的蜕变
+
+你可能忽略了现代浏览器与 Node/Astro 环境所具备的原生能力：
+1. **原生深拷贝：** \`structuredClone()\` 已经全平台支持，不再需要 lodash.clonedeep。
+2. **原生日期与相对时间：** \`Intl.DateTimeFormat\` 与 \`Intl.RelativeTimeFormat\` 原生支持国际化。
+3. **原生 CSS 嵌套与变量：** CSS 原生支持 nesting 与 custom properties，减少了复杂的构建步骤。
+4. **Astro 的零 JS 默认哲学：** 将绝大多数静态内容转化为纯 HTML，仅在需要交互的局部水合。
+
+极简并不是排斥工具，而是明确每引入一个依赖所带来的维护成本与认知负担。克制，是软件工程中最优雅的美德。
+        `
+      }
+    },
+    {
+      params: { slug: 'ai-knowledge-workflow' },
+      props: {
+        title: '在 AI 时代，我是如何构建个人知识库与自动化工作流的',
+        date: '2026-10-08',
+        readTime: '8 分钟',
+        words: '4,100',
+        content: `
+信息洪流时代，最大的挑战不是找不到资料，而是如何把有价值的信息沉淀为自己的思考资产。
+
+### 本地优先（Local-first）原则
+
+我的所有笔记和长文草稿均存储在纯纯的本地 Markdown 文件中。Git 作为唯一的版本控制系统。
+没有任何专有格式，没有锁定在某个 SaaS 平台的私有数据库里。20 年后，任何文本编辑器依然能打开它们。
+
+### 结语
+
+工具是手段，思考才是目的。让 AI 承担繁重的格式整理与初筛工作，把宝贵的专注力留给真正的创作与审美感知。
+        `
+      }
+    },
+    {
+      params: { slug: 'crafting-tiny-tools' },
+      props: {
+        title: '从 0 到 1 手搓轻量桌面工具：小而美软件的设计取舍',
+        date: '2026-09-29',
+        readTime: '5 分钟',
+        words: '2,680',
+        content: `
+当你想做一个功能专注的桌面小工具时，通常面临两条路：
+1. 使用 Electron 快速搞定，但打包出来动辄 100MB+，启动内存占用 150MB+。
+2. 使用 Rust / Swift / Webview 技术栈，体积不到 5MB，毫秒级冷启。
+
+我选择后者。小巧不仅是对系统资源的尊重，更是一种给用户带来的心理轻盈感。
+        `
+      }
+    }
+  ];
+}
+
+const { title, date, readTime, words, content } = Astro.props;
+---
+
+<BaseLayout title={`${title} · 墨羽随笔`} currentPath="/posts">
+  <article class="space-y-6">
+    <!-- Post Header -->
+    <header class="border-b border-[var(--border-secondary)] pb-6 space-y-3">
+      <div class="flex items-center gap-2 text-xs text-[var(--text-secondary)]">
+        <a href="/posts" class="text-[var(--accent)] hover:underline">← 返回文章列表</a>
+        <span>·</span>
+        <time class="mono">{date}</time>
+        <span>·</span>
+        <span>约需 {readTime}</span>
+        <span>·</span>
+        <span>{words} 字</span>
+      </div>
+
+      <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-[var(--text-primary)] leading-tight">
+        {title}
+      </h1>
+    </header>
+
+    <!-- Post Body -->
+    <div class="prose prose-stone dark:prose-invert max-w-none text-sm sm:text-base leading-relaxed text-[var(--text-primary)] whitespace-pre-line space-y-4">
+      {content}
+    </div>
+
+    <!-- Post Footer -->
+    <footer class="mt-12 rounded-xl border border-[var(--border-primary)] bg-[var(--bg-secondary)] p-4 text-xs text-[var(--text-secondary)]">
+      <p>
+        文章标题：<strong class="text-[var(--text-primary)]">{title}</strong>
+      </p>
+      <p class="mt-1">
+        发布日期：{date} ｜ 许可协议：CC BY-SA 4.0 转载请注明出处。
+      </p>
+    </footer>
+  </article>
+</BaseLayout>

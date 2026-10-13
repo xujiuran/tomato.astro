@@ -1,0 +1,36 @@
+---
+// Footer.astro
+---
+
+<footer class="mt-16 border-t border-[var(--border-primary)] py-8 text-xs text-[var(--text-secondary)]">
+  <div class="mx-auto max-w-3xl px-4 sm:px-6">
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div class="flex flex-col gap-1">
+        <div class="flex items-center gap-2 text-sm font-semibold text-[var(--text-primary)]">
+          <span>✦ 墨羽 · 随笔</span>
+          <span class="text-xs font-normal text-[var(--text-tertiary)]">生活需要记录，代码需要沉淀</span>
+        </div>
+        <p class="text-[11px] text-[var(--text-secondary)]">
+          除特殊说明外，本站所有内容均采用 
+          <a
+            href="https://creativecommons.org/licenses/by-sa/4.0/"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="underline hover:text-[var(--accent)]"
+          >
+            CC BY-SA 4.0
+          </a>
+          协议共享。
+        </p>
+      </div>
+
+      <div class="flex items-center gap-3 text-[11px]">
+        <span>© 2026 墨羽</span>
+        <span>·</span>
+        <a href="/rss.xml" class="hover:text-[var(--accent)]">RSS</a>
+        <span>·</span>
+        <span>Astro 驱动</span>
+      </div>
+    </div>
+  </div>
+</footer>
