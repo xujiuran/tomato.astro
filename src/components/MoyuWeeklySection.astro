@@ -1,0 +1,332 @@
+---
+// MoyuWeeklySection.astro
+// Showcase component for the bottom of Homepage:
+// 7-day work week strip, slacking philosophy quote, time progress bars, and holiday countdowns.
+import type { MoyuData } from '../lib/newsService';
+
+interface Props {
+  moyu?: MoyuData | null;
+}
+
+const { moyu } = Astro.props;
+
+// Safe percentage computation
+const getPercentage = (val: any, fallback: number): number => {
+  if (typeof val === 'number') return val;
+  if (typeof val === 'string') return parseInt(val, 10) || fallback;
+  if (val && typeof val.percentage === 'number') return val.percentage;
+  return fallback;
+};
+
+const weekPercentage = getPercentage(moyu?.progress?.week, 43);
+const monthPercentage = getPercentage(moyu?.progress?.month, 45);
+const yearPercentage = getPercentage(moyu?.progress?.year, 79);
+
+const daysToWeekend = moyu?.countdown?.weekend ?? 2;
+const daysToNewYear = moyu?.countdown?.newYear ?? 78;
+const daysToSpringFestival = moyu?.countdown?.springFestival ?? 112;
+const daysToLaborDay = moyu?.countdown?.laborDay ?? 198;
+const daysToNationalDay = moyu?.countdown?.nationalDay ?? 351;
+
+const defaultQuote = '你在认真工作的时候，有人在摸鱼。你在加班的时候，有人在钓鱼。人生苦短，及时摸鱼。劳逸结合，才能行稳致远。';
+const moyuQuote = moyu?.moyuQuote || defaultQuote;
+
+// Compute 7 days of the current week (Monday to Sunday)
+const baseDate = new Date();
+const currentDay = baseDate.getDay(); // 0: Sunday, 1: Monday, ..., 6: Saturday
+const dayOffset = currentDay === 0 ? 6 : currentDay - 1; // 0 for Monday, 6 for Sunday
+
+const monday = new Date(baseDate);
+monday.setDate(baseDate.getDate() - dayOffset);
+
+const weekdayNames = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
+const weekdayTags = ['醒神开工', '火力全开', '胜利过半', '摸鱼充电', '坐等下班', '快乐双休', '养精蓄锐'];
+
+const weekDays = weekdayNames.map((name, i) => {
+  const d = new Date(monday);
+  d.setDate(monday.getDate() + i);
+  const isPast = i < dayOffset;
+  const isToday = i === dayOffset;
+  const isWeekend = i >= 5;
+  const month = d.getMonth() + 1;
+  const date = d.getDate();
+
+  return {
+    index: i,
+    name,
+    dateStr: `${month}.${date}`,
+    isPast,
+    isToday,
+    isWeekend,
+    tag: weekdayTags[i],
+  };
+});
+---
+
+<section id="moyu-weekly-section" class="space-y-4">
+  <!-- Header with title & badges -->
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-[var(--border-secondary)] pb-3">
+    <div class="flex items-center gap-2">
+      <span class="text-xl">🐟</span>
+      <h2 class="text-lg sm:text-xl font-bold text-[var(--text-primary)] tracking-tight">
+        摸鱼周历 · 劳逸结合
+      </h2>
+      <span class="text-xs text-[var(--text-tertiary)] hidden md:inline">
+        掌控工作节奏 · 享受从容生活
+      </span>
+    </div>
+
+    <div class="flex items-center gap-2 text-xs">
+      <span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 text-emerald-600 dark:text-emerald-400 font-medium">
+        <span class="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+        <span>距周末 {daysToWeekend} 天</span>
+      </span>
+      <a
+        href="/news"
+        class="text-[var(--accent)] hover:underline flex items-center gap-1 text-xs"
+      >
+        <span>每日早报与热榜</span>
+        <span>→</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Main Container Card -->
+  <div class="rounded-2xl border border-[var(--border-primary)] bg-[var(--card-bg)] p-4 sm:p-6 shadow-xs space-y-6 transition-all">
+    
+    <!-- 7-Day Week Strip (Monday to Sunday) -->
+    <div>
+      <div class="flex items-center justify-between mb-3 text-xs text-[var(--text-secondary)]">
+        <div class="flex items-center gap-2">
+          <span class="font-bold text-[var(--text-primary)]">本周工时日程</span>
+          <span class="text-[11px] text-[var(--text-tertiary)]">周一至周日全景视图</span>
+        </div>
+        <div class="flex items-center gap-2 text-[11px] text-[var(--text-tertiary)]">
+          <span class="flex items-center gap-1">
+            <span class="h-2 w-2 rounded-full bg-emerald-500"></span> 今日
+          </span>
+          <span class="flex items-center gap-1">
+            <span class="h-2 w-2 rounded-full bg-rose-500"></span> 双休
+          </span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-7 gap-1.5 sm:gap-2.5">
+        {weekDays.map((d) => (
+          <div
+            class:list={[
+              'moyu-week-day group relative rounded-xl p-2 sm:p-3 text-center transition-all border flex flex-col items-center justify-between min-h-[92px] sm:min-h-[105px]',
+              d.isToday
+                ? 'bg-emerald-500/10 border-emerald-500/40 shadow-xs ring-1 ring-emerald-500/30'
+                : d.isWeekend
+                ? 'bg-rose-500/5 border-rose-500/20 hover:border-rose-500/40'
+                : d.isPast
+                ? 'bg-[var(--bg-secondary)]/50 border-[var(--border-secondary)] opacity-70 hover:opacity-100'
+                : 'bg-[var(--bg-secondary)] border-[var(--border-primary)] hover:border-[var(--accent)]/40',
+            ]}
+            data-day-index={d.index}
+          >
+            <!-- Today badge banner -->
+            {d.isToday && (
+              <span class="absolute -top-2 left-1/2 -translate-x-1/2 bg-emerald-600 text-white text-[9px] font-bold px-1.5 py-0.2 rounded-full shadow-xs uppercase tracking-wider">
+                TODAY
+              </span>
+            )}
+
+            <!-- Weekday Title -->
+            <div class:list={[
+              'text-xs sm:text-sm font-bold',
+              d.isToday ? 'text-emerald-600 dark:text-emerald-400 font-extrabold' : d.isWeekend ? 'text-rose-600 dark:text-rose-400' : 'text-[var(--text-primary)]'
+            ]}>
+              {d.name}
+            </div>
+
+            <!-- Date Display -->
+            <div class="moyu-day-date mono text-[11px] sm:text-xs text-[var(--text-tertiary)] my-1">
+              {d.dateStr}
+            </div>
+
+            <!-- Fun Status Tag -->
+            <div class:list={[
+              'text-[10px] sm:text-[11px] px-1 sm:px-1.5 py-0.5 rounded-md font-medium leading-tight truncate w-full',
+              d.isToday
+                ? 'bg-emerald-500 text-white font-semibold'
+                : d.isWeekend
+                ? 'bg-rose-500/15 text-rose-700 dark:text-rose-300'
+                : d.isPast
+                ? 'bg-[var(--bg-primary)] text-[var(--text-tertiary)]'
+                : 'bg-[var(--card-bg)] text-[var(--text-secondary)] border border-[var(--border-secondary)]'
+            ]}>
+              {d.isPast && !d.isToday ? '✓ 已过' : d.tag}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- Slacking Philosophy Quote -->
+    {moyuQuote && (
+      <div class="relative overflow-hidden rounded-xl bg-gradient-to-r from-emerald-500/10 via-teal-500/5 to-cyan-500/10 border border-emerald-500/20 p-3.5 sm:p-4 text-xs sm:text-sm text-emerald-900 dark:text-emerald-200 leading-relaxed">
+        <div class="flex items-start gap-2.5">
+          <span class="text-base select-none mt-0.5">💡</span>
+          <div>
+            <span class="font-bold text-emerald-700 dark:text-emerald-400 mr-1.5">「摸鱼哲学」</span>
+            <span class="font-medium">{moyuQuote}</span>
+          </div>
+        </div>
+      </div>
+    )}
+
+    <!-- Lower Section: Time Progress Bars & Holiday Countdowns -->
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-5 pt-2 border-t border-[var(--border-secondary)]">
+      
+      <!-- Left: Time Progress (7 cols on md) -->
+      <div class="md:col-span-7 space-y-3.5">
+        <div class="flex items-center justify-between text-xs">
+          <div class="flex items-center gap-1.5 font-bold text-[var(--text-primary)]">
+            <span>⏳</span>
+            <span>时光流逝进度</span>
+          </div>
+          <span class="mono text-[11px] text-[var(--text-tertiary)]">流年不负 · 劳逸平衡</span>
+        </div>
+
+        <div class="space-y-3">
+          <!-- Week Progress -->
+          <div>
+            <div class="flex justify-between text-xs text-[var(--text-secondary)] mb-1">
+              <span class="flex items-center gap-1">
+                <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+                <span>本周工作进度</span>
+              </span>
+              <span class="mono font-semibold text-[var(--text-primary)]">{weekPercentage}%</span>
+            </div>
+            <div class="h-2 w-full rounded-full bg-[var(--bg-secondary)] overflow-hidden">
+              <div
+                class="h-full bg-emerald-500 rounded-full transition-all duration-700"
+                style={`width: ${weekPercentage}%`}
+              ></div>
+            </div>
+          </div>
+
+          <!-- Month Progress -->
+          <div>
+            <div class="flex justify-between text-xs text-[var(--text-secondary)] mb-1">
+              <span class="flex items-center gap-1">
+                <span class="h-1.5 w-1.5 rounded-full bg-blue-500"></span>
+                <span>本月自然日进度</span>
+              </span>
+              <span class="mono font-semibold text-[var(--text-primary)]">{monthPercentage}%</span>
+            </div>
+            <div class="h-2 w-full rounded-full bg-[var(--bg-secondary)] overflow-hidden">
+              <div
+                class="h-full bg-blue-500 rounded-full transition-all duration-700"
+                style={`width: ${monthPercentage}%`}
+              ></div>
+            </div>
+          </div>
+
+          <!-- Year Progress -->
+          <div>
+            <div class="flex justify-between text-xs text-[var(--text-secondary)] mb-1">
+              <span class="flex items-center gap-1">
+                <span class="h-1.5 w-1.5 rounded-full bg-orange-500"></span>
+                <span>今年已逝进度</span>
+              </span>
+              <span class="mono font-semibold text-[var(--text-primary)]">{yearPercentage}%</span>
+            </div>
+            <div class="h-2 w-full rounded-full bg-[var(--bg-secondary)] overflow-hidden">
+              <div
+                class="h-full bg-orange-500 rounded-full transition-all duration-700"
+                style={`width: ${yearPercentage}%`}
+              ></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Holiday Countdowns (5 cols on md) -->
+      <div class="md:col-span-5 space-y-3">
+        <div class="flex items-center justify-between text-xs">
+          <div class="flex items-center gap-1.5 font-bold text-[var(--text-primary)]">
+            <span>🎯</span>
+            <span>节日倒计时目标</span>
+          </div>
+          <span class="text-[11px] text-[var(--text-tertiary)]">期待与憧憬</span>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <!-- Weekend -->
+          <div class="rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-secondary)] p-2.5 text-center transition-all hover:border-emerald-500/40">
+            <p class="text-[11px] text-[var(--text-tertiary)] flex items-center justify-center gap-1">
+              <span>🛌</span> 距周末
+            </p>
+            <p class="text-xl font-extrabold mono text-emerald-600 dark:text-emerald-400 mt-0.5">
+              {daysToWeekend} <span class="text-xs font-normal text-[var(--text-tertiary)]">天</span>
+            </p>
+          </div>
+
+          <!-- New Year -->
+          <div class="rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-secondary)] p-2.5 text-center transition-all hover:border-blue-500/40">
+            <p class="text-[11px] text-[var(--text-tertiary)] flex items-center justify-center gap-1">
+              <span>🎉</span> 距元旦
+            </p>
+            <p class="text-xl font-extrabold mono text-blue-600 dark:text-blue-400 mt-0.5">
+              {daysToNewYear} <span class="text-xs font-normal text-[var(--text-tertiary)]">天</span>
+            </p>
+          </div>
+
+          <!-- Spring Festival -->
+          <div class="rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-secondary)] p-2.5 text-center transition-all hover:border-rose-500/40">
+            <p class="text-[11px] text-[var(--text-tertiary)] flex items-center justify-center gap-1">
+              <span>🧧</span> 距春节
+            </p>
+            <p class="text-xl font-extrabold mono text-rose-600 dark:text-rose-400 mt-0.5">
+              {daysToSpringFestival} <span class="text-xs font-normal text-[var(--text-tertiary)]">天</span>
+            </p>
+          </div>
+
+          <!-- Labor Day or National Day -->
+          <div class="rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-secondary)] p-2.5 text-center transition-all hover:border-indigo-500/40">
+            <p class="text-[11px] text-[var(--text-tertiary)] flex items-center justify-center gap-1">
+              <span>✈️</span> 距劳动节
+            </p>
+            <p class="text-xl font-extrabold mono text-indigo-600 dark:text-indigo-400 mt-0.5">
+              {daysToLaborDay} <span class="text-xs font-normal text-[var(--text-tertiary)]">天</span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  function setupWeeklyCalendarSync() {
+    const section = document.getElementById('moyu-weekly-section');
+    if (!section) return;
+
+    const now = new Date();
+    const currentDay = now.getDay(); // 0 is Sunday, 1..6 is Mon..Sat
+    const dayOffset = currentDay === 0 ? 6 : currentDay - 1; // 0 for Monday, 6 for Sunday
+
+    const monday = new Date(now);
+    monday.setDate(now.getDate() - dayOffset);
+
+    const dayCards = section.querySelectorAll<HTMLElement>('.moyu-week-day');
+    dayCards.forEach((card, index) => {
+      const targetDate = new Date(monday);
+      targetDate.setDate(monday.getDate() + index);
+
+      const m = targetDate.getMonth() + 1;
+      const d = targetDate.getDate();
+
+      const dateEl = card.querySelector('.moyu-day-date');
+      if (dateEl) {
+        dateEl.textContent = `${m}.${d}`;
+      }
+    });
+  }
+
+  setupWeeklyCalendarSync();
+  document.addEventListener('astro:page-load', setupWeeklyCalendarSync);
+</script>

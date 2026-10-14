@@ -5,6 +5,10 @@ import PostCard from '../components/PostCard.astro';
 import ThoughtCard from '../components/ThoughtCard.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import TomatoXWordmark from '../components/TomatoXWordmark.astro';
+import MoyuWeeklySection from '../components/MoyuWeeklySection.astro';
+import { fetch60sHubData } from '../lib/newsService';
+
+const hubData = await fetch60sHubData();
 
 const recentPosts = [
   {
@@ -164,4 +168,9 @@ const featuredProjects = recommendedProjects.slice(0, 4);
       ))}
     </div>
   </section>
+
+  <hr class="my-8 border-[var(--border-secondary)]" />
+
+  <!-- Moyu Weekly Calendar & Slacking Dashboard -->
+  <MoyuWeeklySection moyu={hubData.moyu} />
 </BaseLayout>
