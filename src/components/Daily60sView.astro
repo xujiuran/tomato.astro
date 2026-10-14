@@ -126,14 +126,6 @@ const daysToLaborDay = moyu?.countdown?.laborDay ?? 198;
       <button
         type="button"
         class="viki-pill rounded-lg px-3 py-1.5 transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] flex items-center gap-1.5"
-        data-target="panel-moyu"
-      >
-        <img src="/images/icons/moyu.png" alt="摸鱼周历" class="h-4 w-4 object-contain inline-block shrink-0 rounded-xs" />
-        <span>摸鱼周历</span>
-      </button>
-      <button
-        type="button"
-        class="viki-pill rounded-lg px-3 py-1.5 transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] flex items-center gap-1.5"
         data-target="panel-history"
       >
         <img src="/images/icons/history.png" alt="历史今天" class="h-4 w-4 object-contain inline-block shrink-0 rounded-xs" />
@@ -386,97 +378,6 @@ const daysToLaborDay = moyu?.countdown?.laborDay ?? 198;
     </div>
   </div>
 
-  <!-- Channel 4: Moyu Slacking Calendar -->
-  <div id="panel-moyu" class="viki-channel-panel hidden space-y-4">
-    <div class="rounded-xl border border-[var(--border-primary)] bg-[var(--card-bg)] p-5 sm:p-6 shadow-xs">
-      <div class="flex items-center justify-between pb-3 border-b border-[var(--border-secondary)] mb-4">
-        <div class="flex items-center gap-2">
-          <span class="h-2.5 w-2.5 rounded-full bg-emerald-500"></span>
-          <h3 class="text-sm font-bold text-[var(--text-primary)]">
-            摸鱼工作周历 · 劳逸结合指数
-          </h3>
-        </div>
-        <span class="text-xs text-[var(--text-tertiary)] mono">
-          {moyu?.date?.weekday || '星期三'} · 农历{moyu?.date?.lunar?.monthCN}{moyu?.date?.lunar?.dayCN}
-        </span>
-      </div>
-
-      <!-- Moyu Quote -->
-      {moyu?.moyuQuote && (
-        <div class="rounded-xl bg-emerald-500/10 border border-emerald-500/20 p-4 text-xs sm:text-sm text-emerald-800 dark:text-emerald-300 leading-relaxed font-medium mb-5">
-          <div class="flex items-start gap-2">
-            <img src="/images/icons/thoughts.png" alt="摸鱼哲学" class="h-4 w-4 object-contain rounded-xs mt-0.5 inline-block shrink-0" />
-            <div>
-              <span class="font-bold mr-1">「摸鱼哲学」</span>
-              <span>{moyu.moyuQuote}</span>
-            </div>
-          </div>
-        </div>
-      )}
-
-      <!-- Progress Bars -->
-      <div class="space-y-3.5 mb-6">
-        <h4 class="text-xs font-bold text-[var(--text-primary)]">时间流逝进度</h4>
-        <div>
-          <div class="flex justify-between text-xs text-[var(--text-secondary)] mb-1">
-            <span>本周工作进度</span>
-            <span class="mono font-semibold text-[var(--text-primary)]">{weekPercentage}%</span>
-          </div>
-          <div class="h-2 w-full rounded-full bg-[var(--bg-secondary)] overflow-hidden">
-            <div class="h-full bg-emerald-500 rounded-full transition-all duration-500" style={`width: ${weekPercentage}%`}></div>
-          </div>
-        </div>
-
-        <div>
-          <div class="flex justify-between text-xs text-[var(--text-secondary)] mb-1">
-            <span>本月进度</span>
-            <span class="mono font-semibold text-[var(--text-primary)]">{monthPercentage}%</span>
-          </div>
-          <div class="h-2 w-full rounded-full bg-[var(--bg-secondary)] overflow-hidden">
-            <div class="h-full bg-blue-500 rounded-full transition-all duration-500" style={`width: ${monthPercentage}%`}></div>
-          </div>
-        </div>
-
-        <div>
-          <div class="flex justify-between text-xs text-[var(--text-secondary)] mb-1">
-            <span>今年流逝</span>
-            <span class="mono font-semibold text-[var(--text-primary)]">{yearPercentage}%</span>
-          </div>
-          <div class="h-2 w-full rounded-full bg-[var(--bg-secondary)] overflow-hidden">
-            <div class="h-full bg-orange-500 rounded-full transition-all duration-500" style={`width: ${yearPercentage}%`}></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Holiday Countdowns -->
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-        <div class="rounded-lg bg-[var(--bg-secondary)] p-3 text-center">
-          <p class="text-[11px] text-[var(--text-tertiary)]">距离周末</p>
-          <p class="text-xl font-bold mono text-emerald-600 dark:text-emerald-400 mt-0.5">
-            {daysToWeekend} <span class="text-xs font-normal">天</span>
-          </p>
-        </div>
-        <div class="rounded-lg bg-[var(--bg-secondary)] p-3 text-center">
-          <p class="text-[11px] text-[var(--text-tertiary)]">距离元旦</p>
-          <p class="text-xl font-bold mono text-blue-600 dark:text-blue-400 mt-0.5">
-            {daysToNewYear} <span class="text-xs font-normal">天</span>
-          </p>
-        </div>
-        <div class="rounded-lg bg-[var(--bg-secondary)] p-3 text-center">
-          <p class="text-[11px] text-[var(--text-tertiary)]">距离春节</p>
-          <p class="text-xl font-bold mono text-red-600 dark:text-red-400 mt-0.5">
-            {daysToSpringFestival} <span class="text-xs font-normal">天</span>
-          </p>
-        </div>
-        <div class="rounded-lg bg-[var(--bg-secondary)] p-3 text-center">
-          <p class="text-[11px] text-[var(--text-tertiary)]">劳动节倒计</p>
-          <p class="text-xl font-bold mono text-purple-600 dark:text-purple-400 mt-0.5">
-            {daysToLaborDay} <span class="text-xs font-normal">天</span>
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
 
 
   <!-- Channel 6: Today In History -->
@@ -678,18 +579,6 @@ const daysToLaborDay = moyu?.countdown?.laborDay ?? 198;
             panel.classList.add('hidden');
           }
         });
-
-        // If user selects Moyu, highlight & scroll to the companion sidebar
-        if (targetId === 'panel-moyu') {
-          const sidebar = document.getElementById('moyu-sidebar');
-          if (sidebar) {
-            sidebar.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            sidebar.classList.add('ring-2', 'ring-emerald-500', 'rounded-2xl', 'transition-all');
-            setTimeout(() => {
-              sidebar.classList.remove('ring-2', 'ring-emerald-500');
-            }, 1800);
-          }
-        }
       });
     });
 
