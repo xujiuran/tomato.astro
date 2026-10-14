@@ -87,60 +87,60 @@ const daysToLaborDay = moyu?.countdown?.laborDay ?? 198;
   </div>
 
   <!-- Sub-Channel Navigation Pills (Sticky Bar) -->
-  <div class="sticky top-[53px] sm:top-[57px] z-30 rounded-xl border border-[var(--border-primary)] bg-[var(--card-bg)]/95 backdrop-blur-md p-2 sm:p-2.5 shadow-sm transition-all">
-    <div id="viki-channel-pills" class="flex items-center gap-1.5 overflow-x-auto pb-0.5 text-xs font-medium scrollbar-none">
+  <div class="sticky top-[53px] sm:top-[57px] z-30 rounded-xl border border-[var(--border-primary)] bg-[var(--card-bg)]/95 backdrop-blur-md p-2.5 sm:p-3 shadow-sm transition-all">
+    <div id="viki-channel-pills" class="flex flex-wrap items-center gap-1.5 text-xs font-medium">
       <button
         type="button"
-        class="viki-pill active rounded-lg px-3 py-1.5 transition-all bg-[var(--accent)] text-white font-semibold shrink-0"
+        class="viki-pill active rounded-lg px-3 py-1.5 transition-all bg-[var(--accent)] text-white font-semibold"
         data-target="panel-60s"
       >
         ☀️ 60s晨报
       </button>
       <button
         type="button"
-        class="viki-pill rounded-lg px-3 py-1.5 transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] shrink-0"
+        class="viki-pill rounded-lg px-3 py-1.5 transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]"
         data-target="panel-ai"
       >
         🤖 AI 资讯 ({aiNews.length})
       </button>
       <button
         type="button"
-        class="viki-pill rounded-lg px-3 py-1.5 transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] shrink-0"
+        class="viki-pill rounded-lg px-3 py-1.5 transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]"
         data-target="panel-epic"
       >
         🎮 Epic 喜加一 ({epicGames.length})
       </button>
       <button
         type="button"
-        class="viki-pill rounded-lg px-3 py-1.5 transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] shrink-0"
+        class="viki-pill rounded-lg px-3 py-1.5 transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]"
         data-target="panel-moyu"
       >
         🐟 摸鱼周历
       </button>
       <button
         type="button"
-        class="viki-pill rounded-lg px-3 py-1.5 transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] shrink-0"
+        class="viki-pill rounded-lg px-3 py-1.5 transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]"
         data-target="panel-bing"
       >
         🖼️ 必应 4K 壁纸
       </button>
       <button
         type="button"
-        class="viki-pill rounded-lg px-3 py-1.5 transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] shrink-0"
+        class="viki-pill rounded-lg px-3 py-1.5 transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]"
         data-target="panel-history"
       >
         📜 历史今天 ({todayHistory.length})
       </button>
       <button
         type="button"
-        class="viki-pill rounded-lg px-3 py-1.5 transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] shrink-0"
+        class="viki-pill rounded-lg px-3 py-1.5 transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]"
         data-target="panel-douban"
       >
         🎬 豆瓣热榜 ({doubanMovies.length})
       </button>
       <button
         type="button"
-        class="viki-pill rounded-lg px-3 py-1.5 transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] shrink-0"
+        class="viki-pill rounded-lg px-3 py-1.5 transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]"
         data-target="panel-tools"
       >
         🛠️ 极客工具

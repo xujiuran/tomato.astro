@@ -64,43 +64,43 @@ const financeSources = initialSources.filter((s) => s.column === 'finance');
     </div>
 
     <!-- Category Switcher Tabs -->
-    <div class="mt-2.5 flex items-center gap-1 overflow-x-auto pb-0.5 text-xs font-medium scrollbar-none">
+    <div class="mt-2.5 flex flex-wrap items-center gap-1.5 pb-0.5 text-xs font-medium">
       <button
         type="button"
-        class="category-tab active rounded-md px-3 py-1.5 transition-colors bg-[var(--bg-secondary)] text-[var(--accent)] font-semibold shrink-0"
+        class="category-tab active rounded-md px-3 py-1.5 transition-colors bg-[var(--bg-secondary)] text-[var(--accent)] font-semibold"
         data-category="all"
       >
         全部聚焦
       </button>
       <button
         type="button"
-        class="category-tab rounded-md px-3 py-1.5 transition-colors text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] shrink-0"
+        class="category-tab rounded-md px-3 py-1.5 transition-colors text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]"
         data-category="tech"
       >
         💻 极客科技 ({techSources.length})
       </button>
       <button
         type="button"
-        class="category-tab rounded-md px-3 py-1.5 transition-colors text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] shrink-0"
+        class="category-tab rounded-md px-3 py-1.5 transition-colors text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]"
         data-category="general"
       >
         🌐 全网社会 ({generalSources.length})
       </button>
       <button
         type="button"
-        class="category-tab rounded-md px-3 py-1.5 transition-colors text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] shrink-0"
+        class="category-tab rounded-md px-3 py-1.5 transition-colors text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]"
         data-category="finance"
       >
         📈 商业财经 ({financeSources.length})
       </button>
     </div>
 
-    <!-- Platform Filter Pills -->
-    <div id="platform-pills" class="mt-2 flex items-center gap-1.5 overflow-x-auto pt-2 border-t border-[var(--border-secondary)] text-[11px] scrollbar-none pb-0.5">
-      <span class="text-[var(--text-tertiary)] shrink-0 mr-0.5">平台：</span>
+    <!-- Platform Filter Pills (Flex Wrap, No Side Scrolling) -->
+    <div id="platform-pills" class="mt-2.5 flex flex-wrap items-center gap-1.5 pt-2.5 border-t border-[var(--border-secondary)] text-[11px] leading-relaxed">
+      <span class="text-[var(--text-tertiary)] select-none mr-0.5 py-0.5">平台：</span>
       <button
         type="button"
-        class="platform-pill active px-2.5 py-0.5 rounded-full border border-[var(--accent)] bg-[var(--accent)]/10 text-[var(--accent)] font-medium transition-all shrink-0"
+        class="platform-pill active px-2.5 py-1 rounded-full border border-[var(--accent)] bg-[var(--accent)]/10 text-[var(--accent)] font-medium transition-all"
         data-platform="all"
       >
         全部平台
@@ -108,7 +108,7 @@ const financeSources = initialSources.filter((s) => s.column === 'finance');
       {initialSources.map((source) => (
         <button
           type="button"
-          class="platform-pill px-2 py-0.5 rounded-full border border-[var(--border-secondary)] bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:border-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all flex items-center gap-1 shrink-0"
+          class="platform-pill px-2.5 py-1 rounded-full border border-[var(--border-secondary)] bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:border-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all flex items-center gap-1.5"
           data-platform={source.id}
           data-column={source.column}
         >
