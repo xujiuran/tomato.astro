@@ -1,10 +1,16 @@
 ---
 // Footer.astro
 import TomatoXWordmark from './TomatoXWordmark.astro';
+
+interface Props {
+  containerClass?: string;
+}
+
+const { containerClass = 'max-w-6xl' } = Astro.props;
 ---
 
 <footer class="mt-16 border-t border-[var(--border-primary)] py-8 text-xs text-[var(--text-secondary)]">
-  <div class="mx-auto max-w-3xl px-4 sm:px-6">
+  <div class:list={["mx-auto px-4 sm:px-6", containerClass]}>
     <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <div class="flex flex-col gap-1">
         <div class="flex items-center gap-2 text-sm font-semibold text-[var(--text-primary)]">

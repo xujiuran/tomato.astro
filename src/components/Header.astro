@@ -4,9 +4,10 @@ import TomatoXWordmark from './TomatoXWordmark.astro';
 
 interface Props {
   currentPath?: string;
+  containerClass?: string;
 }
 
-const { currentPath = '/' } = Astro.props;
+const { currentPath = '/', containerClass = 'max-w-6xl' } = Astro.props;
 
 const navItems = [
   { label: '首页', href: '/' },
@@ -19,7 +20,7 @@ const navItems = [
 ---
 
 <header class="sticky top-0 z-50 w-full border-b border-[var(--border-primary)] bg-[var(--bg-primary)]/80 backdrop-blur-md transition-colors">
-  <div class="mx-auto flex max-w-3xl items-center justify-between px-4 py-3 sm:px-6">
+  <div class:list={["mx-auto flex items-center justify-between px-4 py-3 sm:px-6", containerClass]}>
     <!-- Brand / Title -->
     <a href="/" class="group flex items-center gap-2.5 focus:outline-hidden">
       <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[var(--surface-subtle)] border border-[var(--border-primary)] shadow-xs transition-transform group-hover:scale-105 overflow-hidden p-0.5">

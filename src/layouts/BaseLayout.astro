@@ -17,7 +17,7 @@ const {
   title = 'TomatoX · 产品工程、AI Coding 与写作者',
   description = 'TomatoX 的个人博客 (xujiuran.top)，记录全栈开发、AI 编码工作流、开源工具、设计与生活琐思。',
   currentPath = '/',
-  containerClass = 'max-w-3xl',
+  containerClass = 'max-w-6xl',
 } = Astro.props;
 ---
 
@@ -69,14 +69,14 @@ const {
     <!-- Generative Zen Canvas Background (Ink Stream / Flow Field) -->
     <ZenBackground />
 
-    <Header currentPath={currentPath} />
+    <Header currentPath={currentPath} containerClass={containerClass} />
 
     <main id="main-content" class:list={["relative z-10 flex-1 mx-auto w-full px-4 sm:px-6 pt-6 sm:pt-10", containerClass]}>
       <slot />
     </main>
 
     <div class="relative z-10">
-      <Footer />
+      <Footer containerClass={containerClass} />
     </div>
 
     <!-- Floating Back to Top Button -->
