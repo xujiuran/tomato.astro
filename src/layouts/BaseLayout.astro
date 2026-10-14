@@ -31,19 +31,36 @@ const {
     <link rel="alternate" type="application/rss+xml" title="TomatoX 随笔 RSS" href="/rss.xml" />
     <ClientRouter />
 
-    <!-- Anti-flicker dark mode script -->
+    <!-- Anti-flicker & persistent theme script across View Transitions -->
     <script is:inline>
-      (function () {
+      function applyTheme(targetDoc) {
         try {
+          const doc = targetDoc || document;
           const stored = localStorage.getItem('theme');
           const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-          if (stored === 'dark' || (!stored && systemDark)) {
-            document.documentElement.classList.add('dark');
+          const isDark = stored === 'dark' || (!stored && systemDark);
+          if (isDark) {
+            doc.documentElement.classList.add('dark');
           } else {
-            document.documentElement.classList.remove('dark');
+            doc.documentElement.classList.remove('dark');
           }
         } catch (_) {}
-      })();
+      }
+
+      // 1. Initial execution on page load/refresh
+      applyTheme();
+
+      // 2. Before ClientRouter swaps documents, carry over dark class to the incoming document
+      document.addEventListener('astro:before-swap', function (ev) {
+        if (ev && ev.newDocument) {
+          applyTheme(ev.newDocument);
+        }
+      });
+
+      // 3. Immediately after DOM swap fallback
+      document.addEventListener('astro:after-swap', function () {
+        applyTheme(document);
+      });
     </script>
   </head>
   <body class="relative min-h-screen flex flex-col bg-[var(--bg-primary)] text-[var(--text-primary)] antialiased transition-colors duration-200">
