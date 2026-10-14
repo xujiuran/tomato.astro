@@ -380,14 +380,15 @@ export async function fetch60sHubData(): Promise<Daily60sHubData> {
  */
 export const DEFAULT_HOT_ITEMS: Record<string, HotNewsItem[]> = {
   github: [
-    { id: 'gh-1', title: 'openclaw/openclaw - The AI that really does things. Any OS. Any Platform. The lobster way. 🦞', url: 'https://github.com/openclaw/openclaw', extra: { info: '⭐ 39.2k', hover: '跨平台自主多智能体系统' } },
-    { id: 'gh-2', title: 'yetone/magpie - Every agent\'s model. One place. Codex on DeepSeek, Claude on Kimi, from the menu bar.', url: 'https://github.com/yetone/magpie', extra: { info: '⭐ 12.2k', hover: '极简菜单栏大模型智能路由' } },
-    { id: 'gh-3', title: 'voidzero-dev/vite-plus - The unified toolchain and entry point for modern web development.', url: 'https://github.com/voidzero-dev/vite-plus', extra: { info: '⭐ 6.1k', hover: 'Evan You 团队打造的一体化前端基建' } },
-    { id: 'gh-4', title: 'kestra-io/kestra - Event Driven Orchestration & Scheduling Platform for Mission Critical Applications', url: 'https://github.com/kestra-io/kestra', extra: { info: '⭐ 29.5k', hover: '声明式工作流事件调度中枢' } },
-    { id: 'gh-5', title: 'milvus-io/milvus - Cloud-native vector database built for scalable vector search', url: 'https://github.com/milvus-io/milvus', extra: { info: '⭐ 46.3k', hover: '云原生高性能向量检索引擎' } },
-    { id: 'gh-6', title: 'tw93/Mole - 深度安全开源的 macOS 系统清理与空间管理套件', url: 'https://github.com/tw93/Mole', extra: { info: '⭐ 8.9k', hover: '极简无后台常驻 Mac 瘦身利器' } },
-    { id: 'gh-7', title: 'cilium/tetragon - eBPF-based Security Observability and Runtime Enforcement', url: 'https://github.com/cilium/tetragon', extra: { info: '⭐ 5.1k', hover: 'Linux 内核级安全可观测性' } },
-    { id: 'gh-8', title: 'microsoft/winget-pkgs - The Microsoft community Windows Package Manager manifest repository', url: 'https://github.com/microsoft/winget-pkgs', extra: { info: '⭐ 11.2k', hover: 'Windows 官方包管理软件源' } },
+    { id: 'gh-1', title: 'morluto/rea - Reverse engineer anything with agents, from app behavior down to native binaries.', url: 'https://github.com/morluto/rea', extra: { info: '⭐ 221k · 今日+54.7k', hover: 'TypeScript · 智能体全自动化逆向工程' } },
+    { id: 'gh-2', title: 'bilawalsidhu/gods-eye-view - A spy satellite simulator in your browser, except the data is real. Spatial intelligence on a photorealistic 3D globe.', url: 'https://github.com/bilawalsidhu/gods-eye-view', extra: { info: '⭐ 56.0k · 今日+1.9k', hover: 'JavaScript · 真实卫星空间情报 3D 地球' } },
+    { id: 'gh-3', title: 'debpalash/VoiceStudio - Open-source, fully-local ElevenLabs alternative — voice cloning, voice design, video dubbing in 646 languages.', url: 'https://github.com/debpalash/VoiceStudio', extra: { info: '⭐ 64.5k · 今日+1.7k', hover: 'Python · 本地化声音克隆与多模态配音' } },
+    { id: 'gh-4', title: 'mksglu/context-mode - Context window optimization for AI coding agents. Sandboxes tool output (98% reduction) and persists session memory.', url: 'https://github.com/mksglu/context-mode', extra: { info: '⭐ 28.6k · 今日+969', hover: 'TypeScript · AI 编码智能体上下文精简' } },
+    { id: 'gh-5', title: 'cathrynlavery/diagram-design - Editorial diagram design for Claude Code, Codex, Copilot, Cursor. 44 diagram types. HTML + SVG.', url: 'https://github.com/cathrynlavery/diagram-design', extra: { info: '⭐ 54.8k · 今日+1.8k', hover: 'HTML · 专为 AI 代码助手打造的极简图表设计' } },
+    { id: 'gh-6', title: 'vercel-labs/skills - The open agent skills tool - npx skills', url: 'https://github.com/vercel-labs/skills', extra: { info: '⭐ 34.8k · 今日+190', hover: 'TypeScript · Vercel 开源通用智能体技能体系' } },
+    { id: 'gh-7', title: 'lyogavin/airllm - AirLLM 2.8T LLM inference with single 4GB GPU', url: 'https://github.com/lyogavin/airllm', extra: { info: '⭐ 38.5k · 今日+1.0k', hover: 'Jupyter · 单张 4GB 显卡运行超大模型推理' } },
+    { id: 'gh-8', title: 'storytold/artcraft - ArtCraft is an intentional crafting engine for artists, designers, and filmmakers', url: 'https://github.com/storytold/artcraft', extra: { info: '⭐ 26.7k · 今日+4.1k', hover: 'Rust · 专为艺术家打造的内容构建引擎' } },
+    { id: 'gh-9', title: 'xtool-org/xtool - Cross-platform Xcode replacement. Build and deploy iOS apps with SwiftPM on Linux, Windows, macOS.', url: 'https://github.com/xtool-org/xtool', extra: { info: '⭐ 9.9k · 今日+1.2k', hover: 'Swift · 跨平台 Xcode 替代者' } },
   ],
   v2ex: [
     { id: 'v2-1', title: '讨论：Cursor 与 Claude 3.5 Sonnet 在长上下文架构下的工程实战体验', url: 'https://v2ex.com/t/1078921', extra: { info: '128 回复', hover: '程序员 · 深度实操' } },
@@ -496,6 +497,64 @@ export const DEFAULT_HOT_ITEMS: Record<string, HotNewsItem[]> = {
 };
 
 /**
+ * Direct scraper / parser for official https://github.com/trending page
+ */
+export async function fetchGitHubTrendingDirect(): Promise<HotNewsItem[]> {
+  try {
+    const res = await fetch('https://github.com/trending', {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Accept-Language': 'en-US,en;q=0.9',
+        'Accept': 'text/html',
+      },
+      signal: AbortSignal.timeout(3500),
+    });
+
+    if (!res.ok) return [];
+    const html = await res.text();
+    const articles = html.split('<article class="Box-row">').slice(1);
+
+    const items: HotNewsItem[] = [];
+    for (let i = 0; i < articles.length && items.length < 15; i++) {
+      const art = articles[i];
+      const h2Match = art.match(/<h2[^>]*>[\s\S]*?<a[^>]+href="\/([^"]+)"[\s\S]*?<\/h2>/);
+      if (!h2Match) continue;
+      const repoPath = h2Match[1].trim();
+
+      const pMatch = art.match(/<p[^>]*class="[^"]*col-9[^"]*"[^>]*>([\s\S]*?)<\/p>/);
+      const desc = pMatch ? pMatch[1].replace(/<[^>]+>/g, '').trim().replace(/&amp;/g, '&') : '';
+
+      const langMatch = art.match(/itemprop="programmingLanguage"[^>]*>([\s\S]*?)<\/span>/);
+      const lang = langMatch ? langMatch[1].trim() : '';
+
+      const todayMatch = art.match(/([0-9,]+)\s+stars\s+today/i);
+      const starsToday = todayMatch ? todayMatch[1] : '';
+
+      const totalStarsMatch = art.match(/href="\/[^/]+\/[^/]+\/stargazers"[^>]*>[\s\S]*?<\/svg>([\s\S]*?)<\/a>/);
+      const totalStars = totalStarsMatch ? totalStarsMatch[1].replace(/<[^>]+>/g, '').trim() : '';
+
+      const starInfo = starsToday ? `⭐ ${totalStars} · 今日+${starsToday}` : (totalStars ? `⭐ ${totalStars}` : '热门开源');
+      const hoverInfo = [lang, desc].filter(Boolean).join(' · ');
+
+      items.push({
+        id: `gh-trending-${repoPath.replace('/', '-')}`,
+        title: `${repoPath}${desc ? ` - ${desc}` : ''}`,
+        url: `https://github.com/${repoPath}`,
+        extra: {
+          info: starInfo,
+          hover: hoverInfo || 'GitHub Trending 今日热门',
+        },
+      });
+    }
+
+    return items;
+  } catch (err) {
+    console.warn('[newsService] fetchGitHubTrendingDirect failed:', err);
+    return [];
+  }
+}
+
+/**
  * Fetch hot news across platforms using newsnext/newsnow API with robust fallback & live augmentation
  */
 export async function fetchHotNews(sourceIds: string[] = Object.keys(SOURCE_CONFIGS)): Promise<HotNewsSource[]> {
@@ -545,39 +604,22 @@ export async function fetchHotNews(sourceIds: string[] = Object.keys(SOURCE_CONF
     // newsnow unreachable or Cloudflare challenge, proceed to live augmentation & robust defaults
   }
 
-  // 2. Try live augmentation for GitHub Trending via GitHub Search API if not already populated
-  if (!resultMap.has('github') || resultMap.get('github')!.items.length <= 1) {
-    try {
-      const ghRes = await fetch('https://api.github.com/search/repositories?q=stars:>5000+pushed:>2026-10-01&sort=updated&order=desc&per_page=8', {
-        headers: { 'User-Agent': 'Astro-News-Radar' },
-        signal: AbortSignal.timeout(2000),
+  // 2. Fetch live data directly from official https://github.com/trending
+  try {
+    const liveTrending = await fetchGitHubTrendingDirect();
+    if (liveTrending.length > 0) {
+      const cfg = SOURCE_CONFIGS.github;
+      resultMap.set('github', {
+        id: 'github',
+        name: cfg.name,
+        column: cfg.column,
+        home: 'https://github.com/trending',
+        color: cfg.color,
+        items: liveTrending,
+        updatedTime: Date.now(),
       });
-      if (ghRes.ok) {
-        const ghJson = await ghRes.json();
-        if (Array.isArray(ghJson.items) && ghJson.items.length > 0) {
-          const ghItems: HotNewsItem[] = ghJson.items.map((r: any) => ({
-            id: `gh-live-${r.id}`,
-            title: `${r.full_name} - ${r.description || 'Modern high-performance project'}`,
-            url: r.html_url,
-            extra: {
-              info: `⭐ ${(r.stargazers_count / 1000).toFixed(1)}k`,
-              hover: r.language ? `${r.language} · 最近更新` : '活跃开源项目',
-            },
-          }));
-          const cfg = SOURCE_CONFIGS.github;
-          resultMap.set('github', {
-            id: 'github',
-            name: cfg.name,
-            column: cfg.column,
-            home: cfg.home,
-            color: cfg.color,
-            items: ghItems,
-            updatedTime: Date.now(),
-          });
-        }
-      }
-    } catch {}
-  }
+    }
+  } catch {}
 
   // 3. Ensure EVERY requested source is covered with rich items
   const finalSources: HotNewsSource[] = [];
