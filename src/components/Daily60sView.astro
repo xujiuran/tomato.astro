@@ -7,6 +7,23 @@ interface Props {
 
 const { initialHubData } = Astro.props;
 const { digest, aiNews, bing, epicGames, todayHistory, moyu, doubanMovies, whois } = initialHubData;
+
+// Safe progress & countdown calculation to avoid [object Object]
+const getPercentage = (val: any, fallback: number): number => {
+  if (typeof val === 'number') return val;
+  if (typeof val === 'string') return parseInt(val, 10) || fallback;
+  if (val && typeof val.percentage === 'number') return val.percentage;
+  return fallback;
+};
+
+const weekPercentage = getPercentage(moyu?.progress?.week, 43);
+const monthPercentage = getPercentage(moyu?.progress?.month, 45);
+const yearPercentage = getPercentage(moyu?.progress?.year, 79);
+
+const daysToWeekend = moyu?.countdown?.toFriday ?? moyu?.countdown?.toWeekEnd ?? moyu?.countdown?.weekend ?? 2;
+const daysToNewYear = moyu?.countdown?.toYearEnd ?? moyu?.countdown?.newYear ?? 78;
+const daysToSpringFestival = moyu?.countdown?.springFestival ?? 112;
+const daysToLaborDay = moyu?.countdown?.laborDay ?? 198;
 ---
 
 <div id="daily-60s-container" class="space-y-6">
@@ -61,17 +78,17 @@ const { digest, aiNews, bing, epicGames, todayHistory, moyu, doubanMovies, whois
         <span>摸鱼日历</span>
       </div>
       <p class="text-xs font-medium text-[var(--text-primary)] line-clamp-1">
-        距离周末还有 {moyu?.countdown?.weekend ?? 2} 天
+        距离周末还有 {daysToWeekend} 天
       </p>
       <p class="text-[11px] text-[var(--text-tertiary)] line-clamp-1 mt-0.5">
-        年进度 {moyu?.progress?.year || '78%'} · 劳逸结合
+        年进度 {yearPercentage}% · 劳逸结合
       </p>
     </div>
   </div>
 
-  <!-- Sub-Channel Navigation Pills -->
-  <div class="rounded-xl border border-[var(--border-primary)] bg-[var(--card-bg)] p-2 sm:p-2.5 shadow-xs">
-    <div id="viki-channel-pills" class="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs font-medium">
+  <!-- Sub-Channel Navigation Pills (Sticky Bar) -->
+  <div class="sticky top-[53px] sm:top-[57px] z-30 rounded-xl border border-[var(--border-primary)] bg-[var(--card-bg)]/95 backdrop-blur-md p-2 sm:p-2.5 shadow-sm transition-all">
+    <div id="viki-channel-pills" class="flex items-center gap-1.5 overflow-x-auto pb-0.5 text-xs font-medium scrollbar-none">
       <button
         type="button"
         class="viki-pill active rounded-lg px-3 py-1.5 transition-all bg-[var(--accent)] text-white font-semibold shrink-0"
@@ -387,30 +404,30 @@ const { digest, aiNews, bing, epicGames, todayHistory, moyu, doubanMovies, whois
         <div>
           <div class="flex justify-between text-xs text-[var(--text-secondary)] mb-1">
             <span>本周工作进度</span>
-            <span class="mono">{moyu?.progress?.week || '50%'}</span>
+            <span class="mono font-semibold text-[var(--text-primary)]">{weekPercentage}%</span>
           </div>
           <div class="h-2 w-full rounded-full bg-[var(--bg-secondary)] overflow-hidden">
-            <div class="h-full bg-emerald-500 rounded-full transition-all duration-500" style={`width: ${moyu?.progress?.week || '50%'}`}></div>
+            <div class="h-full bg-emerald-500 rounded-full transition-all duration-500" style={`width: ${weekPercentage}%`}></div>
           </div>
         </div>
 
         <div>
           <div class="flex justify-between text-xs text-[var(--text-secondary)] mb-1">
             <span>本月进度</span>
-            <span class="mono">{moyu?.progress?.month || '45%'}</span>
+            <span class="mono font-semibold text-[var(--text-primary)]">{monthPercentage}%</span>
           </div>
           <div class="h-2 w-full rounded-full bg-[var(--bg-secondary)] overflow-hidden">
-            <div class="h-full bg-blue-500 rounded-full transition-all duration-500" style={`width: ${moyu?.progress?.month || '45%'}`}></div>
+            <div class="h-full bg-blue-500 rounded-full transition-all duration-500" style={`width: ${monthPercentage}%`}></div>
           </div>
         </div>
 
         <div>
           <div class="flex justify-between text-xs text-[var(--text-secondary)] mb-1">
             <span>今年流逝</span>
-            <span class="mono">{moyu?.progress?.year || '78%'}</span>
+            <span class="mono font-semibold text-[var(--text-primary)]">{yearPercentage}%</span>
           </div>
           <div class="h-2 w-full rounded-full bg-[var(--bg-secondary)] overflow-hidden">
-            <div class="h-full bg-orange-500 rounded-full transition-all duration-500" style={`width: ${moyu?.progress?.year || '78%'}`}></div>
+            <div class="h-full bg-orange-500 rounded-full transition-all duration-500" style={`width: ${yearPercentage}%`}></div>
           </div>
         </div>
       </div>
@@ -420,25 +437,25 @@ const { digest, aiNews, bing, epicGames, todayHistory, moyu, doubanMovies, whois
         <div class="rounded-lg bg-[var(--bg-secondary)] p-3 text-center">
           <p class="text-[11px] text-[var(--text-tertiary)]">距离周末</p>
           <p class="text-xl font-bold mono text-emerald-600 dark:text-emerald-400 mt-0.5">
-            {moyu?.countdown?.weekend ?? 2} <span class="text-xs font-normal">天</span>
+            {daysToWeekend} <span class="text-xs font-normal">天</span>
           </p>
         </div>
         <div class="rounded-lg bg-[var(--bg-secondary)] p-3 text-center">
           <p class="text-[11px] text-[var(--text-tertiary)]">距离元旦</p>
           <p class="text-xl font-bold mono text-blue-600 dark:text-blue-400 mt-0.5">
-            {moyu?.countdown?.newYear ?? 78} <span class="text-xs font-normal">天</span>
+            {daysToNewYear} <span class="text-xs font-normal">天</span>
           </p>
         </div>
         <div class="rounded-lg bg-[var(--bg-secondary)] p-3 text-center">
           <p class="text-[11px] text-[var(--text-tertiary)]">距离春节</p>
           <p class="text-xl font-bold mono text-red-600 dark:text-red-400 mt-0.5">
-            {moyu?.countdown?.springFestival ?? 112} <span class="text-xs font-normal">天</span>
+            {daysToSpringFestival} <span class="text-xs font-normal">天</span>
           </p>
         </div>
         <div class="rounded-lg bg-[var(--bg-secondary)] p-3 text-center">
           <p class="text-[11px] text-[var(--text-tertiary)]">劳动节倒计</p>
           <p class="text-xl font-bold mono text-purple-600 dark:text-purple-400 mt-0.5">
-            {moyu?.countdown?.laborDay ?? 198} <span class="text-xs font-normal">天</span>
+            {daysToLaborDay} <span class="text-xs font-normal">天</span>
           </p>
         </div>
       </div>

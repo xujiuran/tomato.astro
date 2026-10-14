@@ -14,9 +14,9 @@ const financeSources = initialSources.filter((s) => s.column === 'finance');
 ---
 
 <div id="hot-news-container" class="space-y-6">
-  <!-- Controls & Header Bar -->
-  <div class="rounded-xl border border-[var(--border-primary)] bg-[var(--card-bg)] p-4 sm:p-5 shadow-xs">
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3 border-b border-[var(--border-secondary)]">
+  <!-- Controls & Header Bar (Sticky Bar) -->
+  <div class="sticky top-[53px] sm:top-[57px] z-30 rounded-xl border border-[var(--border-primary)] bg-[var(--card-bg)]/95 backdrop-blur-md p-3 sm:p-4 shadow-sm transition-all">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 pb-2.5 border-b border-[var(--border-secondary)]">
       <div class="space-y-0.5">
         <div class="flex items-center gap-2">
           <span class="inline-flex items-center gap-1.5 rounded-full bg-orange-500/10 px-2.5 py-0.5 text-xs font-medium text-orange-600 dark:text-orange-400">
@@ -28,7 +28,7 @@ const financeSources = initialSources.filter((s) => s.column === 'finance');
           </span>
         </div>
         <p class="text-xs text-[var(--text-secondary)]">
-          数据来源于 <a href="https://github.com/newsnext/newsnow" target="_blank" rel="noopener noreferrer" class="underline hover:text-[var(--text-primary)]">newsnext/newsnow</a> · 每 10 分钟动态抓取
+          数据来源于 <a href="https://github.com/newsnext/newsnow" target="_blank" rel="noopener noreferrer" class="underline hover:text-[var(--text-primary)]">newsnext/newsnow</a> · 实时动态抓取
         </p>
       </div>
 
@@ -64,31 +64,31 @@ const financeSources = initialSources.filter((s) => s.column === 'finance');
     </div>
 
     <!-- Category Switcher Tabs -->
-    <div class="mt-3 flex items-center gap-1 overflow-x-auto pb-1 text-xs font-medium">
+    <div class="mt-2.5 flex items-center gap-1 overflow-x-auto pb-0.5 text-xs font-medium scrollbar-none">
       <button
         type="button"
-        class="category-tab active rounded-md px-3 py-1.5 transition-colors bg-[var(--bg-secondary)] text-[var(--accent)] font-semibold"
+        class="category-tab active rounded-md px-3 py-1.5 transition-colors bg-[var(--bg-secondary)] text-[var(--accent)] font-semibold shrink-0"
         data-category="all"
       >
         全部聚焦
       </button>
       <button
         type="button"
-        class="category-tab rounded-md px-3 py-1.5 transition-colors text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]"
+        class="category-tab rounded-md px-3 py-1.5 transition-colors text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] shrink-0"
         data-category="tech"
       >
         💻 极客科技 ({techSources.length})
       </button>
       <button
         type="button"
-        class="category-tab rounded-md px-3 py-1.5 transition-colors text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]"
+        class="category-tab rounded-md px-3 py-1.5 transition-colors text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] shrink-0"
         data-category="general"
       >
         🌐 全网社会 ({generalSources.length})
       </button>
       <button
         type="button"
-        class="category-tab rounded-md px-3 py-1.5 transition-colors text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]"
+        class="category-tab rounded-md px-3 py-1.5 transition-colors text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] shrink-0"
         data-category="finance"
       >
         📈 商业财经 ({financeSources.length})
@@ -96,11 +96,11 @@ const financeSources = initialSources.filter((s) => s.column === 'finance');
     </div>
 
     <!-- Platform Filter Pills -->
-    <div id="platform-pills" class="mt-2.5 flex flex-wrap items-center gap-1.5 pt-2 border-t border-[var(--border-secondary)] text-[11px]">
-      <span class="text-[var(--text-tertiary)] mr-1">平台：</span>
+    <div id="platform-pills" class="mt-2 flex items-center gap-1.5 overflow-x-auto pt-2 border-t border-[var(--border-secondary)] text-[11px] scrollbar-none pb-0.5">
+      <span class="text-[var(--text-tertiary)] shrink-0 mr-0.5">平台：</span>
       <button
         type="button"
-        class="platform-pill active px-2.5 py-0.5 rounded-full border border-[var(--accent)] bg-[var(--accent)]/10 text-[var(--accent)] font-medium transition-all"
+        class="platform-pill active px-2.5 py-0.5 rounded-full border border-[var(--accent)] bg-[var(--accent)]/10 text-[var(--accent)] font-medium transition-all shrink-0"
         data-platform="all"
       >
         全部平台
@@ -108,12 +108,12 @@ const financeSources = initialSources.filter((s) => s.column === 'finance');
       {initialSources.map((source) => (
         <button
           type="button"
-          class="platform-pill px-2 py-0.5 rounded-full border border-[var(--border-secondary)] bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:border-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all flex items-center gap-1"
+          class="platform-pill px-2 py-0.5 rounded-full border border-[var(--border-secondary)] bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:border-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all flex items-center gap-1 shrink-0"
           data-platform={source.id}
           data-column={source.column}
         >
-          <span class="h-1.5 w-1.5 rounded-full" style={`background-color: ${source.color}`}></span>
-          {source.name}
+          <span class="h-1.5 w-1.5 rounded-full shrink-0" style={`background-color: ${source.color}`}></span>
+          <span>{source.name}</span>
         </button>
       ))}
     </div>
