@@ -1,0 +1,137 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Daily60sView from '../../components/Daily60sView.astro';
+import HotNewsView from '../../components/HotNewsView.astro';
+import { fetchDaily60s, fetchHotNews } from '../../lib/newsService';
+
+// Fetch initial data at build time for instant loading and SEO
+const daily60sData = await fetchDaily60s();
+const hotNewsSources = await fetchHotNews([
+  'github',
+  'v2ex',
+  'hackernews',
+  'ithome',
+  'sspai',
+  'juejin',
+  'zhihu',
+  'weibo',
+  'bilibili',
+  'toutiao',
+  'baidu',
+  'cls-hot',
+  'wallstreetcn-hot',
+  'xueqiu-hotstock',
+]);
+---
+
+<BaseLayout
+  title="每日新闻 · TomatoX 随笔"
+  description="每日 60 秒看世界与全网实时热点风向标，整合科技极客、全网焦点与商业财经热门资讯。"
+  currentPath="/news"
+>
+  <div class="space-y-6 pb-12">
+    <!-- Header Section -->
+    <div class="border-b border-[var(--border-secondary)] pb-5">
+      <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-2 mb-1.5">
+            <span class="mono text-[11px] font-semibold text-[var(--accent)] tracking-wider uppercase bg-[var(--accent)]/10 px-2 py-0.5 rounded">
+              Daily News Radar
+            </span>
+            <span class="mono text-xs text-[var(--text-tertiary)]">
+              {daily60sData.date}
+            </span>
+          </div>
+          <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-[var(--text-primary)]">
+            每日新闻
+          </h1>
+          <p class="mt-1 text-xs sm:text-sm text-[var(--text-secondary)]">
+            晨起 60 秒通读天下事，实时纵览全网极客与科技风向。
+          </p>
+        </div>
+
+        <!-- Main Column Tabs: 60s vs Hot Radar -->
+        <div class="inline-flex rounded-lg border border-[var(--border-primary)] bg-[var(--bg-secondary)] p-1 text-xs font-medium self-start sm:self-auto shadow-xs">
+          <button
+            id="tab-btn-60s"
+            type="button"
+            class="main-tab active flex items-center gap-1.5 rounded-md px-3.5 py-1.5 transition-all bg-[var(--card-bg)] text-[var(--text-primary)] font-semibold shadow-xs"
+            data-target="section-60s"
+          >
+            <span>☀️ 60秒早报</span>
+            <span class="mono text-[10px] bg-[var(--bg-secondary)] text-[var(--text-tertiary)] px-1.5 py-0.2 rounded">
+              {daily60sData.news.length}
+            </span>
+          </button>
+          <button
+            id="tab-btn-hot"
+            type="button"
+            class="main-tab flex items-center gap-1.5 rounded-md px-3.5 py-1.5 transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+            data-target="section-hot"
+          >
+            <span>⚡ 全网风向标</span>
+            <span class="mono text-[10px] bg-[var(--bg-secondary)] text-[var(--text-tertiary)] px-1.5 py-0.2 rounded">
+              {hotNewsSources.length}平台
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 1: 60s Daily Digest -->
+    <section id="section-60s" class="news-section">
+      <Daily60sView initialData={daily60sData} />
+    </section>
+
+    <!-- Section 2: Hot News Radar -->
+    <section id="section-hot" class="news-section hidden">
+      <HotNewsView initialSources={hotNewsSources} />
+    </section>
+  </div>
+</BaseLayout>
+
+<script>
+  function setupMainTabs() {
+    const tab60s = document.getElementById('tab-btn-60s');
+    const tabHot = document.getElementById('tab-btn-hot');
+    const sec60s = document.getElementById('section-60s');
+    const secHot = document.getElementById('section-hot');
+
+    if (!tab60s || !tabHot || !sec60s || !secHot) return;
+
+    function switchTab(is60s: boolean) {
+      if (is60s) {
+        tab60s?.classList.add('bg-[var(--card-bg)]', 'text-[var(--text-primary)]', 'font-semibold', 'shadow-xs');
+        tab60s?.classList.remove('text-[var(--text-secondary)]');
+
+        tabHot?.classList.remove('bg-[var(--card-bg)]', 'text-[var(--text-primary)]', 'font-semibold', 'shadow-xs');
+        tabHot?.classList.add('text-[var(--text-secondary)]');
+
+        sec60s?.classList.remove('hidden');
+        secHot?.classList.add('hidden');
+        history.replaceState(null, '', '#60s');
+      } else {
+        tabHot?.classList.add('bg-[var(--card-bg)]', 'text-[var(--text-primary)]', 'font-semibold', 'shadow-xs');
+        tabHot?.classList.remove('text-[var(--text-secondary)]');
+
+        tab60s?.classList.remove('bg-[var(--card-bg)]', 'text-[var(--text-primary)]', 'font-semibold', 'shadow-xs');
+        tab60s?.classList.add('text-[var(--text-secondary)]');
+
+        secHot?.classList.remove('hidden');
+        sec60s?.classList.add('hidden');
+        history.replaceState(null, '', '#hot');
+      }
+    }
+
+    tab60s.addEventListener('click', () => switchTab(true));
+    tabHot.addEventListener('click', () => switchTab(false));
+
+    // Support URL hash navigation
+    if (window.location.hash === '#hot') {
+      switchTab(false);
+    }
+  }
+
+  setupMainTabs();
+  document.addEventListener('astro:page-load', setupMainTabs);
+</script>
