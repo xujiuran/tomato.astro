@@ -71,11 +71,21 @@ const daysToLaborDay = moyu?.countdown?.laborDay ?? 198;
       </p>
     </div>
 
-    <!-- Card 4: Moyu Countdown -->
-    <div class="rounded-xl border border-[var(--border-primary)] bg-[var(--card-bg)] p-3 shadow-xs">
-      <div class="flex items-center gap-1.5 text-xs text-emerald-500 font-semibold mb-1">
-        <span>🐟</span>
-        <span>摸鱼日历</span>
+    <!-- Card 4: Moyu Countdown (Click to jump / focus sidebar) -->
+    <a
+      href="#moyu-sidebar"
+      id="top-card-moyu"
+      class="group rounded-xl border border-[var(--border-primary)] bg-[var(--card-bg)] p-3 shadow-xs hover:border-emerald-500/50 hover:shadow-sm transition-all cursor-pointer block"
+      title="点击查看摸鱼日历与时钟"
+    >
+      <div class="flex items-center justify-between text-xs text-emerald-500 font-semibold mb-1">
+        <div class="flex items-center gap-1.5">
+          <span>🐟</span>
+          <span>摸鱼日历</span>
+        </div>
+        <span class="text-[10px] text-[var(--text-tertiary)] group-hover:text-emerald-500 transition-colors">
+          直达 ↘
+        </span>
       </div>
       <p class="text-xs font-medium text-[var(--text-primary)] line-clamp-1">
         距离周末还有 {daysToWeekend} 天
@@ -83,7 +93,7 @@ const daysToLaborDay = moyu?.countdown?.laborDay ?? 198;
       <p class="text-[11px] text-[var(--text-tertiary)] line-clamp-1 mt-0.5">
         年进度 {yearPercentage}% · 劳逸结合
       </p>
-    </div>
+    </a>
   </div>
 
   <!-- Sub-Channel Navigation Pills (Sticky Bar) -->
@@ -655,7 +665,33 @@ const daysToLaborDay = moyu?.countdown?.laborDay ?? 198;
             panel.classList.add('hidden');
           }
         });
+
+        // If user selects Moyu, highlight & scroll to the companion sidebar
+        if (targetId === 'panel-moyu') {
+          const sidebar = document.getElementById('moyu-sidebar');
+          if (sidebar) {
+            sidebar.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            sidebar.classList.add('ring-2', 'ring-emerald-500', 'rounded-2xl', 'transition-all');
+            setTimeout(() => {
+              sidebar.classList.remove('ring-2', 'ring-emerald-500');
+            }, 1800);
+          }
+        }
       });
+    });
+
+    // Top card direct focus
+    const topCardMoyu = document.getElementById('top-card-moyu');
+    topCardMoyu?.addEventListener('click', (e) => {
+      e.preventDefault();
+      const sidebar = document.getElementById('moyu-sidebar');
+      if (sidebar) {
+        sidebar.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        sidebar.classList.add('ring-2', 'ring-emerald-500', 'rounded-2xl', 'transition-all');
+        setTimeout(() => {
+          sidebar.classList.remove('ring-2', 'ring-emerald-500');
+        }, 1800);
+      }
     });
 
     // Copy早报文本

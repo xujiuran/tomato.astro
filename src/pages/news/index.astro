@@ -2,6 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Daily60sView from '../../components/Daily60sView.astro';
 import HotNewsView from '../../components/HotNewsView.astro';
+import MoyuCalendarSidebar from '../../components/MoyuCalendarSidebar.astro';
 import { fetch60sHubData, fetchHotNews } from '../../lib/newsService';
 
 // Fetch initial data at build time for instant loading and SEO
@@ -29,6 +30,7 @@ const hotNewsSources = await fetchHotNews([
   title="每日新闻 · TomatoX 随笔"
   description="每日 60 秒看世界与全网实时热点风向标，整合科技极客、全网焦点与商业财经热门资讯。"
   currentPath="/news"
+  containerClass="max-w-6xl"
 >
   <div class="space-y-6 pb-12">
     <!-- Header Section -->
@@ -97,15 +99,26 @@ const hotNewsSources = await fetchHotNews([
       </div>
     </div>
 
-    <!-- Section 1: 60s Daily Digest -->
-    <section id="section-60s" class="news-section">
-      <Daily60sView initialHubData={hubData} />
-    </section>
+    <!-- Main Content & Companion Sidebar Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      <!-- Main Content Column (8 cols on lg) -->
+      <div class="lg:col-span-8 min-w-0 space-y-6">
+        <!-- Section 1: 60s Daily Digest -->
+        <section id="section-60s" class="news-section">
+          <Daily60sView initialHubData={hubData} />
+        </section>
 
-    <!-- Section 2: Hot News Radar -->
-    <section id="section-hot" class="news-section hidden">
-      <HotNewsView initialSources={hotNewsSources} />
-    </section>
+        <!-- Section 2: Hot News Radar -->
+        <section id="section-hot" class="news-section hidden">
+          <HotNewsView initialSources={hotNewsSources} />
+        </section>
+      </div>
+
+      <!-- Right Companion Sidebar (4 cols on lg, sticky) -->
+      <aside id="moyu-sidebar" class="lg:col-span-4 space-y-4 lg:sticky lg:top-[68px]">
+        <MoyuCalendarSidebar moyu={hubData.moyu} />
+      </aside>
+    </div>
   </div>
 </BaseLayout>
 

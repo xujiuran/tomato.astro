@@ -1,0 +1,532 @@
+---
+// MoyuCalendarSidebar.astro
+// Companion Sidebar containing: Real-time Live Clock, Monthly Interactive Calendar, and Moyu Slacking Dashboard
+import type { MoyuData } from '../lib/newsService';
+
+interface Props {
+  moyu?: MoyuData | null;
+}
+
+const { moyu } = Astro.props;
+
+// Safe percentage computation
+const getPercentage = (val: any, fallback: number): number => {
+  if (typeof val === 'number') return val;
+  if (typeof val === 'string') return parseInt(val, 10) || fallback;
+  if (val && typeof val.percentage === 'number') return val.percentage;
+  return fallback;
+};
+
+const weekPercentage = getPercentage(moyu?.progress?.week, 43);
+const monthPercentage = getPercentage(moyu?.progress?.month, 45);
+const yearPercentage = getPercentage(moyu?.progress?.year, 79);
+
+const daysToWeekend = moyu?.countdown?.weekend ?? 2;
+const daysToNewYear = moyu?.countdown?.newYear ?? 78;
+const daysToSpringFestival = moyu?.countdown?.springFestival ?? 112;
+const daysToLaborDay = moyu?.countdown?.laborDay ?? 198;
+
+const defaultQuote = '你在认真工作的时候，有人在摸鱼。你在加班的时候，有人在钓鱼。人生苦短，及时摸鱼。';
+const moyuQuote = moyu?.moyuQuote || defaultQuote;
+---
+
+<div id="moyu-sidebar-wrapper" class="space-y-4">
+  <!-- Widget 1: Real-time Digital Clock & Workday Mode -->
+  <div class="relative overflow-hidden rounded-xl border border-[var(--border-primary)] bg-[var(--card-bg)] p-4 sm:p-5 shadow-xs transition-all">
+    <div class="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500"></div>
+
+    <div class="flex items-center justify-between text-xs text-[var(--text-tertiary)] mb-2.5">
+      <div class="flex items-center gap-1.5 font-medium">
+        <span class="relative flex h-2 w-2">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+        </span>
+        <span class="text-[var(--text-secondary)] font-semibold">北京时间</span>
+      </div>
+      <span class="mono text-[11px] bg-[var(--bg-secondary)] text-[var(--text-tertiary)] px-1.5 py-0.5 rounded">
+        UTC+8
+      </span>
+    </div>
+
+    <!-- Live Digital Clock -->
+    <div class="flex items-baseline justify-between mb-2">
+      <div id="live-digital-clock" class="mono text-3xl sm:text-4xl font-extrabold tracking-tight text-[var(--text-primary)] select-all">
+        --:--:--
+      </div>
+      <div class="text-right">
+        <div id="live-clock-weekday" class="text-xs font-bold text-[var(--text-primary)]">
+          {moyu?.date?.weekday || '星期三'}
+        </div>
+        <div id="live-clock-lunar" class="text-[11px] text-[var(--text-tertiary)]">
+          农历{moyu?.date?.lunar?.monthCN || '九月'}{moyu?.date?.lunar?.dayCN || '初五'}
+        </div>
+      </div>
+    </div>
+
+    <!-- Solar Date & Term bar -->
+    <div class="pt-2 border-t border-[var(--border-secondary)] flex items-center justify-between text-[11px] text-[var(--text-secondary)]">
+      <span id="live-clock-date" class="mono font-medium">
+        {moyu?.date?.gregorian || '2026年10月14日'}
+      </span>
+      <span id="live-clock-term" class="text-emerald-600 dark:text-emerald-400 font-medium">
+        🍂 寒露 · 劳逸结合
+      </span>
+    </div>
+
+    <!-- Workday Status Card -->
+    <div id="live-work-status-card" class="mt-3 rounded-lg bg-[var(--bg-secondary)] border border-[var(--border-secondary)] p-2.5 flex items-start gap-2.5 text-xs transition-colors">
+      <span id="work-status-emoji" class="text-lg leading-none select-none mt-0.5">☕</span>
+      <div class="min-w-0 flex-1">
+        <div class="flex items-center justify-between gap-1">
+          <span id="work-status-title" class="font-bold text-[var(--text-primary)]">
+            工时进行中
+          </span>
+          <span id="work-status-badge" class="mono text-[10px] text-[var(--accent)] font-semibold bg-[var(--accent)]/10 px-1.5 py-0.2 rounded">
+            下班倒计
+          </span>
+        </div>
+        <p id="work-status-desc" class="text-[11px] text-[var(--text-secondary)] mt-0.5 leading-snug">
+          保持好心情，适度喝水与活动双眼
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Widget 2: Interactive Monthly Calendar -->
+  <div class="rounded-xl border border-[var(--border-primary)] bg-[var(--card-bg)] p-4 sm:p-5 shadow-xs transition-all">
+    <!-- Header with controls -->
+    <div class="flex items-center justify-between mb-3">
+      <div class="flex items-center gap-1.5">
+        <span class="text-sm">📅</span>
+        <h3 id="sidebar-cal-title" class="text-sm font-bold text-[var(--text-primary)] tracking-tight">
+          2026年 10月
+        </h3>
+      </div>
+      <div class="flex items-center gap-1">
+        <button
+          id="sidebar-cal-prev"
+          type="button"
+          class="h-6 w-6 rounded-md flex items-center justify-center text-xs text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] hover:text-[var(--text-primary)] transition-colors cursor-pointer"
+          title="上一月"
+        >
+          ‹
+        </button>
+        <button
+          id="sidebar-cal-today"
+          type="button"
+          class="rounded-md px-1.5 py-0.5 text-[10px] font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] hover:text-[var(--text-primary)] transition-colors cursor-pointer"
+          title="返回今日"
+        >
+          今日
+        </button>
+        <button
+          id="sidebar-cal-next"
+          type="button"
+          class="h-6 w-6 rounded-md flex items-center justify-center text-xs text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] hover:text-[var(--text-primary)] transition-colors cursor-pointer"
+          title="下一月"
+        >
+          ›
+        </button>
+      </div>
+    </div>
+
+    <!-- Weekday header -->
+    <div class="grid grid-cols-7 gap-1 text-center mb-1 text-[11px] font-semibold text-[var(--text-tertiary)] mono">
+      <span>一</span>
+      <span>二</span>
+      <span>三</span>
+      <span>四</span>
+      <span>五</span>
+      <span class="text-rose-500">六</span>
+      <span class="text-rose-500">日</span>
+    </div>
+
+    <!-- Calendar 7-column Days Grid -->
+    <div id="sidebar-cal-days" class="grid grid-cols-7 gap-1 text-center text-xs">
+      <!-- Generated dynamically by script -->
+    </div>
+
+    <!-- Calendar Footer Detail -->
+    <div class="mt-3 pt-2.5 border-t border-[var(--border-secondary)] flex items-center justify-between text-[11px] text-[var(--text-tertiary)]">
+      <div class="flex items-center gap-2">
+        <span class="flex items-center gap-1">
+          <span class="h-1.5 w-1.5 rounded-full bg-[var(--accent)]"></span>
+          <span>今日</span>
+        </span>
+        <span class="flex items-center gap-1">
+          <span class="h-1.5 w-1.5 rounded-full bg-rose-500"></span>
+          <span>周末</span>
+        </span>
+      </div>
+      <span id="sidebar-cal-info" class="text-[var(--text-secondary)] font-medium truncate max-w-[150px]">
+        点击日期查农历
+      </span>
+    </div>
+  </div>
+
+  <!-- Widget 3: Moyu Slacking & Holiday Countdowns -->
+  <div id="moyu-card-content" class="rounded-xl border border-[var(--border-primary)] bg-[var(--card-bg)] p-4 sm:p-5 shadow-xs space-y-4 transition-all">
+    <div class="flex items-center justify-between pb-2 border-b border-[var(--border-secondary)]">
+      <div class="flex items-center gap-2">
+        <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
+        <h3 class="text-sm font-bold text-[var(--text-primary)]">
+          摸鱼工作周历 · 劳逸结合
+        </h3>
+      </div>
+      <span class="text-[11px] text-[var(--text-tertiary)] mono">
+        🐟 适度放松
+      </span>
+    </div>
+
+    <!-- Slacking Quote -->
+    {moyuQuote && (
+      <div class="rounded-lg bg-emerald-500/10 border border-emerald-500/20 p-3 text-xs text-emerald-800 dark:text-emerald-300 leading-relaxed font-medium">
+        💬 「摸鱼哲学」{moyuQuote}
+      </div>
+    )}
+
+    <!-- Time Progress Bars -->
+    <div class="space-y-3">
+      <div class="flex items-center justify-between text-xs">
+        <span class="font-bold text-[var(--text-primary)]">时间流逝进度</span>
+        <span class="text-[11px] text-[var(--text-tertiary)] mono">流年不息</span>
+      </div>
+
+      <!-- Week -->
+      <div>
+        <div class="flex justify-between text-[11px] text-[var(--text-secondary)] mb-1">
+          <span>本周工作进度</span>
+          <span class="mono font-semibold text-[var(--text-primary)]">{weekPercentage}%</span>
+        </div>
+        <div class="h-2 w-full rounded-full bg-[var(--bg-secondary)] overflow-hidden">
+          <div
+            class="h-full bg-emerald-500 rounded-full transition-all duration-500"
+            style={`width: ${weekPercentage}%`}
+          ></div>
+        </div>
+      </div>
+
+      <!-- Month -->
+      <div>
+        <div class="flex justify-between text-[11px] text-[var(--text-secondary)] mb-1">
+          <span>本月进度</span>
+          <span class="mono font-semibold text-[var(--text-primary)]">{monthPercentage}%</span>
+        </div>
+        <div class="h-2 w-full rounded-full bg-[var(--bg-secondary)] overflow-hidden">
+          <div
+            class="h-full bg-blue-500 rounded-full transition-all duration-500"
+            style={`width: ${monthPercentage}%`}
+          ></div>
+        </div>
+      </div>
+
+      <!-- Year -->
+      <div>
+        <div class="flex justify-between text-[11px] text-[var(--text-secondary)] mb-1">
+          <span>今年流逝</span>
+          <span class="mono font-semibold text-[var(--text-primary)]">{yearPercentage}%</span>
+        </div>
+        <div class="h-2 w-full rounded-full bg-[var(--bg-secondary)] overflow-hidden">
+          <div
+            class="h-full bg-orange-500 rounded-full transition-all duration-500"
+            style={`width: ${yearPercentage}%`}
+          ></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Festive Countdowns -->
+    <div class="pt-2">
+      <h4 class="text-xs font-bold text-[var(--text-primary)] mb-2">节日倒计时目标</h4>
+      <div class="grid grid-cols-2 gap-2">
+        <div class="rounded-lg bg-[var(--bg-secondary)] p-2.5 text-center transition-all hover:bg-[var(--bg-secondary)]/80">
+          <p class="text-[10px] text-[var(--text-tertiary)]">距离周末</p>
+          <p class="text-lg font-bold mono text-emerald-600 dark:text-emerald-400 mt-0.5">
+            {daysToWeekend} <span class="text-[10px] font-normal">天</span>
+          </p>
+        </div>
+        <div class="rounded-lg bg-[var(--bg-secondary)] p-2.5 text-center transition-all hover:bg-[var(--bg-secondary)]/80">
+          <p class="text-[10px] text-[var(--text-tertiary)]">距离元旦</p>
+          <p class="text-lg font-bold mono text-blue-600 dark:text-blue-400 mt-0.5">
+            {daysToNewYear} <span class="text-[10px] font-normal">天</span>
+          </p>
+        </div>
+        <div class="rounded-lg bg-[var(--bg-secondary)] p-2.5 text-center transition-all hover:bg-[var(--bg-secondary)]/80">
+          <p class="text-[10px] text-[var(--text-tertiary)]">距离春节</p>
+          <p class="text-lg font-bold mono text-red-600 dark:text-red-400 mt-0.5">
+            {daysToSpringFestival} <span class="text-[10px] font-normal">天</span>
+          </p>
+        </div>
+        <div class="rounded-lg bg-[var(--bg-secondary)] p-2.5 text-center transition-all hover:bg-[var(--bg-secondary)]/80">
+          <p class="text-[10px] text-[var(--text-tertiary)]">五一劳动节</p>
+          <p class="text-lg font-bold mono text-purple-600 dark:text-purple-400 mt-0.5">
+            {daysToLaborDay} <span class="text-[10px] font-normal">天</span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  let clockInterval: any = null;
+
+  function setupMoyuSidebar() {
+    // 1. Setup Live Digital Clock
+    const clockEl = document.getElementById('live-digital-clock');
+    const weekdayEl = document.getElementById('live-clock-weekday');
+    const dateEl = document.getElementById('live-clock-date');
+    const lunarEl = document.getElementById('live-clock-lunar');
+    const termEl = document.getElementById('live-clock-term');
+    const emojiEl = document.getElementById('work-status-emoji');
+    const titleEl = document.getElementById('work-status-title');
+    const badgeEl = document.getElementById('work-status-badge');
+    const descEl = document.getElementById('work-status-desc');
+
+    const weekdays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+
+    function getLunarDayText(date: Date): string {
+      try {
+        const parts = new Intl.DateTimeFormat('zh-u-ca-chinese', { month: 'numeric', day: 'numeric' }).formatToParts(date);
+        const m = parseInt(parts.find(p => p.type === 'month')?.value || '0', 10);
+        const d = parseInt(parts.find(p => p.type === 'day')?.value || '0', 10);
+        const dayNames = [
+          '初一','初二','初三','初四','初五','初六','初七','初八','初九','初十',
+          '十一','十二','十三','十四','十五','十六','十七','十八','十九','二十',
+          '廿一','廿二','廿三','廿四','廿五','廿六','廿七','廿八','廿九','三十'
+        ];
+        const monthNames = ['正月','二月','三月','四月','五月','六月','七月','八月','九月','十月','冬月','腊月'];
+        return `${monthNames[m - 1] || `${m}月`}${dayNames[d - 1] || `${d}日`}`;
+      } catch {
+        return '';
+      }
+    }
+
+    function updateClock() {
+      const now = new Date();
+      const h = now.getHours();
+      const m = now.getMinutes();
+      const s = now.getSeconds();
+
+      if (clockEl) {
+        clockEl.textContent = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+      }
+
+      if (weekdayEl) weekdayEl.textContent = weekdays[now.getDay()];
+      if (dateEl) dateEl.textContent = `${now.getFullYear()}年${now.getMonth() + 1}月${now.getDate()}日`;
+      
+      const lunarStr = getLunarDayText(now);
+      if (lunarEl && lunarStr) {
+        lunarEl.textContent = `农历${lunarStr}`;
+      }
+
+      // Workday Status Calculation
+      const isWeekend = now.getDay() === 0 || now.getDay() === 6;
+      if (isWeekend) {
+        if (emojiEl) emojiEl.textContent = '🏖️';
+        if (titleEl) titleEl.textContent = '周末休假时光';
+        if (badgeEl) badgeEl.textContent = '尽情享受';
+        if (descEl) descEl.textContent = '远离代码与打卡，充分享受生活与休息';
+      } else {
+        const currentMins = h * 60 + m;
+        // 09:00 -> 540, 12:00 -> 720, 13:30 -> 810, 18:00 -> 1080
+        if (currentMins < 540) {
+          if (emojiEl) emojiEl.textContent = '🌅';
+          if (titleEl) titleEl.textContent = '清晨准备';
+          if (badgeEl) badgeEl.textContent = '开启一天';
+          if (descEl) descEl.textContent = '吃一顿营养早餐，清醒大脑迎接新挑战';
+        } else if (currentMins >= 540 && currentMins < 720) {
+          const toLunchMins = 720 - currentMins;
+          if (emojiEl) emojiEl.textContent = '💻';
+          if (titleEl) titleEl.textContent = '上午专注时刻';
+          if (badgeEl) badgeEl.textContent = `距午餐 ${toLunchMins}分`;
+          if (descEl) descEl.textContent = '精力最充沛时段，专攻关键核心任务';
+        } else if (currentMins >= 720 && currentMins < 810) {
+          if (emojiEl) emojiEl.textContent = '🍱';
+          if (titleEl) titleEl.textContent = '午休干饭充能';
+          if (badgeEl) badgeEl.textContent = '午休中';
+          if (descEl) descEl.textContent = '好好吃饭，小憩片刻为下午续航';
+        } else if (currentMins >= 810 && currentMins < 1080) {
+          const toOffMins = 1080 - currentMins;
+          const toOffH = Math.floor(toOffMins / 60);
+          const toOffM = toOffMins % 60;
+          if (emojiEl) emojiEl.textContent = '☕';
+          if (titleEl) titleEl.textContent = '午后推进中';
+          if (badgeEl) badgeEl.textContent = `距下班 ${toOffH}h ${toOffM}m`;
+          if (descEl) descEl.textContent = '站起来喝口水，眺望远方让双眼放松';
+        } else {
+          if (emojiEl) emojiEl.textContent = '🎉';
+          if (titleEl) titleEl.textContent = '下班自由时光';
+          if (badgeEl) badgeEl.textContent = '自由状态';
+          if (descEl) descEl.textContent = '打卡完成，享受个人项目与美好夜晚';
+        }
+      }
+    }
+
+    if (clockInterval) clearInterval(clockInterval);
+    updateClock();
+    clockInterval = setInterval(updateClock, 1000);
+
+    // 2. Setup Interactive Monthly Calendar
+    const calTitle = document.getElementById('sidebar-cal-title');
+    const calDaysGrid = document.getElementById('sidebar-cal-days');
+    const calPrev = document.getElementById('sidebar-cal-prev');
+    const calNext = document.getElementById('sidebar-cal-next');
+    const calToday = document.getElementById('sidebar-cal-today');
+    const calInfo = document.getElementById('sidebar-cal-info');
+
+    let currentCalDate = new Date();
+    const today = new Date();
+
+    const solarFestivals: Record<string, string> = {
+      '1-1': '元旦', '2-14': '情人节', '3-8': '妇女节', '4-5': '清明节',
+      '5-1': '劳动节', '5-4': '青年节', '6-1': '儿童节', '7-1': '建党节',
+      '8-1': '建军节', '9-10': '教师节', '10-1': '国庆节', '10-24': '1024',
+      '11-11': '双十一', '12-25': '圣诞节'
+    };
+
+    const lunarFestivals: Record<string, string> = {
+      '1-1': '春节', '1-15': '元宵', '5-5': '端午', '7-7': '七夕',
+      '8-15': '中秋', '9-9': '重阳', '12-8': '腊八'
+    };
+
+    function getDayLunarAndFest(date: Date): { text: string; isFest: boolean } {
+      const sm = date.getMonth() + 1;
+      const sd = date.getDate();
+      const solarFest = solarFestivals[`${sm}-${sd}`];
+      if (solarFest) return { text: solarFest, isFest: true };
+
+      try {
+        const parts = new Intl.DateTimeFormat('zh-u-ca-chinese', { month: 'numeric', day: 'numeric' }).formatToParts(date);
+        const lm = parseInt(parts.find(p => p.type === 'month')?.value || '0', 10);
+        const ld = parseInt(parts.find(p => p.type === 'day')?.value || '0', 10);
+
+        const lunFest = lunarFestivals[`${lm}-${ld}`];
+        if (lunFest) return { text: lunFest, isFest: true };
+
+        const dayNames = [
+          '初一','初二','初三','初四','初五','初六','初七','初八','初九','初十',
+          '十一','十二','十三','十四','十五','十六','十七','十八','十九','二十',
+          '廿一','廿二','廿三','廿四','廿五','廿六','廿七','廿八','廿九','三十'
+        ];
+        return { text: dayNames[ld - 1] || `${ld}`, isFest: false };
+      } catch {
+        return { text: `${sd}`, isFest: false };
+      }
+    }
+
+    function renderCalendar() {
+      if (!calTitle || !calDaysGrid) return;
+
+      const year = currentCalDate.getFullYear();
+      const month = currentCalDate.getMonth();
+
+      calTitle.textContent = `${year}年 ${month + 1}月`;
+
+      // 1st day of month (Monday as first day)
+      const firstDayRaw = new Date(year, month, 1).getDay();
+      const firstDay = firstDayRaw === 0 ? 6 : firstDayRaw - 1; // 0 for Monday
+
+      const daysInCurrentMonth = new Date(year, month + 1, 0).getDate();
+      const daysInPrevMonth = new Date(year, month, 0).getDate();
+
+      calDaysGrid.innerHTML = '';
+
+      // 1. Previous month trailing days
+      for (let i = firstDay - 1; i >= 0; i--) {
+        const d = daysInPrevMonth - i;
+        const cell = document.createElement('div');
+        cell.className = 'py-1 text-[var(--text-tertiary)] opacity-30 cursor-not-allowed select-none';
+        cell.innerHTML = `<span class="block mono text-xs">${d}</span>`;
+        calDaysGrid.appendChild(cell);
+      }
+
+      // 2. Current month days
+      for (let d = 1; d <= daysInCurrentMonth; d++) {
+        const thisDate = new Date(year, month, d);
+        const dayOfWeek = thisDate.getDay();
+        const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+        const isToday =
+          today.getFullYear() === year &&
+          today.getMonth() === month &&
+          today.getDate() === d;
+
+        const { text: subText, isFest } = getDayLunarAndFest(thisDate);
+
+        const cell = document.createElement('button');
+        cell.type = 'button';
+        cell.className = `cal-day-cell group relative flex flex-col items-center justify-center py-1 rounded-lg transition-all cursor-pointer ${
+          isToday
+            ? 'bg-[var(--accent)] text-white font-bold ring-2 ring-[var(--accent)]/30 shadow-xs'
+            : isWeekend
+            ? 'text-rose-500 hover:bg-[var(--bg-secondary)]'
+            : 'text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]'
+        }`;
+
+        cell.innerHTML = `
+          <span class="mono text-xs leading-none ${isToday ? 'text-white' : ''}">${d}</span>
+          <span class="text-[9px] scale-90 leading-tight truncate mt-0.5 ${
+            isToday
+              ? 'text-white/90'
+              : isFest
+              ? 'text-[var(--accent)] font-semibold'
+              : isWeekend
+              ? 'text-rose-400/80'
+              : 'text-[var(--text-tertiary)]'
+          }">${subText}</span>
+        `;
+
+        cell.addEventListener('click', () => {
+          document.querySelectorAll('.cal-day-cell').forEach(c => {
+            if (!c.classList.contains('bg-[var(--accent)]')) {
+              c.classList.remove('ring-1', 'ring-[var(--border-primary)]', 'bg-[var(--bg-secondary)]');
+            }
+          });
+          if (!isToday) {
+            cell.classList.add('ring-1', 'ring-[var(--border-primary)]', 'bg-[var(--bg-secondary)]');
+          }
+
+          if (calInfo) {
+            calInfo.textContent = `${year}/${month + 1}/${d} · ${subText} · ${weekdays[dayOfWeek]}`;
+          }
+        });
+
+        calDaysGrid.appendChild(cell);
+      }
+
+      // 3. Next month leading days to complete grid rows
+      const totalCells = firstDay + daysInCurrentMonth;
+      const remainingCells = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
+      for (let d = 1; d <= remainingCells; d++) {
+        const cell = document.createElement('div');
+        cell.className = 'py-1 text-[var(--text-tertiary)] opacity-30 cursor-not-allowed select-none';
+        cell.innerHTML = `<span class="block mono text-xs">${d}</span>`;
+        calDaysGrid.appendChild(cell);
+      }
+    }
+
+    calPrev?.addEventListener('click', () => {
+      currentCalDate.setMonth(currentCalDate.getMonth() - 1);
+      renderCalendar();
+    });
+
+    calNext?.addEventListener('click', () => {
+      currentCalDate.setMonth(currentCalDate.getMonth() + 1);
+      renderCalendar();
+    });
+
+    calToday?.addEventListener('click', () => {
+      currentCalDate = new Date();
+      renderCalendar();
+      if (calInfo) {
+        calInfo.textContent = '已回到今日';
+      }
+    });
+
+    renderCalendar();
+  }
+
+  // Bind to lifecycle
+  setupMoyuSidebar();
+  document.addEventListener('astro:page-load', setupMoyuSidebar);
+</script>

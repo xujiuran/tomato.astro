@@ -10,12 +10,14 @@ interface Props {
   title?: string;
   description?: string;
   currentPath?: string;
+  containerClass?: string;
 }
 
 const {
   title = 'TomatoX · 产品工程、AI Coding 与写作者',
   description = 'TomatoX 的个人博客 (xujiuran.top)，记录全栈开发、AI 编码工作流、开源工具、设计与生活琐思。',
   currentPath = '/',
+  containerClass = 'max-w-3xl',
 } = Astro.props;
 ---
 
@@ -69,7 +71,7 @@ const {
 
     <Header currentPath={currentPath} />
 
-    <main id="main-content" class="relative z-10 flex-1 mx-auto w-full max-w-3xl px-4 sm:px-6 pt-6 sm:pt-10">
+    <main id="main-content" class:list={["relative z-10 flex-1 mx-auto w-full px-4 sm:px-6 pt-6 sm:pt-10", containerClass]}>
       <slot />
     </main>
 
