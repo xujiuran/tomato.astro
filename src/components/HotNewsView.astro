@@ -75,24 +75,27 @@ const financeSources = initialSources.filter((s) => s.column === 'finance');
         </button>
         <button
           type="button"
-          class="category-tab rounded-md px-3 py-1.5 transition-colors text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]"
+          class="category-tab rounded-md px-3 py-1.5 transition-colors text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] inline-flex items-center gap-1.5"
           data-category="tech"
         >
-          💻 极客科技 ({techSources.length})
+          <img src="/images/icons/tools.png" alt="极客科技" class="h-3.5 w-3.5 object-contain rounded-xs shrink-0" />
+          <span>极客科技 ({techSources.length})</span>
         </button>
         <button
           type="button"
-          class="category-tab rounded-md px-3 py-1.5 transition-colors text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]"
+          class="category-tab rounded-md px-3 py-1.5 transition-colors text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] inline-flex items-center gap-1.5"
           data-category="general"
         >
-          🌐 全网社会 ({generalSources.length})
+          <img src="/images/icons/globe.png" alt="全网社会" class="h-3.5 w-3.5 object-contain rounded-xs shrink-0" />
+          <span>全网社会 ({generalSources.length})</span>
         </button>
         <button
           type="button"
-          class="category-tab rounded-md px-3 py-1.5 transition-colors text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]"
+          class="category-tab rounded-md px-3 py-1.5 transition-colors text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] inline-flex items-center gap-1.5"
           data-category="finance"
         >
-          📈 商业财经 ({financeSources.length})
+          <img src="/images/icons/market.png" alt="商业财经" class="h-3.5 w-3.5 object-contain rounded-xs shrink-0" />
+          <span>商业财经 ({financeSources.length})</span>
         </button>
       </div>
 

@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="sq-bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1e1e24"/>
+      <stop offset="100%" stop-color="#0d0d11"/>
+    </linearGradient>
+    <linearGradient id="sq-stroke" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#3f3f46" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#18181b" stop-opacity="0.4"/>
+    </linearGradient>
+    <linearGradient id="mug-body" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f8fafc"/>
+      <stop offset="100%" stop-color="#94a3b8"/>
+    </linearGradient>
+    <linearGradient id="coffee-liq" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#78350f"/>
+      <stop offset="100%" stop-color="#451a03"/>
+    </linearGradient>
+    <radialGradient id="coffee-ambient" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#b45309" stop-opacity="0.32"/>
+      <stop offset="100%" stop-color="#b45309" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="shadow-main" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="16" stdDeviation="16" flood-color="#000000" flood-opacity="0.6"/>
+    </filter>
+  </defs>
+
+  <circle cx="256" cy="256" r="220" fill="url(#coffee-ambient)"/>
+  <rect x="36" y="36" width="440" height="440" rx="100" fill="url(#sq-bg)" stroke="url(#sq-stroke)" stroke-width="4" filter="url(#shadow-main)"/>
+  <rect x="40" y="40" width="432" height="432" rx="96" fill="none" stroke="#ffffff" stroke-opacity="0.08" stroke-width="2"/>
+
+  <!-- Rising Steam Swirls -->
+  <g fill="none" stroke="#fed7aa" stroke-width="4" stroke-linecap="round" opacity="0.65">
+    <path d="M225 150 C215 125, 235 110, 220 90"/>
+    <path d="M256 145 C246 120, 266 100, 256 80"/>
+    <path d="M287 150 C277 125, 297 110, 287 90"/>
+  </g>
+
+  <!-- 3D Ceramic Coffee Mug -->
+  <g filter="url(#shadow-main)" transform="translate(256, 275)">
+    <!-- Mug Handle -->
+    <path d="M60 -30 C120 -30, 120 70, 60 70" fill="none" stroke="url(#mug-body)" stroke-width="22" stroke-linecap="round"/>
+
+    <!-- Main Cup Body -->
+    <path d="M-80 -50 L-65 95 C-60 120, 60 120, 65 95 L80 -50 Z" fill="url(#mug-body)"/>
+
+    <!-- Top Rim Opening -->
+    <ellipse cx="0" cy="-50" rx="80" ry="24" fill="#cbd5e1" stroke="#94a3b8" stroke-width="3"/>
+    
+    <!-- Rich Dark Coffee Liquid Inside -->
+    <ellipse cx="0" cy="-50" rx="72" ry="20" fill="url(#coffee-liq)"/>
+    <ellipse cx="15" cy="-52" rx="30" ry="10" fill="#9a3412" opacity="0.4"/>
+  </g>
+</svg>

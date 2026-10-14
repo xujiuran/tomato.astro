@@ -168,7 +168,7 @@ const weekDays = weekdayNames.map((name, i) => {
     {moyuQuote && (
       <div class="relative overflow-hidden rounded-xl bg-gradient-to-r from-emerald-500/10 via-teal-500/5 to-cyan-500/10 border border-emerald-500/20 p-3.5 sm:p-4 text-xs sm:text-sm text-emerald-900 dark:text-emerald-200 leading-relaxed">
         <div class="flex items-start gap-2.5">
-          <span class="text-base select-none mt-0.5">💡</span>
+          <img src="/images/icons/thoughts.png" alt="摸鱼哲学" class="h-4 w-4 object-contain rounded-xs mt-0.5 shrink-0 inline-block" />
           <div>
             <span class="font-bold text-emerald-700 dark:text-emerald-400 mr-1.5">「摸鱼哲学」</span>
             <span class="font-medium">{moyuQuote}</span>
@@ -248,7 +248,7 @@ const weekDays = weekdayNames.map((name, i) => {
       <div class="md:col-span-5 space-y-3">
         <div class="flex items-center justify-between text-xs">
           <div class="flex items-center gap-1.5 font-bold text-[var(--text-primary)]">
-            <span>🎯</span>
+            <img src="/images/icons/target.png" alt="目标" class="h-4 w-4 object-contain rounded-xs shrink-0 inline-block" />
             <span>节日倒计时目标</span>
           </div>
           <span class="text-[11px] text-[var(--text-tertiary)]">期待与憧憬</span>
@@ -258,7 +258,8 @@ const weekDays = weekdayNames.map((name, i) => {
           <!-- Weekend -->
           <div class="rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-secondary)] p-2.5 text-center transition-all hover:border-emerald-500/40">
             <p class="text-[11px] text-[var(--text-tertiary)] flex items-center justify-center gap-1">
-              <span>🛌</span> 距周末
+              <img src="/images/icons/coffee.png" alt="周末" class="h-3.5 w-3.5 object-contain rounded-xs shrink-0 inline-block" />
+              <span>距周末</span>
             </p>
             <p class="text-xl font-extrabold mono text-emerald-600 dark:text-emerald-400 mt-0.5">
               {daysToWeekend} <span class="text-xs font-normal text-[var(--text-tertiary)]">天</span>
@@ -268,7 +269,8 @@ const weekDays = weekdayNames.map((name, i) => {
           <!-- New Year -->
           <div class="rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-secondary)] p-2.5 text-center transition-all hover:border-blue-500/40">
             <p class="text-[11px] text-[var(--text-tertiary)] flex items-center justify-center gap-1">
-              <span>🎉</span> 距元旦
+              <img src="/images/icons/calendar.png" alt="元旦" class="h-3.5 w-3.5 object-contain rounded-xs shrink-0 inline-block" />
+              <span>距元旦</span>
             </p>
             <p class="text-xl font-extrabold mono text-blue-600 dark:text-blue-400 mt-0.5">
               {daysToNewYear} <span class="text-xs font-normal text-[var(--text-tertiary)]">天</span>
@@ -278,7 +280,8 @@ const weekDays = weekdayNames.map((name, i) => {
           <!-- Spring Festival -->
           <div class="rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-secondary)] p-2.5 text-center transition-all hover:border-rose-500/40">
             <p class="text-[11px] text-[var(--text-tertiary)] flex items-center justify-center gap-1">
-              <span>🧧</span> 距春节
+              <img src="/images/icons/moyu.png" alt="春节" class="h-3.5 w-3.5 object-contain rounded-xs shrink-0 inline-block" />
+              <span>距春节</span>
             </p>
             <p class="text-xl font-extrabold mono text-rose-600 dark:text-rose-400 mt-0.5">
               {daysToSpringFestival} <span class="text-xs font-normal text-[var(--text-tertiary)]">天</span>
@@ -288,7 +291,8 @@ const weekDays = weekdayNames.map((name, i) => {
           <!-- Labor Day or National Day -->
           <div class="rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-secondary)] p-2.5 text-center transition-all hover:border-indigo-500/40">
             <p class="text-[11px] text-[var(--text-tertiary)] flex items-center justify-center gap-1">
-              <span>✈️</span> 距劳动节
+              <img src="/images/icons/rocket.png" alt="劳动节" class="h-3.5 w-3.5 object-contain rounded-xs shrink-0 inline-block" />
+              <span>距劳动节</span>
             </p>
             <p class="text-xl font-extrabold mono text-indigo-600 dark:text-indigo-400 mt-0.5">
               {daysToLaborDay} <span class="text-xs font-normal text-[var(--text-tertiary)]">天</span>

@@ -32,7 +32,7 @@ const daysToLaborDay = moyu?.countdown?.laborDay ?? 198;
     <!-- Card 1: 60s Date & Tip -->
     <div class="rounded-xl border border-[var(--border-primary)] bg-[var(--card-bg)] p-3 shadow-xs">
       <div class="flex items-center gap-1.5 text-xs text-[var(--accent)] font-semibold mb-1">
-        <span>☀️</span>
+        <img src="/images/icons/news.png" alt="今日晨报" class="h-4 w-4 object-contain inline-block shrink-0 rounded-xs" />
         <span>今日晨报</span>
       </div>
       <p class="text-xs font-medium text-[var(--text-primary)] line-clamp-1">
@@ -46,7 +46,7 @@ const daysToLaborDay = moyu?.countdown?.laborDay ?? 198;
     <!-- Card 2: AI Tech News -->
     <div class="rounded-xl border border-[var(--border-primary)] bg-[var(--card-bg)] p-3 shadow-xs">
       <div class="flex items-center gap-1.5 text-xs text-blue-500 font-semibold mb-1">
-        <span>🤖</span>
+        <img src="/images/icons/ai.png" alt="AI 前沿" class="h-4 w-4 object-contain inline-block shrink-0 rounded-xs" />
         <span>AI 前沿</span>
       </div>
       <p class="text-xs font-medium text-[var(--text-primary)] line-clamp-1">
@@ -60,7 +60,7 @@ const daysToLaborDay = moyu?.countdown?.laborDay ?? 198;
     <!-- Card 3: Epic Free Game -->
     <div class="rounded-xl border border-[var(--border-primary)] bg-[var(--card-bg)] p-3 shadow-xs">
       <div class="flex items-center gap-1.5 text-xs text-amber-500 font-semibold mb-1">
-        <span>🎮</span>
+        <img src="/images/icons/epic.png" alt="Epic 喜加一" class="h-4 w-4 object-contain inline-block shrink-0 rounded-xs" />
         <span>Epic 喜加一</span>
       </div>
       <p class="text-xs font-medium text-[var(--text-primary)] line-clamp-1">
@@ -80,7 +80,7 @@ const daysToLaborDay = moyu?.countdown?.laborDay ?? 198;
     >
       <div class="flex items-center justify-between text-xs text-emerald-500 font-semibold mb-1">
         <div class="flex items-center gap-1.5">
-          <span>🐟</span>
+          <img src="/images/icons/moyu.png" alt="摸鱼日历" class="h-4 w-4 object-contain inline-block shrink-0 rounded-xs" />
           <span>摸鱼日历</span>
         </div>
         <span class="text-[10px] text-[var(--text-tertiary)] group-hover:text-emerald-500 transition-colors">
@@ -101,52 +101,59 @@ const daysToLaborDay = moyu?.countdown?.laborDay ?? 198;
     <div id="viki-channel-pills" class="flex flex-wrap items-center gap-1.5 text-xs font-medium">
       <button
         type="button"
-        class="viki-pill active rounded-lg px-3 py-1.5 transition-all bg-[var(--accent)] text-white font-semibold"
+        class="viki-pill active rounded-lg px-3 py-1.5 transition-all bg-[var(--accent)] text-white font-semibold flex items-center gap-1.5"
         data-target="panel-60s"
       >
-        ☀️ 60s晨报
+        <img src="/images/icons/news.png" alt="60s晨报" class="h-4 w-4 object-contain inline-block shrink-0 rounded-xs" />
+        <span>60s晨报</span>
       </button>
       <button
         type="button"
-        class="viki-pill rounded-lg px-3 py-1.5 transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]"
+        class="viki-pill rounded-lg px-3 py-1.5 transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] flex items-center gap-1.5"
         data-target="panel-ai"
       >
-        🤖 AI 资讯 ({aiNews.length})
+        <img src="/images/icons/ai.png" alt="AI 资讯" class="h-4 w-4 object-contain inline-block shrink-0 rounded-xs" />
+        <span>AI 资讯 ({aiNews.length})</span>
       </button>
       <button
         type="button"
-        class="viki-pill rounded-lg px-3 py-1.5 transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]"
+        class="viki-pill rounded-lg px-3 py-1.5 transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] flex items-center gap-1.5"
         data-target="panel-epic"
       >
-        🎮 Epic 喜加一 ({epicGames.length})
+        <img src="/images/icons/epic.png" alt="Epic 喜加一" class="h-4 w-4 object-contain inline-block shrink-0 rounded-xs" />
+        <span>Epic 喜加一 ({epicGames.length})</span>
       </button>
       <button
         type="button"
-        class="viki-pill rounded-lg px-3 py-1.5 transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]"
+        class="viki-pill rounded-lg px-3 py-1.5 transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] flex items-center gap-1.5"
         data-target="panel-moyu"
       >
-        🐟 摸鱼周历
+        <img src="/images/icons/moyu.png" alt="摸鱼周历" class="h-4 w-4 object-contain inline-block shrink-0 rounded-xs" />
+        <span>摸鱼周历</span>
       </button>
       <button
         type="button"
-        class="viki-pill rounded-lg px-3 py-1.5 transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]"
+        class="viki-pill rounded-lg px-3 py-1.5 transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] flex items-center gap-1.5"
         data-target="panel-history"
       >
-        📜 历史今天 ({todayHistory.length})
+        <img src="/images/icons/history.png" alt="历史今天" class="h-4 w-4 object-contain inline-block shrink-0 rounded-xs" />
+        <span>历史今天 ({todayHistory.length})</span>
       </button>
       <button
         type="button"
-        class="viki-pill rounded-lg px-3 py-1.5 transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]"
+        class="viki-pill rounded-lg px-3 py-1.5 transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] flex items-center gap-1.5"
         data-target="panel-douban"
       >
-        🎬 豆瓣热榜 ({doubanMovies.length})
+        <img src="/images/icons/douban.png" alt="豆瓣热榜" class="h-4 w-4 object-contain inline-block shrink-0 rounded-xs" />
+        <span>豆瓣热榜 ({doubanMovies.length})</span>
       </button>
       <button
         type="button"
-        class="viki-pill rounded-lg px-3 py-1.5 transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]"
+        class="viki-pill rounded-lg px-3 py-1.5 transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] flex items-center gap-1.5"
         data-target="panel-tools"
       >
-        🛠️ 极客工具
+        <img src="/images/icons/tools.png" alt="极客工具" class="h-4 w-4 object-contain inline-block shrink-0 rounded-xs" />
+        <span>极客工具</span>
       </button>
     </div>
   </div>
@@ -397,7 +404,13 @@ const daysToLaborDay = moyu?.countdown?.laborDay ?? 198;
       <!-- Moyu Quote -->
       {moyu?.moyuQuote && (
         <div class="rounded-xl bg-emerald-500/10 border border-emerald-500/20 p-4 text-xs sm:text-sm text-emerald-800 dark:text-emerald-300 leading-relaxed font-medium mb-5">
-          💬 「摸鱼哲学」{moyu.moyuQuote}
+          <div class="flex items-start gap-2">
+            <img src="/images/icons/thoughts.png" alt="摸鱼哲学" class="h-4 w-4 object-contain rounded-xs mt-0.5 inline-block shrink-0" />
+            <div>
+              <span class="font-bold mr-1">「摸鱼哲学」</span>
+              <span>{moyu.moyuQuote}</span>
+            </div>
+          </div>
         </div>
       )}
 
@@ -553,7 +566,7 @@ const daysToLaborDay = moyu?.countdown?.laborDay ?? 198;
       <!-- Tool 1: Whois Domain Lookup -->
       <div class="rounded-xl border border-[var(--border-primary)] bg-[var(--card-bg)] p-4 sm:p-5 shadow-xs">
         <div class="flex items-center gap-2 pb-3 border-b border-[var(--border-secondary)] mb-3">
-          <span class="text-base">🌐</span>
+          <img src="/images/icons/globe.png" alt="Whois" class="h-4 w-4 object-contain inline-block shrink-0 rounded-xs" />
           <h3 class="text-sm font-bold text-[var(--text-primary)]">
             Whois 域名信息查询
           </h3>
@@ -603,7 +616,7 @@ const daysToLaborDay = moyu?.countdown?.laborDay ?? 198;
       <div class="rounded-xl border border-[var(--border-primary)] bg-[var(--card-bg)] p-4 sm:p-5 shadow-xs flex flex-col justify-between">
         <div>
           <div class="flex items-center gap-2 pb-3 border-b border-[var(--border-secondary)] mb-3">
-            <span class="text-base">📱</span>
+            <img src="/images/icons/tools.png" alt="二维码生成器" class="h-4 w-4 object-contain inline-block shrink-0 rounded-xs" />
             <h3 class="text-sm font-bold text-[var(--text-primary)]">
               二维码极速生成器
             </h3>

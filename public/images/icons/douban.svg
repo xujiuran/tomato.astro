@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="sq-bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1e1e24"/>
+      <stop offset="100%" stop-color="#0d0d11"/>
+    </linearGradient>
+    <linearGradient id="sq-stroke" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#3f3f46" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#18181b" stop-opacity="0.4"/>
+    </linearGradient>
+    <linearGradient id="douban-green" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#22c55e"/>
+      <stop offset="100%" stop-color="#15803d"/>
+    </linearGradient>
+    <radialGradient id="douban-ambient" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#22c55e" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#22c55e" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="shadow-main" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="16" stdDeviation="16" flood-color="#000000" flood-opacity="0.6"/>
+    </filter>
+  </defs>
+
+  <circle cx="256" cy="256" r="220" fill="url(#douban-ambient)"/>
+  <rect x="36" y="36" width="440" height="440" rx="100" fill="url(#sq-bg)" stroke="url(#sq-stroke)" stroke-width="4" filter="url(#shadow-main)"/>
+  <rect x="40" y="40" width="432" height="432" rx="96" fill="none" stroke="#ffffff" stroke-opacity="0.08" stroke-width="2"/>
+
+  <!-- 3D Cinema Clapperboard -->
+  <g filter="url(#shadow-main)" transform="translate(256, 260)">
+    <!-- Lower Main Board -->
+    <rect x="-120" y="-30" width="240" height="150" rx="14" fill="#0f172a" stroke="#334155" stroke-width="3"/>
+    
+    <!-- Movie Title Area -->
+    <rect x="-100" y="-10" width="200" height="24" rx="4" fill="#1e293b"/>
+    <line x1="-90" y1="2" x2="-20" y2="2" stroke="#22c55e" stroke-width="4" stroke-linecap="round"/>
+    
+    <!-- Director / Scene Lines -->
+    <rect x="-100" y="30" width="90" height="18" rx="3" fill="#1e293b"/>
+    <rect x="10" y="30" width="90" height="18" rx="3" fill="#1e293b"/>
+    <rect x="-100" y="62" width="200" height="36" rx="6" fill="url(#douban-green)"/>
+    <!-- Rating Stars inside green badge -->
+    <g fill="#fef08a" transform="translate(-65, 80) scale(0.7)">
+      <polygon points="0,-12 4,-4 12,-4 6,2 8,10 0,6 -8,10 -6,2 -12,-4 -4,-4"/>
+      <polygon points="35,-12 39,-4 47,-4 41,2 43,10 35,6 27,10 29,2 23,-4 31,-4"/>
+      <polygon points="70,-12 74,-4 82,-4 76,2 78,10 70,6 62,10 64,2 58,-4 66,-4"/>
+      <polygon points="105,-12 109,-4 117,-4 111,2 113,10 105,6 97,10 99,2 93,-4 101,-4"/>
+      <polygon points="140,-12 144,-4 152,-4 146,2 148,10 140,6 132,10 134,2 128,-4 136,-4"/>
+    </g>
+
+    <!-- Top Clapper Arm (Angled open) -->
+    <g transform="translate(-120, -30) rotate(-18)">
+      <rect x="0" y="-36" width="240" height="36" rx="6" fill="#0f172a" stroke="#334155" stroke-width="2"/>
+      <!-- Striped Zebra pattern -->
+      <polygon points="25,0 45,0 75,-36 55,-36" fill="#f8fafc"/>
+      <polygon points="85,0 105,0 135,-36 115,-36" fill="#f8fafc"/>
+      <polygon points="145,0 165,0 195,-36 175,-36" fill="#f8fafc"/>
+      <polygon points="205,0 225,0 240,-18 240,-36" fill="#f8fafc"/>
+      <!-- Hinge Joint -->
+      <circle cx="12" cy="-18" r="8" fill="#64748b"/>
+      <circle cx="12" cy="-18" r="4" fill="#ffffff"/>
+    </g>
+  </g>
+</svg>

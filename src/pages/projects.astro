@@ -8,11 +8,11 @@ import { recommendedProjects } from '../data/projects';
 const hubData = await fetch60sHubData();
 
 const categories = [
-  { id: 'all', label: '全部利器', count: recommendedProjects.length },
-  { id: 'productivity', label: '🚀 效率与翻译', count: recommendedProjects.filter((p) => p.category === 'productivity').length },
-  { id: 'system', label: '🛠️ 系统与外设', count: recommendedProjects.filter((p) => p.category === 'system').length },
-  { id: 'health', label: '🌱 作息与健康', count: recommendedProjects.filter((p) => p.category === 'health').length },
-  { id: 'network', label: '🌐 网络与分流', count: recommendedProjects.filter((p) => p.category === 'network').length },
+  { id: 'all', label: '全部利器', count: recommendedProjects.length, icon: null },
+  { id: 'productivity', label: '效率与翻译', count: recommendedProjects.filter((p) => p.category === 'productivity').length, icon: '/images/icons/rocket.png' },
+  { id: 'system', label: '系统与外设', count: recommendedProjects.filter((p) => p.category === 'system').length, icon: '/images/icons/tools.png' },
+  { id: 'health', label: '作息与健康', count: recommendedProjects.filter((p) => p.category === 'health').length, icon: '/images/icons/health.png' },
+  { id: 'network', label: '网络与分流', count: recommendedProjects.filter((p) => p.category === 'network').length, icon: '/images/icons/globe.png' },
 ];
 ---
 
@@ -46,7 +46,7 @@ const categories = [
         <!-- Search & Note banner -->
         <div class="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-3 border-t border-[var(--border-secondary)]">
           <div class="flex items-center gap-1.5 text-xs text-[var(--text-tertiary)]">
-            <span>💡</span>
+            <img src="/images/icons/thoughts.png" alt="提示" class="h-3.5 w-3.5 object-contain rounded-xs shrink-0 inline-block" />
             <span>点击任意卡片可直达官网或 GitHub 源码仓库</span>
           </div>
 
@@ -71,14 +71,17 @@ const categories = [
           <button
             type="button"
             class:list={[
-              'proj-cat-tab rounded-lg px-3 py-1.5 transition-all text-xs cursor-pointer',
+              'proj-cat-tab rounded-lg px-3 py-1.5 transition-all text-xs cursor-pointer inline-flex items-center gap-1.5',
               idx === 0
                 ? 'active bg-[var(--accent)] text-white font-semibold'
                 : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]'
             ]}
             data-category={cat.id}
           >
-            {cat.label} ({cat.count})
+            {cat.icon && (
+              <img src={cat.icon} alt="" class="h-3.5 w-3.5 object-contain rounded-xs shrink-0" />
+            )}
+            <span>{cat.label} ({cat.count})</span>
           </button>
         ))}
       </div>
@@ -92,7 +95,7 @@ const categories = [
 
       <!-- Empty search state -->
       <div id="projects-empty-state" class="hidden rounded-xl border border-dashed border-[var(--border-primary)] p-10 text-center">
-        <span class="text-3xl">🔍</span>
+        <img src="/images/icons/search.png" alt="搜索" class="h-12 w-12 object-contain mx-auto rounded-xl shadow-xs" />
         <p class="mt-2 text-sm font-semibold text-[var(--text-primary)]">未找到匹配的推荐利器</p>
         <p class="mt-1 text-xs text-[var(--text-tertiary)]">尝试更换关键词或切换到“全部利器”分类查看</p>
       </div>
