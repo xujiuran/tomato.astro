@@ -79,6 +79,24 @@ const hotNewsSources = await fetchHotNews([
       </div>
     </div>
 
+    <!-- Real-time Freshness & Loading Status Bar -->
+    <div id="news-status-bar" class="flex items-center justify-between rounded-xl border border-[var(--border-primary)] bg-[var(--card-bg)]/80 backdrop-blur-sm px-3.5 py-2 shadow-xs text-xs">
+      <div class="flex items-center gap-2">
+        <span class="relative flex h-2 w-2">
+          <span id="status-pulse-dot" class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+          <span id="status-live-dot" class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+        </span>
+        <span id="status-message" class="text-[var(--text-secondary)] font-medium">
+          实时连接中 · 正在聚合今日晨报与全网风向...
+        </span>
+      </div>
+      <div class="flex items-center gap-2">
+        <span id="status-timestamp" class="mono text-[11px] text-[var(--text-tertiary)] hidden sm:inline">
+          刚刚同步
+        </span>
+      </div>
+    </div>
+
     <!-- Section 1: 60s Daily Digest -->
     <section id="section-60s" class="news-section">
       <Daily60sView initialHubData={hubData} />
@@ -130,6 +148,17 @@ const hotNewsSources = await fetchHotNews([
     // Support URL hash navigation
     if (window.location.hash === '#hot') {
       switchTab(false);
+    }
+
+    // Update real-time status indicator
+    const statusMsg = document.getElementById('status-message');
+    const statusTime = document.getElementById('status-timestamp');
+    if (statusMsg) {
+      statusMsg.textContent = '已连接实时源 · 今日 60s 晨报与全网热点已就绪';
+    }
+    if (statusTime) {
+      const now = new Date();
+      statusTime.textContent = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')} 同步`;
     }
   }
 

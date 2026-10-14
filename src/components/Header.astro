@@ -59,8 +59,9 @@ const navItems = [
             <li>
               <a
                 href={item.href}
+                data-astro-prefetch="hover"
                 class:list={[
-                  'rounded-md px-2 py-1 transition-colors text-xs sm:text-sm',
+                  'rounded-md px-2 py-1 transition-all text-xs sm:text-sm active:scale-95 inline-flex items-center gap-1',
                   isActive
                     ? 'bg-[var(--bg-secondary)] font-semibold text-[var(--accent)]'
                     : 'text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] hover:text-[var(--text-primary)]'

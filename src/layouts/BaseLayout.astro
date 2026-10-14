@@ -3,6 +3,7 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import ZenBackground from '../components/ZenBackground.astro';
 import BackToTop from '../components/BackToTop.astro';
+import { ClientRouter } from 'astro:transitions';
 import '../styles/global.css';
 
 interface Props {
@@ -28,6 +29,7 @@ const {
     <link rel="canonical" href={`https://xujiuran.top${currentPath}`} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="alternate" type="application/rss+xml" title="TomatoX 随笔 RSS" href="/rss.xml" />
+    <ClientRouter />
 
     <!-- Anti-flicker dark mode script -->
     <script is:inline>
@@ -60,5 +62,37 @@ const {
 
     <!-- Floating Back to Top Button -->
     <BackToTop />
+
+    <!-- Global Route Navigation Progress Bar (Instant feedback on click) -->
+    <div id="route-loading-bar" class="fixed top-0 left-0 right-0 h-[2.5px] z-[9999] opacity-0 pointer-events-none transition-opacity duration-300">
+      <div id="route-loading-progress" class="h-full w-0 bg-gradient-to-r from-red-500 via-orange-500 to-amber-500 shadow-[0_0_8px_rgba(239,68,68,0.8)] transition-all duration-300 ease-out"></div>
+    </div>
+
+    <script>
+      function setupRouteProgressBar() {
+        const bar = document.getElementById('route-loading-bar');
+        const progress = document.getElementById('route-loading-progress');
+        if (!bar || !progress) return;
+
+        document.addEventListener('astro:before-preparation', () => {
+          bar.style.opacity = '1';
+          progress.style.transition = 'width 350ms cubic-bezier(0.4, 0, 0.2, 1)';
+          progress.style.width = '75%';
+        });
+
+        document.addEventListener('astro:page-load', () => {
+          progress.style.transition = 'width 120ms ease-out';
+          progress.style.width = '100%';
+          setTimeout(() => {
+            bar.style.opacity = '0';
+            setTimeout(() => {
+              progress.style.transition = 'none';
+              progress.style.width = '0%';
+            }, 300);
+          }, 180);
+        });
+      }
+      setupRouteProgressBar();
+    </script>
   </body>
 </html>

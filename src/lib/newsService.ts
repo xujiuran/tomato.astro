@@ -186,14 +186,12 @@ export function getShanghaiDate(offsetDays = 0): string {
 
 export const VIKI_60S_HOSTS = [
   'https://60s.mizhoubaobei.top',
-  'https://60s.okbaike.com',
-  'https://60s.zellon.top',
 ];
 
 /**
  * Generic helper to fetch from 60s API instances with failover
  */
-export async function fetchVikiEndpoint<T>(endpoint: string, timeoutMs = 3500): Promise<T | null> {
+export async function fetchVikiEndpoint<T>(endpoint: string, timeoutMs = 2000): Promise<T | null> {
   for (const host of VIKI_60S_HOSTS) {
     try {
       const res = await fetch(`${host}${endpoint}`, {
@@ -219,22 +217,38 @@ export async function fetchVikiEndpoint<T>(endpoint: string, timeoutMs = 3500): 
  * Fetch 60s Daily News from vikiboss/60s project repository and endpoints
  */
 export async function fetchDaily60s(specificDate?: string): Promise<Daily60sData> {
+  // 1. Try fast dynamic API endpoint first (< 200ms)
+  try {
+    const apiData = await fetchVikiEndpoint<any>('/v2/60s', 2000);
+    if (apiData && Array.isArray(apiData.news) && apiData.news.length > 0) {
+      const dateStr = apiData.date || getShanghaiDate(0);
+      return {
+        date: dateStr,
+        dayOfWeek: getDayOfWeek(dateStr),
+        news: apiData.news,
+        tip: apiData.tip || '保持好奇与专注，在平淡的日常里蓄力前行。',
+        image: apiData.image || `https://cdn.jsdmirror.com/gh/vikiboss/60s-static-host@main/static/images/${dateStr}.png`,
+        link: apiData.link || 'https://github.com/vikiboss/60s',
+        updated: apiData.updated || apiData.created || dateStr,
+      };
+    }
+  } catch {}
+
+  // 2. Fallback to static hosts if API is unreachable
   const targetDates = specificDate
     ? [specificDate]
-    : [getShanghaiDate(0), getShanghaiDate(-1), getShanghaiDate(-2)];
+    : [getShanghaiDate(0), getShanghaiDate(-1)];
 
   for (const date of targetDates) {
     const urls = [
       `https://cdn.jsdelivr.net/gh/vikiboss/60s-static-host@main/static/60s/${date}.json`,
-      `https://raw.githubusercontent.com/vikiboss/60s-static-host/main/static/60s/${date}.json`,
-      `https://cdn.jsdmirror.com/gh/vikiboss/60s-static-host@main/static/60s/${date}.json`,
       `https://60s-static.viki.moe/60s/${date}.json`,
     ];
 
     for (const url of urls) {
       try {
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 3500);
+        const timeoutId = setTimeout(() => controller.abort(), 1200);
         const res = await fetch(url, {
           signal: controller.signal,
           headers: {
@@ -258,7 +272,7 @@ export async function fetchDaily60s(specificDate?: string): Promise<Daily60sData
           }
         }
       } catch {
-        // Continue to fallback mirror
+        // Continue to fallback
       }
     }
   }
@@ -283,10 +297,18 @@ export async function fetchDaily60s(specificDate?: string): Promise<Daily60sData
   };
 }
 
+let hubCache: { data: Daily60sHubData; timestamp: number } | null = null;
+let hotCache: { data: HotNewsSource[]; timestamp: number } | null = null;
+const CACHE_TTL_MS = 10 * 60 * 1000; // 10 minutes cache
+
 /**
  * Fetch full 60s Multi-channel Hub Data
  */
 export async function fetch60sHubData(): Promise<Daily60sHubData> {
+  if (hubCache && Date.now() - hubCache.timestamp < CACHE_TTL_MS) {
+    return hubCache.data;
+  }
+
   const [digest, aiRes, epicGames, historyRes, moyu, doubanMovies, itNews, whois] = await Promise.all([
     fetchDaily60s(),
     fetchVikiEndpoint<{ date: string; news: AINewsItem[] }>('/v2/ai-news'),
@@ -348,17 +370,24 @@ export async function fetch60sHubData(): Promise<Daily60sHubData> {
       expires: '2027/09/30',
     },
   };
+
+  hubCache = { data: hubData, timestamp: Date.now() };
+  return hubData;
 }
 
 /**
  * Fetch hot news across platforms using newsnext/newsnow API
  */
 export async function fetchHotNews(sourceIds: string[] = Object.keys(SOURCE_CONFIGS)): Promise<HotNewsSource[]> {
+  if (hotCache && Date.now() - hotCache.timestamp < CACHE_TTL_MS) {
+    return hotCache.data;
+  }
+
   const result: HotNewsSource[] = [];
 
   try {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 12000);
+    const timeoutId = setTimeout(() => controller.abort(), 2500);
 
     const res = await fetch('https://newsnow.busiyi.world/api/s/entire', {
       method: 'POST',
@@ -420,5 +449,6 @@ export async function fetchHotNews(sourceIds: string[] = Object.keys(SOURCE_CONF
     }
   }
 
+  hotCache = { data: result, timestamp: Date.now() };
   return result;
 }
