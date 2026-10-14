@@ -46,7 +46,10 @@ const hotNewsSources = await fetchHotNews();
             class="main-tab active flex items-center gap-1.5 rounded-md px-3.5 py-1.5 transition-all bg-[var(--card-bg)] text-[var(--text-primary)] font-semibold shadow-xs"
             data-target="section-60s"
           >
-            <span>☀️ 60秒早报</span>
+            <span class="flex items-center gap-1.5">
+              <img src="/images/icons/news.png" alt="60秒早报" class="h-4 w-4 object-contain inline-block shrink-0 rounded-xs" />
+              <span>60秒早报</span>
+            </span>
             <span class="mono text-[10px] bg-[var(--bg-secondary)] text-[var(--text-tertiary)] px-1.5 py-0.2 rounded">
               {daily60sData.news.length}
             </span>
@@ -57,7 +60,10 @@ const hotNewsSources = await fetchHotNews();
             class="main-tab flex items-center gap-1.5 rounded-md px-3.5 py-1.5 transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
             data-target="section-hot"
           >
-            <span>⚡ 全网风向标</span>
+            <span class="flex items-center gap-1.5">
+              <img src="/images/icons/trending.png" alt="全网风向标" class="h-4 w-4 object-contain inline-block shrink-0 rounded-xs" />
+              <span>全网风向标</span>
+            </span>
             <span class="mono text-[10px] bg-[var(--bg-secondary)] text-[var(--text-tertiary)] px-1.5 py-0.2 rounded">
               {hotNewsSources.length}平台
             </span>

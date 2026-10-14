@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="sq-bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1e1e24"/>
+      <stop offset="100%" stop-color="#0d0d11"/>
+    </linearGradient>
+    <linearGradient id="sq-stroke" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#3f3f46" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#18181b" stop-opacity="0.4"/>
+    </linearGradient>
+    <linearGradient id="titanium" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#cbd5e1"/>
+      <stop offset="50%" stop-color="#94a3b8"/>
+      <stop offset="100%" stop-color="#475569"/>
+    </linearGradient>
+    <linearGradient id="cyan-glow" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#0284c7"/>
+    </linearGradient>
+    <linearGradient id="emerald-glow" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#34d399"/>
+      <stop offset="100%" stop-color="#059669"/>
+    </linearGradient>
+    <radialGradient id="tool-ambient" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#0284c7" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#0284c7" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="shadow-main" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="16" stdDeviation="16" flood-color="#000000" flood-opacity="0.6"/>
+    </filter>
+  </defs>
+
+  <circle cx="256" cy="256" r="220" fill="url(#tool-ambient)"/>
+  <rect x="36" y="36" width="440" height="440" rx="100" fill="url(#sq-bg)" stroke="url(#sq-stroke)" stroke-width="4" filter="url(#shadow-main)"/>
+  <rect x="40" y="40" width="432" height="432" rx="96" fill="none" stroke="#ffffff" stroke-opacity="0.08" stroke-width="2"/>
+
+  <!-- Orbital tech particle ring -->
+  <circle cx="256" cy="256" r="130" fill="none" stroke="#0284c7" stroke-width="2" stroke-dasharray="6 8" opacity="0.4"/>
+
+  <!-- Crossed Tools -->
+  <g filter="url(#shadow-main)">
+    <!-- Wrench (Bottom-Left to Top-Right) -->
+    <g transform="translate(256, 256) rotate(45)">
+      <!-- Main body -->
+      <rect x="-14" y="-120" width="28" height="240" rx="14" fill="url(#titanium)"/>
+      <rect x="-6" y="-70" width="12" height="140" rx="6" fill="#334155"/>
+      <!-- Neon energy strip in wrench handle -->
+      <rect x="-2" y="-50" width="4" height="100" rx="2" fill="url(#cyan-glow)"/>
+      
+      <!-- Top Open Wrench Jaw -->
+      <path d="M-36 -120 C-38 -95, 38 -95, 36 -120 L30 -145 C15 -135, -15 -135, -30 -145 Z" fill="url(#titanium)"/>
+      <circle cx="0" cy="-115" r="16" fill="#18181b"/>
+      <rect x="-9" y="-132" width="18" height="20" fill="#18181b"/>
+
+      <!-- Bottom Closed Ring -->
+      <circle cx="0" cy="120" r="28" fill="url(#titanium)"/>
+      <circle cx="0" cy="120" r="15" fill="#18181b"/>
+      <!-- Inner teeth -->
+      <polygon points="0,108 5,114 -5,114" fill="#64748b"/>
+      <polygon points="0,132 5,126 -5,126" fill="#64748b"/>
+    </g>
+
+    <!-- Screwdriver (Top-Left to Bottom-Right) -->
+    <g transform="translate(256, 256) rotate(-45)">
+      <!-- Metal shaft -->
+      <rect x="-8" y="-140" width="16" height="160" rx="4" fill="#e2e8f0"/>
+      <!-- Tip -->
+      <polygon points="-8,-140 8,-140 4,-158 -4,-158" fill="#94a3b8"/>
+      <!-- Ergonomic Grip Handle -->
+      <rect x="-18" y="10" width="36" height="120" rx="18" fill="url(#emerald-glow)"/>
+      <rect x="-12" y="25" width="24" height="90" rx="12" fill="#065f46"/>
+      <rect x="-4" y="35" width="8" height="70" rx="4" fill="#34d399"/>
+      <!-- Top Collar -->
+      <rect x="-12" y="0" width="24" height="12" rx="4" fill="#1e293b"/>
+    </g>
+
+    <!-- Center Cyber Energy Reactor Hub -->
+    <circle cx="256" cy="256" r="34" fill="#09090b" stroke="#0284c7" stroke-width="4"/>
+    <circle cx="256" cy="256" r="24" fill="url(#cyan-glow)"/>
+    <circle cx="256" cy="256" r="12" fill="#ffffff"/>
+  </g>
+
+  <!-- Glowing satellite telemetry dots -->
+  <circle cx="160" cy="170" r="5" fill="#38bdf8"/>
+  <circle cx="350" cy="340" r="4.5" fill="#34d399"/>
+  <circle cx="360" cy="160" r="4" fill="#38bdf8"/>
+</svg>

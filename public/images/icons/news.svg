@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="sq-bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1e1e24"/>
+      <stop offset="100%" stop-color="#0d0d11"/>
+    </linearGradient>
+    <linearGradient id="sq-stroke" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#3f3f46" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#18181b" stop-opacity="0.4"/>
+    </linearGradient>
+    <linearGradient id="sun-core" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fef08a"/>
+      <stop offset="45%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#ea580c"/>
+    </linearGradient>
+    <linearGradient id="paper-front" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#e2e8f0"/>
+    </linearGradient>
+    <radialGradient id="news-ambient" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#f59e0b" stop-opacity="0.38"/>
+      <stop offset="100%" stop-color="#f59e0b" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="shadow-main" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="16" stdDeviation="16" flood-color="#000000" flood-opacity="0.6"/>
+    </filter>
+  </defs>
+
+  <circle cx="256" cy="256" r="220" fill="url(#news-ambient)"/>
+  <rect x="36" y="36" width="440" height="440" rx="100" fill="url(#sq-bg)" stroke="url(#sq-stroke)" stroke-width="4" filter="url(#shadow-main)"/>
+  <rect x="40" y="40" width="432" height="432" rx="96" fill="none" stroke="#ffffff" stroke-opacity="0.08" stroke-width="2"/>
+
+  <!-- Radiant Sunrise Rays -->
+  <g stroke="url(#sun-core)" stroke-width="5" stroke-linecap="round" opacity="0.8">
+    <line x1="256" y1="85" x2="256" y2="60"/>
+    <line x1="160" y1="110" x2="140" y2="90"/>
+    <line x1="352" y1="110" x2="372" y2="90"/>
+    <line x1="120" y1="180" x2="95" y2="180"/>
+    <line x1="392" y1="180" x2="417" y2="180"/>
+  </g>
+
+  <!-- 3D Rising Sun Orb -->
+  <g filter="url(#shadow-main)">
+    <circle cx="256" cy="190" r="80" fill="url(#sun-core)"/>
+    <ellipse cx="256" cy="150" rx="55" ry="30" fill="#ffffff" opacity="0.25"/>
+  </g>
+
+  <!-- 3D Morning Briefing Newspaper -->
+  <g filter="url(#shadow-main)" transform="translate(256, 315)">
+    <!-- Back drop sheet -->
+    <rect x="-115" y="-65" width="230" height="125" rx="12" fill="#94a3b8" transform="rotate(-3)"/>
+    <!-- Front main newspaper -->
+    <rect x="-110" y="-60" width="220" height="120" rx="10" fill="url(#paper-front)"/>
+    
+    <!-- Masthead & Red Accent Pill -->
+    <rect x="-92" y="-45" width="105" height="15" rx="3" fill="#0f172a"/>
+    <rect x="25" y="-45" width="68" height="12" rx="2" fill="#ef4444"/>
+
+    <!-- Headline text bars -->
+    <line x1="-92" y1="-20" x2="92" y2="-20" stroke="#334155" stroke-width="5" stroke-linecap="round"/>
+    <line x1="-92" y1="-5" x2="92" y2="-5" stroke="#64748b" stroke-width="3.5" stroke-linecap="round"/>
+    <line x1="-92" y1="7" x2="50" y2="7" stroke="#64748b" stroke-width="3.5" stroke-linecap="round"/>
+
+    <!-- News Thumbnail photo box & summary lines -->
+    <rect x="-92" y="20" width="52" height="28" rx="4" fill="#cbd5e1" stroke="#94a3b8" stroke-width="1.5"/>
+    <line x1="-30" y1="26" x2="92" y2="26" stroke="#94a3b8" stroke-width="3" stroke-linecap="round"/>
+    <line x1="-30" y1="38" x2="70" y2="38" stroke="#94a3b8" stroke-width="3" stroke-linecap="round"/>
+  </g>
+</svg>

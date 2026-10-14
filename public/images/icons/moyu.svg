@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="sq-bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1e1e24"/>
+      <stop offset="100%" stop-color="#0d0d11"/>
+    </linearGradient>
+    <linearGradient id="sq-stroke" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#3f3f46" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#18181b" stop-opacity="0.4"/>
+    </linearGradient>
+    <linearGradient id="koi-body" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#34d399"/>
+      <stop offset="40%" stop-color="#10b981"/>
+      <stop offset="100%" stop-color="#0284c7"/>
+    </linearGradient>
+    <linearGradient id="koi-fin" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#67e8f9" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#06b6d4" stop-opacity="0.6"/>
+    </linearGradient>
+    <radialGradient id="moyu-ambient" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#10b981" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#10b981" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="shadow-main" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="16" stdDeviation="16" flood-color="#000000" flood-opacity="0.6"/>
+    </filter>
+  </defs>
+
+  <circle cx="256" cy="256" r="220" fill="url(#moyu-ambient)"/>
+  <rect x="36" y="36" width="440" height="440" rx="100" fill="url(#sq-bg)" stroke="url(#sq-stroke)" stroke-width="4" filter="url(#shadow-main)"/>
+  <rect x="40" y="40" width="432" height="432" rx="96" fill="none" stroke="#ffffff" stroke-opacity="0.08" stroke-width="2"/>
+
+  <!-- Water ripple rings -->
+  <ellipse cx="256" cy="300" rx="145" ry="48" fill="none" stroke="#059669" stroke-width="3" opacity="0.3"/>
+  <ellipse cx="256" cy="300" rx="95" ry="32" fill="none" stroke="#34d399" stroke-width="2.5" opacity="0.5"/>
+  <ellipse cx="256" cy="300" rx="45" ry="16" fill="none" stroke="#6ee7b7" stroke-width="2" opacity="0.7"/>
+
+  <!-- 3D Leaping Koi Fish -->
+  <g filter="url(#shadow-main)">
+    <!-- Dorsal Fin (Top wave) -->
+    <path d="M220 180 C240 120, 290 125, 310 160 C280 165, 250 172, 220 180 Z" fill="url(#koi-fin)"/>
+
+    <!-- Pectoral Fin (Bottom front) -->
+    <path d="M190 240 C150 265, 130 300, 160 315 C185 300, 195 270, 190 240 Z" fill="url(#koi-fin)"/>
+
+    <!-- Fish Main Muscular Body (Elegant leap arc) -->
+    <path d="M140 245 C145 180, 220 150, 285 180 C345 205, 375 275, 360 320 C340 275, 305 245, 255 240 C205 235, 160 268, 140 245 Z" 
+          fill="url(#koi-body)"/>
+
+    <!-- Iridescent Back Highlight -->
+    <path d="M165 230 C200 180, 265 170, 300 190" fill="none" stroke="#a7f3d0" stroke-width="6" stroke-linecap="round" opacity="0.8"/>
+
+    <!-- Golden Koi Accent Patch -->
+    <path d="M210 195 C230 180, 260 185, 275 205 C255 215, 230 215, 210 195 Z" fill="#fbbf24" opacity="0.9"/>
+
+    <!-- Flowing Split Tail Fin -->
+    <path d="M360 320 C390 340, 420 365, 420 330 C405 310, 385 305, 370 305 C385 285, 395 260, 370 265 C360 280, 355 305, 360 320 Z" 
+          fill="url(#koi-fin)"/>
+
+    <!-- Fish Eye (Luminous jewel) -->
+    <circle cx="168" cy="230" r="10" fill="#0f172a"/>
+    <circle cx="168" cy="230" r="7" fill="#fbbf24"/>
+    <circle cx="166" cy="228" r="2.5" fill="#ffffff"/>
+
+    <!-- Glowing airborne splash droplets -->
+    <circle cx="185" cy="140" r="6" fill="#67e8f9" opacity="0.9"/>
+    <circle cx="330" cy="150" r="7" fill="#67e8f9" opacity="0.85"/>
+    <circle cx="365" cy="200" r="5" fill="#a7f3d0" opacity="0.9"/>
+    <circle cx="140" cy="300" r="4.5" fill="#38bdf8" opacity="0.8"/>
+  </g>
+</svg>
