@@ -8,22 +8,7 @@ import { fetch60sHubData, fetchHotNews } from '../../lib/newsService';
 // Fetch initial data at build time for instant loading and SEO
 const hubData = await fetch60sHubData();
 const daily60sData = hubData.digest;
-const hotNewsSources = await fetchHotNews([
-  'github',
-  'v2ex',
-  'hackernews',
-  'ithome',
-  'sspai',
-  'juejin',
-  'zhihu',
-  'weibo',
-  'bilibili',
-  'toutiao',
-  'baidu',
-  'cls-hot',
-  'wallstreetcn-hot',
-  'xueqiu-hotstock',
-]);
+const hotNewsSources = await fetchHotNews();
 ---
 
 <BaseLayout

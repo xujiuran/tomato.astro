@@ -63,36 +63,67 @@ const financeSources = initialSources.filter((s) => s.column === 'finance');
       </div>
     </div>
 
-    <!-- Category Switcher Tabs -->
-    <div class="mt-2.5 flex flex-wrap items-center gap-1.5 pb-0.5 text-xs font-medium">
-      <button
-        type="button"
-        class="category-tab active rounded-md px-3 py-1.5 transition-colors bg-[var(--bg-secondary)] text-[var(--accent)] font-semibold"
-        data-category="all"
-      >
-        全部聚焦
-      </button>
-      <button
-        type="button"
-        class="category-tab rounded-md px-3 py-1.5 transition-colors text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]"
-        data-category="tech"
-      >
-        💻 极客科技 ({techSources.length})
-      </button>
-      <button
-        type="button"
-        class="category-tab rounded-md px-3 py-1.5 transition-colors text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]"
-        data-category="general"
-      >
-        🌐 全网社会 ({generalSources.length})
-      </button>
-      <button
-        type="button"
-        class="category-tab rounded-md px-3 py-1.5 transition-colors text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]"
-        data-category="finance"
-      >
-        📈 商业财经 ({financeSources.length})
-      </button>
+    <!-- Category Switcher Tabs & Density Limit Switcher -->
+    <div class="mt-2.5 flex flex-wrap items-center justify-between gap-2 pb-0.5 text-xs font-medium">
+      <div class="flex flex-wrap items-center gap-1.5">
+        <button
+          type="button"
+          class="category-tab active rounded-md px-3 py-1.5 transition-colors bg-[var(--bg-secondary)] text-[var(--accent)] font-semibold"
+          data-category="all"
+        >
+          全部聚焦
+        </button>
+        <button
+          type="button"
+          class="category-tab rounded-md px-3 py-1.5 transition-colors text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]"
+          data-category="tech"
+        >
+          💻 极客科技 ({techSources.length})
+        </button>
+        <button
+          type="button"
+          class="category-tab rounded-md px-3 py-1.5 transition-colors text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]"
+          data-category="general"
+        >
+          🌐 全网社会 ({generalSources.length})
+        </button>
+        <button
+          type="button"
+          class="category-tab rounded-md px-3 py-1.5 transition-colors text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]"
+          data-category="finance"
+        >
+          📈 商业财经 ({financeSources.length})
+        </button>
+      </div>
+
+      <!-- Max Display Density Switcher -->
+      <div class="inline-flex items-center gap-1 rounded-lg border border-[var(--border-primary)] bg-[var(--bg-secondary)] p-0.5 text-[11px] shrink-0">
+        <span class="text-[var(--text-tertiary)] px-1.5 select-none text-[10px] font-normal">单榜展示:</span>
+        <button
+          type="button"
+          class="density-btn rounded px-2 py-0.5 transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+          data-density="6"
+          title="每平台最多展示前 6 条（不足则按实际条数展示）"
+        >
+          TOP 6
+        </button>
+        <button
+          type="button"
+          class="density-btn active rounded px-2 py-0.5 transition-all bg-[var(--card-bg)] text-[var(--text-primary)] font-semibold shadow-2xs"
+          data-density="10"
+          title="每平台最多展示前 10 条（默认推荐，不足则按实际条数展示）"
+        >
+          TOP 10
+        </button>
+        <button
+          type="button"
+          class="density-btn rounded px-2 py-0.5 transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+          data-density="all"
+          title="展示平台抓取到的全部条目"
+        >
+          全部
+        </button>
+      </div>
     </div>
 
     <!-- Platform Filter Pills (Flex Wrap, No Side Scrolling) -->
@@ -134,7 +165,7 @@ const financeSources = initialSources.filter((s) => s.column === 'finance');
             <h3 class="text-sm font-bold text-[var(--text-primary)]">
               {source.name}
             </h3>
-            <span class="mono text-[11px] text-[var(--text-tertiary)] bg-[var(--bg-secondary)] px-2 py-0.5 rounded">
+            <span class="source-item-count mono text-[11px] text-[var(--text-tertiary)] bg-[var(--bg-secondary)] px-2 py-0.5 rounded">
               TOP {source.items.length}
             </span>
           </div>
@@ -160,7 +191,10 @@ const financeSources = initialSources.filter((s) => s.column === 'finance');
             const rank = index + 1;
             const isTop3 = rank <= 3;
             return (
-              <li class="hot-item group flex items-start gap-3 py-2.5 hover:bg-[var(--bg-secondary)]/40 rounded-lg px-2 -mx-2 transition-colors">
+              <li
+                class="hot-item group flex items-start gap-3 py-2.5 hover:bg-[var(--bg-secondary)]/40 rounded-lg px-2 -mx-2 transition-colors"
+                data-rank={rank}
+              >
                 <!-- Rank Badge -->
                 <span
                   class:list={[
@@ -215,6 +249,7 @@ const financeSources = initialSources.filter((s) => s.column === 'finance');
 
 <script>
   function setupHotNewsInteractions() {
+    const densityBtns = document.querySelectorAll('.density-btn');
     const categoryTabs = document.querySelectorAll('.category-tab');
     const platformPills = document.querySelectorAll('.platform-pill');
     const sourceBlocks = document.querySelectorAll('.source-block');
@@ -226,6 +261,56 @@ const financeSources = initialSources.filter((s) => s.column === 'finance');
     let currentCategory = 'all';
     let currentPlatform = 'all';
     let currentSearch = '';
+    let currentDensity = '10';
+    try {
+      currentDensity = localStorage.getItem('hotNewsDisplayDensity') || '10';
+    } catch {}
+
+    function applyDensity(density: string) {
+      currentDensity = density;
+      try {
+        localStorage.setItem('hotNewsDisplayDensity', density);
+      } catch {}
+
+      // Update density buttons state
+      densityBtns.forEach((btn) => {
+        const b = btn as HTMLElement;
+        if (b.dataset.density === density) {
+          b.classList.add('active', 'bg-[var(--card-bg)]', 'text-[var(--text-primary)]', 'font-semibold', 'shadow-2xs');
+          b.classList.remove('text-[var(--text-secondary)]');
+        } else {
+          b.classList.remove('active', 'bg-[var(--card-bg)]', 'text-[var(--text-primary)]', 'font-semibold', 'shadow-2xs');
+          b.classList.add('text-[var(--text-secondary)]');
+        }
+      });
+
+      // Update items in each block according to limit, or show however many exist
+      sourceBlocks.forEach((block) => {
+        const el = block as HTMLElement;
+        const items = el.querySelectorAll('.hot-item');
+        const badge = el.querySelector('.source-item-count');
+        const limit = density === 'all' ? Infinity : parseInt(density, 10);
+
+        let visibleCount = 0;
+        items.forEach((item, idx) => {
+          const itemEl = item as HTMLElement;
+          const rank = idx + 1;
+          if (rank <= limit) {
+            itemEl.dataset.densityVisible = 'true';
+            visibleCount++;
+          } else {
+            itemEl.dataset.densityVisible = 'false';
+          }
+        });
+
+        // "没有就只展示那么多": Badge accurately reflects actual visible items
+        if (badge) {
+          badge.textContent = `TOP ${visibleCount}`;
+        }
+      });
+
+      filterView();
+    }
 
     function filterView() {
       let visibleCount = 0;
@@ -240,7 +325,7 @@ const financeSources = initialSources.filter((s) => s.column === 'finance');
         // Match platform
         const matchPlatform = currentPlatform === 'all' || id === currentPlatform;
 
-        // Match search query
+        // Match search query & density limit
         let matchQuery = true;
         const items = el.querySelectorAll('.hot-item');
         let matchedItemsInBlock = 0;
@@ -248,7 +333,10 @@ const financeSources = initialSources.filter((s) => s.column === 'finance');
         items.forEach((item) => {
           const itemEl = item as HTMLElement;
           const text = (itemEl.querySelector('.hot-title')?.textContent || '').toLowerCase();
-          if (!currentSearch || text.includes(currentSearch)) {
+          const matchesQuery = !currentSearch || text.includes(currentSearch);
+          const isDensityVisible = itemEl.dataset.densityVisible !== 'false';
+
+          if (matchesQuery && (currentSearch ? true : isDensityVisible)) {
             itemEl.style.display = 'flex';
             matchedItemsInBlock++;
           } else {
@@ -272,6 +360,14 @@ const financeSources = initialSources.filter((s) => s.column === 'finance');
         emptyState.style.display = visibleCount === 0 ? 'block' : 'none';
       }
     }
+
+    // Density Buttons click
+    densityBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const density = (btn as HTMLElement).dataset.density || '10';
+        applyDensity(density);
+      });
+    });
 
     // Category Tabs click
     categoryTabs.forEach((tab) => {
@@ -353,14 +449,14 @@ const financeSources = initialSources.filter((s) => s.column === 'finance');
               if (block && Array.isArray(s.items)) {
                 const list = block.querySelector('ul');
                 if (list) {
-                  list.innerHTML = s.items.slice(0, 20).map((item: any, idx: number) => {
+                  list.innerHTML = s.items.slice(0, 25).map((item: any, idx: number) => {
                     const rank = idx + 1;
                     const rankClass = rank === 1 ? 'bg-red-500 text-white' :
                       rank === 2 ? 'bg-orange-500 text-white' :
                       rank === 3 ? 'bg-amber-500 text-white' :
                       'text-[var(--text-tertiary)] bg-[var(--bg-secondary)] font-medium';
                     return `
-                      <li class="hot-item group flex items-start gap-3 py-2.5 hover:bg-[var(--bg-secondary)]/40 rounded-lg px-2 -mx-2 transition-colors">
+                      <li class="hot-item group flex items-start gap-3 py-2.5 hover:bg-[var(--bg-secondary)]/40 rounded-lg px-2 -mx-2 transition-colors" data-rank="${rank}">
                         <span class="mono text-xs font-bold shrink-0 mt-0.5 flex h-5 w-5 items-center justify-center rounded ${rankClass}">
                           ${rank}
                         </span>
@@ -377,7 +473,7 @@ const financeSources = initialSources.filter((s) => s.column === 'finance');
                 }
               }
             });
-            filterView();
+            applyDensity(currentDensity);
           }
         }
       } catch (err) {
@@ -388,6 +484,9 @@ const financeSources = initialSources.filter((s) => s.column === 'finance');
         }, 500);
       }
     });
+
+    // Initialize with saved density
+    applyDensity(currentDensity);
   }
 
   setupHotNewsInteractions();
