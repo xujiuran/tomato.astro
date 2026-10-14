@@ -110,7 +110,7 @@ export interface WhoisData {
 export interface Daily60sHubData {
   digest: Daily60sData;
   aiNews: AINewsItem[];
-  bing: BingWallpaperData | null;
+  bing?: BingWallpaperData | null;
   epicGames: EpicGameItem[];
   todayHistory: TodayHistoryItem[];
   moyu: MoyuData | null;
@@ -287,10 +287,9 @@ export async function fetchDaily60s(specificDate?: string): Promise<Daily60sData
  * Fetch full 60s Multi-channel Hub Data
  */
 export async function fetch60sHubData(): Promise<Daily60sHubData> {
-  const [digest, aiRes, bing, epicGames, historyRes, moyu, doubanMovies, itNews, whois] = await Promise.all([
+  const [digest, aiRes, epicGames, historyRes, moyu, doubanMovies, itNews, whois] = await Promise.all([
     fetchDaily60s(),
     fetchVikiEndpoint<{ date: string; news: AINewsItem[] }>('/v2/ai-news'),
-    fetchVikiEndpoint<BingWallpaperData>('/v2/bing'),
     fetchVikiEndpoint<EpicGameItem[]>('/v2/epic'),
     fetchVikiEndpoint<{ items: TodayHistoryItem[] }>('/v2/today-in-history'),
     fetchVikiEndpoint<MoyuData>('/v2/moyu'),
@@ -309,12 +308,6 @@ export async function fetch60sHubData(): Promise<Daily60sHubData> {
         source: '开源社区',
       },
     ],
-    bing: bing || {
-      title: '穿越时间的螺旋',
-      cover: 'https://bing.com/th?id=OHR.AmmoniteFossils_ZH-CN5825251327_1920x1080.jpg',
-      cover_4k: 'https://bing.com/th?id=OHR.AmmoniteFossils_ZH-CN5825251327_UHD.jpg',
-      copyright: '侏罗纪时期的菊石化石',
-    },
     epicGames: epicGames || [
       {
         id: 'terrascape',

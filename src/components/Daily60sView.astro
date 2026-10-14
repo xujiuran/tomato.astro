@@ -6,7 +6,7 @@ interface Props {
 }
 
 const { initialHubData } = Astro.props;
-const { digest, aiNews, bing, epicGames, todayHistory, moyu, doubanMovies, whois } = initialHubData;
+const { digest, aiNews, epicGames, todayHistory, moyu, doubanMovies, whois } = initialHubData;
 
 // Safe progress & countdown calculation to avoid [object Object]
 const getPercentage = (val: any, fallback: number): number => {
@@ -116,13 +116,6 @@ const daysToLaborDay = moyu?.countdown?.laborDay ?? 198;
         data-target="panel-moyu"
       >
         🐟 摸鱼周历
-      </button>
-      <button
-        type="button"
-        class="viki-pill rounded-lg px-3 py-1.5 transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]"
-        data-target="panel-bing"
-      >
-        🖼️ 必应 4K 壁纸
       </button>
       <button
         type="button"
@@ -462,57 +455,6 @@ const daysToLaborDay = moyu?.countdown?.laborDay ?? 198;
     </div>
   </div>
 
-  <!-- Channel 5: Bing Daily Wallpaper -->
-  <div id="panel-bing" class="viki-channel-panel hidden space-y-4">
-    {bing && (
-      <div class="rounded-xl border border-[var(--border-primary)] bg-[var(--card-bg)] overflow-hidden shadow-xs">
-        <div class="relative aspect-video w-full overflow-hidden bg-black/10">
-          <img
-            src={bing.cover}
-            alt={bing.title}
-            class="h-full w-full object-cover"
-          />
-          <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-4 sm:p-6 text-white">
-            <span class="mono text-xs text-orange-400 font-semibold mb-1">
-              BING DAILY WALLPAPER · 4K UHD
-            </span>
-            <h3 class="text-lg sm:text-2xl font-bold tracking-tight">
-              {bing.title}
-            </h3>
-            {bing.copyright && (
-              <p class="text-xs text-zinc-300 mt-1">
-                {bing.copyright}
-              </p>
-            )}
-          </div>
-        </div>
-
-        <div class="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <p class="text-xs text-[var(--text-secondary)] leading-relaxed">
-            {bing.headline || bing.description || '自然与人文之美，每日清晨呈现。'}
-          </p>
-          <div class="flex items-center gap-2 shrink-0">
-            <a
-              href={bing.cover}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="rounded-lg border border-[var(--border-primary)] bg-[var(--bg-secondary)] px-3 py-1.5 text-xs font-medium text-[var(--text-primary)] hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors"
-            >
-              1080P 查看
-            </a>
-            <a
-              href={bing.cover_4k || bing.cover}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="rounded-lg bg-[var(--accent)] text-white px-3 py-1.5 text-xs font-semibold hover:opacity-90 transition-opacity"
-            >
-              下载 4K 超清 ↗
-            </a>
-          </div>
-        </div>
-      </div>
-    )}
-  </div>
 
   <!-- Channel 6: Today In History -->
   <div id="panel-history" class="viki-channel-panel hidden space-y-4">
