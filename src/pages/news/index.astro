@@ -2,10 +2,11 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Daily60sView from '../../components/Daily60sView.astro';
 import HotNewsView from '../../components/HotNewsView.astro';
-import { fetchDaily60s, fetchHotNews } from '../../lib/newsService';
+import { fetch60sHubData, fetchHotNews } from '../../lib/newsService';
 
 // Fetch initial data at build time for instant loading and SEO
-const daily60sData = await fetchDaily60s();
+const hubData = await fetch60sHubData();
+const daily60sData = hubData.digest;
 const hotNewsSources = await fetchHotNews([
   'github',
   'v2ex',
@@ -80,7 +81,7 @@ const hotNewsSources = await fetchHotNews([
 
     <!-- Section 1: 60s Daily Digest -->
     <section id="section-60s" class="news-section">
-      <Daily60sView initialData={daily60sData} />
+      <Daily60sView initialHubData={hubData} />
     </section>
 
     <!-- Section 2: Hot News Radar -->

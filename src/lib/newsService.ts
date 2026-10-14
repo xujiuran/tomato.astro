@@ -1,7 +1,7 @@
 /**
  * News Data Service
  * Integrates data APIs from:
- * 1. vikiboss/60s (Daily 60 seconds news & micro-quote)
+ * 1. vikiboss/60s (Daily 60s, AI News, Bing Wallpaper, Epic Free Games, Moyu, History, IT News, Douban, Whois)
  * 2. newsnext/newsnow (Multi-source real-time hot news aggregator)
  */
 
@@ -14,6 +14,109 @@ export interface Daily60sData {
   image: string;
   link: string;
   updated: string;
+}
+
+export interface AINewsItem {
+  title: string;
+  detail: string;
+  link: string;
+  source?: string;
+  date?: string;
+}
+
+export interface BingWallpaperData {
+  title: string;
+  headline?: string;
+  description?: string;
+  main_text?: string;
+  cover: string;
+  cover_4k: string;
+  copyright?: string;
+  update_date?: string;
+}
+
+export interface EpicGameItem {
+  id: string;
+  title: string;
+  cover: string;
+  original_price?: number;
+  original_price_desc?: string;
+  description: string;
+  start_date?: string;
+  end_date?: string;
+}
+
+export interface TodayHistoryItem {
+  year: string;
+  title: string;
+  description: string;
+  link?: string;
+  event_type?: string;
+}
+
+export interface MoyuData {
+  date?: {
+    gregorian?: string;
+    weekday?: string;
+    lunar?: { monthCN?: string; dayCN?: string; yearGanZhi?: string };
+  };
+  today?: { isWeekend?: boolean; isHoliday?: boolean; isWorkday?: boolean };
+  progress?: {
+    week?: string;
+    month?: string;
+    year?: string;
+  };
+  nextWeekend?: number;
+  nextHoliday?: { name?: string; date?: string; countdown?: number };
+  countdown?: {
+    weekend?: number;
+    newYear?: number;
+    springFestival?: number;
+    laborDay?: number;
+    nationalDay?: number;
+  };
+  moyuQuote?: string;
+}
+
+export interface DoubanMovieItem {
+  rank: number;
+  title: string;
+  rating: number;
+  rating_count?: number;
+  card_subtitle?: string;
+  cover: string;
+  cover_proxy?: string;
+  id?: string;
+}
+
+export interface ITNewsItem {
+  title: string;
+  description: string;
+  link: string;
+  created?: string;
+}
+
+export interface WhoisData {
+  domain: string;
+  status?: string[];
+  registrar?: string;
+  nameservers?: string[];
+  created?: string;
+  updated?: string;
+  expires?: string;
+  duration_desc?: string;
+}
+
+export interface Daily60sHubData {
+  digest: Daily60sData;
+  aiNews: AINewsItem[];
+  bing: BingWallpaperData | null;
+  epicGames: EpicGameItem[];
+  todayHistory: TodayHistoryItem[];
+  moyu: MoyuData | null;
+  doubanMovies: DoubanMovieItem[];
+  itNews: ITNewsItem[];
+  whois: WhoisData | null;
 }
 
 export interface HotNewsItem {
@@ -66,9 +169,6 @@ function getDayOfWeek(dateStr: string): string {
   return `星期${WEEK_DAYS[date.getDay()] || '三'}`;
 }
 
-/**
- * Format today's date in YYYY-MM-DD for Shanghai timezone
- */
 export function getShanghaiDate(offsetDays = 0): string {
   const d = new Date(Date.now() + offsetDays * 86400000);
   const formatter = new Intl.DateTimeFormat('zh-CN', {
@@ -82,6 +182,37 @@ export function getShanghaiDate(offsetDays = 0): string {
   const month = parts.find((p) => p.type === 'month')?.value || '';
   const day = parts.find((p) => p.type === 'day')?.value || '';
   return `${year}-${month}-${day}`;
+}
+
+export const VIKI_60S_HOSTS = [
+  'https://60s.mizhoubaobei.top',
+  'https://60s.okbaike.com',
+  'https://60s.zellon.top',
+];
+
+/**
+ * Generic helper to fetch from 60s API instances with failover
+ */
+export async function fetchVikiEndpoint<T>(endpoint: string, timeoutMs = 3500): Promise<T | null> {
+  for (const host of VIKI_60S_HOSTS) {
+    try {
+      const res = await fetch(`${host}${endpoint}`, {
+        signal: AbortSignal.timeout(timeoutMs),
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko)',
+        },
+      });
+      if (res.ok) {
+        const json = await res.json();
+        if (json && json.data) {
+          return json.data as T;
+        }
+      }
+    } catch {
+      // try next mirror
+    }
+  }
+  return null;
 }
 
 /**
@@ -149,6 +280,80 @@ export async function fetchDaily60s(specificDate?: string): Promise<Daily60sData
     image: '',
     link: 'https://github.com/vikiboss/60s',
     updated: `${fallbackDate} 08:30`,
+  };
+}
+
+/**
+ * Fetch full 60s Multi-channel Hub Data
+ */
+export async function fetch60sHubData(): Promise<Daily60sHubData> {
+  const [digest, aiRes, bing, epicGames, historyRes, moyu, doubanMovies, itNews, whois] = await Promise.all([
+    fetchDaily60s(),
+    fetchVikiEndpoint<{ date: string; news: AINewsItem[] }>('/v2/ai-news'),
+    fetchVikiEndpoint<BingWallpaperData>('/v2/bing'),
+    fetchVikiEndpoint<EpicGameItem[]>('/v2/epic'),
+    fetchVikiEndpoint<{ items: TodayHistoryItem[] }>('/v2/today-in-history'),
+    fetchVikiEndpoint<MoyuData>('/v2/moyu'),
+    fetchVikiEndpoint<DoubanMovieItem[]>('/v2/douban/weekly/movie'),
+    fetchVikiEndpoint<ITNewsItem[]>('/v2/it-news'),
+    fetchVikiEndpoint<WhoisData>('/v2/whois?domain=xujiuran.top'),
+  ]);
+
+  return {
+    digest,
+    aiNews: aiRes?.news || [
+      {
+        title: '阿里千问推出在线强化学习框架 QwenGyre',
+        detail: '面向超长程智能体任务的在线强化学习框架，提升复杂代码与推理 benchmark 通过率。',
+        link: 'https://github.com/QwenLM',
+        source: '开源社区',
+      },
+    ],
+    bing: bing || {
+      title: '穿越时间的螺旋',
+      cover: 'https://bing.com/th?id=OHR.AmmoniteFossils_ZH-CN5825251327_1920x1080.jpg',
+      cover_4k: 'https://bing.com/th?id=OHR.AmmoniteFossils_ZH-CN5825251327_UHD.jpg',
+      copyright: '侏罗纪时期的菊石化石',
+    },
+    epicGames: epicGames || [
+      {
+        id: 'terrascape',
+        title: 'TerraScape',
+        cover: 'https://cdn1.epicgames.com/spt-assets/a740a2eed807469f88b9dff17e7cd3a3/terrascape-j7p8d.png',
+        original_price_desc: '¥53.00',
+        description: '温馨惬意的中世纪城市建造解谜游戏，在浮空岛屿上打造壮丽王国。',
+      },
+    ],
+    todayHistory: historyRes?.items || [
+      {
+        year: '1947',
+        title: '查克·叶格突破音障',
+        description: '美国飞行员查克·叶格驾驶贝尔X-1火箭动力飞机首次超越音速。',
+      },
+    ],
+    moyu: moyu || {
+      countdown: { weekend: 2, newYear: 78, springFestival: 112 },
+      progress: { week: '50%', month: '45%', year: '78%' },
+      moyuQuote: '工作是做不完的，钱也是赚不完的，按时下班，多喝热水。',
+    },
+    doubanMovies: doubanMovies || [
+      {
+        rank: 1,
+        title: '罗斯',
+        rating: 8.5,
+        card_subtitle: '剧情 / 德国 奥地利',
+        cover: 'https://img3.doubanio.com/view/photo/m_ratio_poster/public/p2935294362.jpg',
+      },
+    ],
+    itNews: itNews || [],
+    whois: whois || {
+      domain: 'xujiuran.top',
+      registrar: 'Spaceship, Inc.',
+      nameservers: ['riya.ns.cloudflare.com', 'igor.ns.cloudflare.com'],
+      status: ['clientTransferProhibited'],
+      created: '2026/09/30',
+      expires: '2027/09/30',
+    },
   };
 }
 

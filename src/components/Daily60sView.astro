@@ -1,188 +1,715 @@
 ---
-import type { Daily60sData } from '../lib/newsService';
+import type { Daily60sHubData } from '../lib/newsService';
 
 interface Props {
-  initialData: Daily60sData;
+  initialHubData: Daily60sHubData;
 }
 
-const { initialData } = Astro.props;
+const { initialHubData } = Astro.props;
+const { digest, aiNews, bing, epicGames, todayHistory, moyu, doubanMovies, whois } = initialHubData;
 ---
 
 <div id="daily-60s-container" class="space-y-6">
-  <!-- Date & Info Header Card -->
-  <div class="relative overflow-hidden rounded-xl border border-[var(--border-primary)] bg-[var(--card-bg)] p-5 sm:p-6 shadow-xs transition-all">
-    <!-- Top Decorative Gradient Line -->
-    <div class="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-red-500 via-orange-500 to-amber-500"></div>
-
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-      <div class="space-y-1.5">
-        <div class="flex items-center gap-2">
-          <span class="inline-flex items-center gap-1.5 rounded-full bg-red-500/10 px-2.5 py-0.5 text-xs font-medium text-red-600 dark:text-red-400">
-            <span class="h-1.5 w-1.5 rounded-full bg-red-500 animate-pulse"></span>
-            60s 看世界
-          </span>
-          <span id="news-date-text" class="mono text-xs text-[var(--text-secondary)]">
-            {initialData.date} · {initialData.dayOfWeek}
-          </span>
-        </div>
-        <h2 class="text-xl sm:text-2xl font-bold tracking-tight text-[var(--text-primary)]">
-          每天 60 秒读懂世界
-        </h2>
-        <p class="text-xs text-[var(--text-tertiary)] mono">
-          数据来源于 <a href="https://github.com/vikiboss/60s" target="_blank" rel="noopener noreferrer" class="underline hover:text-[var(--text-secondary)]">vikiboss/60s</a> · 晨间自动整理
-        </p>
+  <!-- Top Daily Briefing Bento Strip -->
+  <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+    <!-- Card 1: 60s Date & Tip -->
+    <div class="rounded-xl border border-[var(--border-primary)] bg-[var(--card-bg)] p-3 shadow-xs">
+      <div class="flex items-center gap-1.5 text-xs text-[var(--accent)] font-semibold mb-1">
+        <span>☀️</span>
+        <span>今日晨报</span>
       </div>
-
-      <!-- Action Buttons -->
-      <div class="flex flex-wrap items-center gap-2">
-        <button
-          id="btn-copy-60s"
-          type="button"
-          class="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border-primary)] bg-[var(--bg-secondary)] px-3 py-1.5 text-xs font-medium text-[var(--text-primary)] transition-all hover:border-[var(--accent)] hover:text-[var(--accent)] hover:shadow-xs active:scale-95"
-          title="复制今日纯文本早报"
-        >
-          <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-          </svg>
-          <span id="copy-btn-text">复制早报</span>
-        </button>
-
-        {initialData.image && (
-          <a
-            id="btn-view-image"
-            href={initialData.image}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border-primary)] bg-[var(--bg-secondary)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition-all hover:text-[var(--text-primary)] hover:border-[var(--text-secondary)]"
-            title="查看原版高清图文海报"
-          >
-            <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-              <circle cx="8.5" cy="8.5" r="1.5"></circle>
-              <polyline points="21 15 16 10 5 21"></polyline>
-            </svg>
-            <span>海报长图</span>
-          </a>
-        )}
-
-        <button
-          id="btn-refresh-60s"
-          type="button"
-          class="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border-primary)] bg-[var(--bg-secondary)] px-2.5 py-1.5 text-xs text-[var(--text-secondary)] transition-all hover:text-[var(--text-primary)] active:rotate-180"
-          title="刷新最新数据"
-        >
-          <svg id="refresh-spinner" class="h-3.5 w-3.5 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M23 4v6h-6"></path>
-            <path d="M1 20v-6h6"></path>
-            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
-          </svg>
-        </button>
-      </div>
+      <p class="text-xs font-medium text-[var(--text-primary)] line-clamp-1">
+        {digest.date} · {digest.dayOfWeek}
+      </p>
+      <p class="text-[11px] text-[var(--text-tertiary)] line-clamp-1 mt-0.5">
+        共 {digest.news.length} 条要闻精选
+      </p>
     </div>
 
-    <!-- Tip of the Day / 微语 Block -->
-    {initialData.tip && (
-      <div id="tip-card" class="mt-4 rounded-lg bg-[var(--bg-secondary)] p-3.5 border-l-3 border-orange-500/70 text-xs sm:text-sm">
-        <div class="flex items-start gap-2.5">
-          <span class="text-orange-500 font-bold shrink-0 serif-title">「微语」</span>
-          <p id="tip-text" class="text-[var(--text-primary)] italic font-normal leading-relaxed">
-            {initialData.tip}
+    <!-- Card 2: AI Tech News -->
+    <div class="rounded-xl border border-[var(--border-primary)] bg-[var(--card-bg)] p-3 shadow-xs">
+      <div class="flex items-center gap-1.5 text-xs text-blue-500 font-semibold mb-1">
+        <span>🤖</span>
+        <span>AI 前沿</span>
+      </div>
+      <p class="text-xs font-medium text-[var(--text-primary)] line-clamp-1">
+        {aiNews[0]?.title || 'AI 大模型最新动向'}
+      </p>
+      <p class="text-[11px] text-[var(--text-tertiary)] line-clamp-1 mt-0.5">
+        {aiNews[0]?.source || '开源前沿'} · 深度简讯
+      </p>
+    </div>
+
+    <!-- Card 3: Epic Free Game -->
+    <div class="rounded-xl border border-[var(--border-primary)] bg-[var(--card-bg)] p-3 shadow-xs">
+      <div class="flex items-center gap-1.5 text-xs text-amber-500 font-semibold mb-1">
+        <span>🎮</span>
+        <span>Epic 喜加一</span>
+      </div>
+      <p class="text-xs font-medium text-[var(--text-primary)] line-clamp-1">
+        {epicGames[0]?.title || '本周限免游戏'}
+      </p>
+      <p class="text-[11px] text-[var(--text-tertiary)] line-clamp-1 mt-0.5">
+        原价 {epicGames[0]?.original_price_desc || '免费'} · 限时白嫖
+      </p>
+    </div>
+
+    <!-- Card 4: Moyu Countdown -->
+    <div class="rounded-xl border border-[var(--border-primary)] bg-[var(--card-bg)] p-3 shadow-xs">
+      <div class="flex items-center gap-1.5 text-xs text-emerald-500 font-semibold mb-1">
+        <span>🐟</span>
+        <span>摸鱼日历</span>
+      </div>
+      <p class="text-xs font-medium text-[var(--text-primary)] line-clamp-1">
+        距离周末还有 {moyu?.countdown?.weekend ?? 2} 天
+      </p>
+      <p class="text-[11px] text-[var(--text-tertiary)] line-clamp-1 mt-0.5">
+        年进度 {moyu?.progress?.year || '78%'} · 劳逸结合
+      </p>
+    </div>
+  </div>
+
+  <!-- Sub-Channel Navigation Pills -->
+  <div class="rounded-xl border border-[var(--border-primary)] bg-[var(--card-bg)] p-2 sm:p-2.5 shadow-xs">
+    <div id="viki-channel-pills" class="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs font-medium">
+      <button
+        type="button"
+        class="viki-pill active rounded-lg px-3 py-1.5 transition-all bg-[var(--accent)] text-white font-semibold shrink-0"
+        data-target="panel-60s"
+      >
+        ☀️ 60s晨报
+      </button>
+      <button
+        type="button"
+        class="viki-pill rounded-lg px-3 py-1.5 transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] shrink-0"
+        data-target="panel-ai"
+      >
+        🤖 AI 资讯 ({aiNews.length})
+      </button>
+      <button
+        type="button"
+        class="viki-pill rounded-lg px-3 py-1.5 transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] shrink-0"
+        data-target="panel-epic"
+      >
+        🎮 Epic 喜加一 ({epicGames.length})
+      </button>
+      <button
+        type="button"
+        class="viki-pill rounded-lg px-3 py-1.5 transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] shrink-0"
+        data-target="panel-moyu"
+      >
+        🐟 摸鱼周历
+      </button>
+      <button
+        type="button"
+        class="viki-pill rounded-lg px-3 py-1.5 transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] shrink-0"
+        data-target="panel-bing"
+      >
+        🖼️ 必应 4K 壁纸
+      </button>
+      <button
+        type="button"
+        class="viki-pill rounded-lg px-3 py-1.5 transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] shrink-0"
+        data-target="panel-history"
+      >
+        📜 历史今天 ({todayHistory.length})
+      </button>
+      <button
+        type="button"
+        class="viki-pill rounded-lg px-3 py-1.5 transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] shrink-0"
+        data-target="panel-douban"
+      >
+        🎬 豆瓣热榜 ({doubanMovies.length})
+      </button>
+      <button
+        type="button"
+        class="viki-pill rounded-lg px-3 py-1.5 transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] shrink-0"
+        data-target="panel-tools"
+      >
+        🛠️ 极客工具
+      </button>
+    </div>
+  </div>
+
+  <!-- Channel 1: 60s World News (Default) -->
+  <div id="panel-60s" class="viki-channel-panel space-y-6">
+    <!-- Header Card -->
+    <div class="relative overflow-hidden rounded-xl border border-[var(--border-primary)] bg-[var(--card-bg)] p-5 sm:p-6 shadow-xs">
+      <div class="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-red-500 via-orange-500 to-amber-500"></div>
+
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div class="space-y-1">
+          <div class="flex items-center gap-2">
+            <span class="inline-flex items-center gap-1.5 rounded-full bg-red-500/10 px-2.5 py-0.5 text-xs font-medium text-red-600 dark:text-red-400">
+              <span class="h-1.5 w-1.5 rounded-full bg-red-500 animate-pulse"></span>
+              每天 60 秒读懂世界
+            </span>
+            <span class="mono text-xs text-[var(--text-secondary)]">
+              {digest.date} · {digest.dayOfWeek}
+            </span>
+          </div>
+          <h2 class="text-xl sm:text-2xl font-bold tracking-tight text-[var(--text-primary)]">
+            每日晨间早报要闻
+          </h2>
+          <p class="text-xs text-[var(--text-tertiary)] mono">
+            数据来源于 <a href="https://github.com/vikiboss/60s" target="_blank" rel="noopener noreferrer" class="underline hover:text-[var(--text-secondary)]">vikiboss/60s</a> · 过滤噪音，聚焦要闻
           </p>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex flex-wrap items-center gap-2">
+          <button
+            id="btn-copy-60s"
+            type="button"
+            class="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border-primary)] bg-[var(--bg-secondary)] px-3 py-1.5 text-xs font-medium text-[var(--text-primary)] transition-all hover:border-[var(--accent)] hover:text-[var(--accent)] active:scale-95"
+          >
+            <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+            <span id="copy-btn-text">复制早报文本</span>
+          </button>
+
+          {digest.image && (
+            <a
+              href={digest.image}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border-primary)] bg-[var(--bg-secondary)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition-all hover:text-[var(--text-primary)] hover:border-[var(--text-secondary)]"
+            >
+              <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                <polyline points="21 15 16 10 5 21"></polyline>
+              </svg>
+              <span>高清图文</span>
+            </a>
+          )}
+        </div>
+      </div>
+
+      <!-- Tip of the Day -->
+      {digest.tip && (
+        <div class="mt-4 rounded-lg bg-[var(--bg-secondary)] p-3.5 border-l-3 border-orange-500/70 text-xs sm:text-sm">
+          <div class="flex items-start gap-2.5">
+            <span class="text-orange-500 font-bold shrink-0 serif-title">「微语」</span>
+            <p id="tip-text" class="text-[var(--text-primary)] italic font-normal leading-relaxed">
+              {digest.tip}
+            </p>
+          </div>
+        </div>
+      )}
+    </div>
+
+    <!-- News List -->
+    <div class="rounded-xl border border-[var(--border-primary)] bg-[var(--card-bg)] p-4 sm:p-6 shadow-xs">
+      <div class="flex items-center justify-between pb-3 border-b border-[var(--border-secondary)] mb-4">
+        <div class="flex items-center gap-2">
+          <span class="h-2 w-2 rounded-full bg-[var(--accent)]"></span>
+          <h3 class="text-sm font-semibold text-[var(--text-primary)]">
+            今日要闻简报
+          </h3>
+          <span class="mono text-[11px] text-[var(--text-tertiary)] bg-[var(--bg-secondary)] px-2 py-0.5 rounded">
+            共 {digest.news.length} 条
+          </span>
+        </div>
+        <div class="text-[11px] text-[var(--text-tertiary)] mono">
+          点击条目可标记已读
+        </div>
+      </div>
+
+      <ul id="news-list" class="divide-y divide-[var(--border-secondary)]">
+        {digest.news.map((item, index) => {
+          const num = String(index + 1).padStart(2, '0');
+          return (
+            <li
+              class="news-item group flex items-start gap-3.5 py-3.5 transition-colors hover:bg-[var(--bg-secondary)]/50 rounded-lg px-2 -mx-2 cursor-pointer select-none"
+            >
+              <span class="mono text-xs font-semibold text-[var(--text-tertiary)] group-hover:text-[var(--accent)] transition-colors mt-0.5 shrink-0 w-6">
+                {num}
+              </span>
+              <div class="flex-1 min-w-0">
+                <p class="news-text text-sm sm:text-[14.5px] leading-relaxed text-[var(--text-primary)]">
+                  {item}
+                </p>
+              </div>
+              <span class="read-check opacity-0 group-hover:opacity-40 transition-opacity text-xs text-[var(--text-tertiary)] shrink-0 mt-0.5">
+                ✓
+              </span>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  </div>
+
+  <!-- Channel 2: AI Tech News -->
+  <div id="panel-ai" class="viki-channel-panel hidden space-y-4">
+    <div class="rounded-xl border border-[var(--border-primary)] bg-[var(--card-bg)] p-4 sm:p-5 shadow-xs">
+      <div class="flex items-center justify-between pb-3 border-b border-[var(--border-secondary)] mb-4">
+        <div class="flex items-center gap-2">
+          <span class="h-2.5 w-2.5 rounded-full bg-blue-500"></span>
+          <h3 class="text-sm font-bold text-[var(--text-primary)]">
+            AI 资讯快报 · 人工智能前沿
+          </h3>
+          <span class="mono text-[11px] text-[var(--text-tertiary)] bg-[var(--bg-secondary)] px-2 py-0.5 rounded">
+            大模型 · 强化学习 · Agent 动态
+          </span>
+        </div>
+        <span class="text-xs text-[var(--text-tertiary)] mono">日更更新</span>
+      </div>
+
+      <div class="space-y-4">
+        {aiNews.map((item, index) => (
+          <div class="rounded-lg border border-[var(--border-secondary)] bg-[var(--bg-secondary)]/40 p-4 transition-all hover:border-[var(--accent)] hover:shadow-xs">
+            <div class="flex items-start justify-between gap-3 mb-2">
+              <a
+                href={item.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-sm sm:text-base font-semibold text-[var(--text-primary)] hover:text-[var(--accent)] transition-colors line-clamp-2"
+              >
+                {item.title}
+              </a>
+              {item.source && (
+                <span class="mono text-[11px] bg-blue-500/10 text-blue-600 dark:text-blue-400 px-2 py-0.5 rounded shrink-0">
+                  {item.source}
+                </span>
+              )}
+            </div>
+            <p class="text-xs sm:text-[13px] text-[var(--text-secondary)] leading-relaxed">
+              {item.detail}
+            </p>
+            <div class="mt-3 flex items-center justify-between text-[11px] text-[var(--text-tertiary)] pt-2 border-t border-[var(--border-secondary)]">
+              <span>{item.date || '今日要闻'}</span>
+              <a href={item.link} target="_blank" rel="noopener noreferrer" class="hover:text-[var(--accent)] transition-colors flex items-center gap-1">
+                <span>查看原文详情</span>
+                <span>↗</span>
+              </a>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  <!-- Channel 3: Epic Free Games -->
+  <div id="panel-epic" class="viki-channel-panel hidden space-y-4">
+    <div class="rounded-xl border border-[var(--border-primary)] bg-[var(--card-bg)] p-4 sm:p-5 shadow-xs">
+      <div class="flex items-center justify-between pb-3 border-b border-[var(--border-secondary)] mb-4">
+        <div class="flex items-center gap-2">
+          <span class="h-2.5 w-2.5 rounded-full bg-amber-500"></span>
+          <h3 class="text-sm font-bold text-[var(--text-primary)]">
+            Epic Games 喜加一 · 本周免费游戏
+          </h3>
+          <span class="mono text-[11px] text-[var(--text-tertiary)] bg-[var(--bg-secondary)] px-2 py-0.5 rounded">
+            周更更新 · 限时领取
+          </span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {epicGames.map((game) => (
+          <div class="rounded-xl border border-[var(--border-secondary)] bg-[var(--bg-secondary)]/30 overflow-hidden flex flex-col transition-all hover:border-amber-500/50 hover:shadow-xs group">
+            <div class="relative aspect-video w-full overflow-hidden bg-black/10">
+              <img
+                src={game.cover}
+                alt={game.title}
+                class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                loading="lazy"
+              />
+              <span class="absolute top-2.5 left-2.5 rounded-md bg-emerald-600/90 backdrop-blur-xs px-2 py-0.5 text-[11px] font-bold text-white shadow-xs">
+                限时免费
+              </span>
+              {game.original_price_desc && (
+                <span class="absolute top-2.5 right-2.5 rounded-md bg-black/60 backdrop-blur-xs px-2 py-0.5 text-[11px] mono text-zinc-300 line-through">
+                  {game.original_price_desc}
+                </span>
+              )}
+            </div>
+
+            <div class="p-4 flex-1 flex flex-col justify-between">
+              <div>
+                <h4 class="text-sm sm:text-base font-bold text-[var(--text-primary)] group-hover:text-amber-500 transition-colors">
+                  {game.title}
+                </h4>
+                <p class="mt-1 text-xs text-[var(--text-secondary)] line-clamp-3 leading-relaxed">
+                  {game.description}
+                </p>
+              </div>
+
+              <div class="mt-4 pt-3 border-t border-[var(--border-secondary)] flex items-center justify-between">
+                <span class="text-[11px] text-[var(--text-tertiary)] mono">
+                  永久入库无门槛
+                </span>
+                <a
+                  href={`https://store.epicgames.com/`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="inline-flex items-center gap-1 rounded-lg bg-amber-500/10 px-2.5 py-1 text-xs font-semibold text-amber-600 dark:text-amber-400 hover:bg-amber-500 hover:text-white transition-colors"
+                >
+                  <span>立即领取</span>
+                  <span>↗</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  <!-- Channel 4: Moyu Slacking Calendar -->
+  <div id="panel-moyu" class="viki-channel-panel hidden space-y-4">
+    <div class="rounded-xl border border-[var(--border-primary)] bg-[var(--card-bg)] p-5 sm:p-6 shadow-xs">
+      <div class="flex items-center justify-between pb-3 border-b border-[var(--border-secondary)] mb-4">
+        <div class="flex items-center gap-2">
+          <span class="h-2.5 w-2.5 rounded-full bg-emerald-500"></span>
+          <h3 class="text-sm font-bold text-[var(--text-primary)]">
+            摸鱼工作周历 · 劳逸结合指数
+          </h3>
+        </div>
+        <span class="text-xs text-[var(--text-tertiary)] mono">
+          {moyu?.date?.weekday || '星期三'} · 农历{moyu?.date?.lunar?.monthCN}{moyu?.date?.lunar?.dayCN}
+        </span>
+      </div>
+
+      <!-- Moyu Quote -->
+      {moyu?.moyuQuote && (
+        <div class="rounded-xl bg-emerald-500/10 border border-emerald-500/20 p-4 text-xs sm:text-sm text-emerald-800 dark:text-emerald-300 leading-relaxed font-medium mb-5">
+          💬 「摸鱼哲学」{moyu.moyuQuote}
+        </div>
+      )}
+
+      <!-- Progress Bars -->
+      <div class="space-y-3.5 mb-6">
+        <h4 class="text-xs font-bold text-[var(--text-primary)]">时间流逝进度</h4>
+        <div>
+          <div class="flex justify-between text-xs text-[var(--text-secondary)] mb-1">
+            <span>本周工作进度</span>
+            <span class="mono">{moyu?.progress?.week || '50%'}</span>
+          </div>
+          <div class="h-2 w-full rounded-full bg-[var(--bg-secondary)] overflow-hidden">
+            <div class="h-full bg-emerald-500 rounded-full transition-all duration-500" style={`width: ${moyu?.progress?.week || '50%'}`}></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="flex justify-between text-xs text-[var(--text-secondary)] mb-1">
+            <span>本月进度</span>
+            <span class="mono">{moyu?.progress?.month || '45%'}</span>
+          </div>
+          <div class="h-2 w-full rounded-full bg-[var(--bg-secondary)] overflow-hidden">
+            <div class="h-full bg-blue-500 rounded-full transition-all duration-500" style={`width: ${moyu?.progress?.month || '45%'}`}></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="flex justify-between text-xs text-[var(--text-secondary)] mb-1">
+            <span>今年流逝</span>
+            <span class="mono">{moyu?.progress?.year || '78%'}</span>
+          </div>
+          <div class="h-2 w-full rounded-full bg-[var(--bg-secondary)] overflow-hidden">
+            <div class="h-full bg-orange-500 rounded-full transition-all duration-500" style={`width: ${moyu?.progress?.year || '78%'}`}></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Holiday Countdowns -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+        <div class="rounded-lg bg-[var(--bg-secondary)] p-3 text-center">
+          <p class="text-[11px] text-[var(--text-tertiary)]">距离周末</p>
+          <p class="text-xl font-bold mono text-emerald-600 dark:text-emerald-400 mt-0.5">
+            {moyu?.countdown?.weekend ?? 2} <span class="text-xs font-normal">天</span>
+          </p>
+        </div>
+        <div class="rounded-lg bg-[var(--bg-secondary)] p-3 text-center">
+          <p class="text-[11px] text-[var(--text-tertiary)]">距离元旦</p>
+          <p class="text-xl font-bold mono text-blue-600 dark:text-blue-400 mt-0.5">
+            {moyu?.countdown?.newYear ?? 78} <span class="text-xs font-normal">天</span>
+          </p>
+        </div>
+        <div class="rounded-lg bg-[var(--bg-secondary)] p-3 text-center">
+          <p class="text-[11px] text-[var(--text-tertiary)]">距离春节</p>
+          <p class="text-xl font-bold mono text-red-600 dark:text-red-400 mt-0.5">
+            {moyu?.countdown?.springFestival ?? 112} <span class="text-xs font-normal">天</span>
+          </p>
+        </div>
+        <div class="rounded-lg bg-[var(--bg-secondary)] p-3 text-center">
+          <p class="text-[11px] text-[var(--text-tertiary)]">劳动节倒计</p>
+          <p class="text-xl font-bold mono text-purple-600 dark:text-purple-400 mt-0.5">
+            {moyu?.countdown?.laborDay ?? 198} <span class="text-xs font-normal">天</span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Channel 5: Bing Daily Wallpaper -->
+  <div id="panel-bing" class="viki-channel-panel hidden space-y-4">
+    {bing && (
+      <div class="rounded-xl border border-[var(--border-primary)] bg-[var(--card-bg)] overflow-hidden shadow-xs">
+        <div class="relative aspect-video w-full overflow-hidden bg-black/10">
+          <img
+            src={bing.cover}
+            alt={bing.title}
+            class="h-full w-full object-cover"
+          />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-4 sm:p-6 text-white">
+            <span class="mono text-xs text-orange-400 font-semibold mb-1">
+              BING DAILY WALLPAPER · 4K UHD
+            </span>
+            <h3 class="text-lg sm:text-2xl font-bold tracking-tight">
+              {bing.title}
+            </h3>
+            {bing.copyright && (
+              <p class="text-xs text-zinc-300 mt-1">
+                {bing.copyright}
+              </p>
+            )}
+          </div>
+        </div>
+
+        <div class="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <p class="text-xs text-[var(--text-secondary)] leading-relaxed">
+            {bing.headline || bing.description || '自然与人文之美，每日清晨呈现。'}
+          </p>
+          <div class="flex items-center gap-2 shrink-0">
+            <a
+              href={bing.cover}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="rounded-lg border border-[var(--border-primary)] bg-[var(--bg-secondary)] px-3 py-1.5 text-xs font-medium text-[var(--text-primary)] hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors"
+            >
+              1080P 查看
+            </a>
+            <a
+              href={bing.cover_4k || bing.cover}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="rounded-lg bg-[var(--accent)] text-white px-3 py-1.5 text-xs font-semibold hover:opacity-90 transition-opacity"
+            >
+              下载 4K 超清 ↗
+            </a>
+          </div>
         </div>
       </div>
     )}
   </div>
 
-  <!-- News List Items -->
-  <div class="rounded-xl border border-[var(--border-primary)] bg-[var(--card-bg)] p-4 sm:p-6 shadow-xs">
-    <div class="flex items-center justify-between pb-3 border-b border-[var(--border-secondary)] mb-4">
-      <div class="flex items-center gap-2">
-        <span class="h-2 w-2 rounded-full bg-[var(--accent)]"></span>
-        <h3 class="text-sm font-semibold text-[var(--text-primary)]">
-          今日要闻摘录
-        </h3>
-        <span id="news-count-badge" class="mono text-[11px] text-[var(--text-tertiary)] bg-[var(--bg-secondary)] px-2 py-0.5 rounded">
-          共 {initialData.news.length} 条
-        </span>
+  <!-- Channel 6: Today In History -->
+  <div id="panel-history" class="viki-channel-panel hidden space-y-4">
+    <div class="rounded-xl border border-[var(--border-primary)] bg-[var(--card-bg)] p-4 sm:p-5 shadow-xs">
+      <div class="flex items-center justify-between pb-3 border-b border-[var(--border-secondary)] mb-4">
+        <div class="flex items-center gap-2">
+          <span class="h-2.5 w-2.5 rounded-full bg-violet-500"></span>
+          <h3 class="text-sm font-bold text-[var(--text-primary)]">
+            历史上的今天 · 岁月长河
+          </h3>
+          <span class="mono text-[11px] text-[var(--text-tertiary)] bg-[var(--bg-secondary)] px-2 py-0.5 rounded">
+            共 {todayHistory.length} 件大事
+          </span>
+        </div>
       </div>
-      <div class="text-[11px] text-[var(--text-tertiary)] mono">
-        点击条目可标记阅读状态
-      </div>
-    </div>
 
-    <ul id="news-list" class="divide-y divide-[var(--border-secondary)]">
-      {initialData.news.map((item, index) => {
-        const num = String(index + 1).padStart(2, '0');
-        return (
-          <li
-            class="news-item group flex items-start gap-3.5 py-3.5 transition-colors hover:bg-[var(--bg-secondary)]/50 rounded-lg px-2 -mx-2 cursor-pointer select-none"
-            data-index={index}
-          >
-            <span class="mono text-xs font-semibold text-[var(--text-tertiary)] group-hover:text-[var(--accent)] transition-colors mt-0.5 shrink-0 w-6">
-              {num}
+      <ul class="divide-y divide-[var(--border-secondary)]">
+        {todayHistory.map((item) => (
+          <li class="py-3 flex items-start gap-3 group">
+            <span class="mono text-xs font-bold text-[var(--accent)] bg-[var(--accent)]/10 px-2 py-0.5 rounded shrink-0 mt-0.5">
+              {item.year} 年
             </span>
             <div class="flex-1 min-w-0">
-              <p class="news-text text-sm sm:text-[14.5px] leading-relaxed text-[var(--text-primary)] group-hover:text-[var(--text-primary)] transition-colors">
-                {item}
+              <h4 class="text-sm font-semibold text-[var(--text-primary)] group-hover:text-[var(--accent)] transition-colors">
+                {item.title}
+              </h4>
+              <p class="mt-0.5 text-xs text-[var(--text-secondary)] leading-relaxed">
+                {item.description}
               </p>
             </div>
-            <span class="read-check opacity-0 group-hover:opacity-40 transition-opacity text-xs text-[var(--text-tertiary)] shrink-0 mt-0.5">
-              ✓
-            </span>
           </li>
-        );
-      })}
-    </ul>
+        ))}
+      </ul>
+    </div>
+  </div>
 
-    <!-- Footer meta -->
-    <div class="mt-6 pt-4 border-t border-[var(--border-secondary)] flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-[var(--text-tertiary)]">
-      <span class="mono">更新时间：{initialData.updated}</span>
-      <div class="flex items-center gap-3">
-        <button id="btn-copy-bottom" type="button" class="hover:text-[var(--accent)] transition-colors">
-          复制全文
-        </button>
-        <span>·</span>
-        <a href={initialData.link} target="_blank" rel="noopener noreferrer" class="hover:text-[var(--accent)] transition-colors">
-          微信发布页 ↗
-        </a>
+  <!-- Channel 7: Douban Movies -->
+  <div id="panel-douban" class="viki-channel-panel hidden space-y-4">
+    <div class="rounded-xl border border-[var(--border-primary)] bg-[var(--card-bg)] p-4 sm:p-5 shadow-xs">
+      <div class="flex items-center justify-between pb-3 border-b border-[var(--border-secondary)] mb-4">
+        <div class="flex items-center gap-2">
+          <span class="h-2.5 w-2.5 rounded-full bg-emerald-600"></span>
+          <h3 class="text-sm font-bold text-[var(--text-primary)]">
+            豆瓣全球口碑电影榜 · 周榜 TOP 10
+          </h3>
+          <span class="mono text-[11px] text-[var(--text-tertiary)] bg-[var(--bg-secondary)] px-2 py-0.5 rounded">
+            高分影评指南
+          </span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
+        {doubanMovies.map((movie) => (
+          <div class="rounded-lg border border-[var(--border-secondary)] bg-[var(--bg-secondary)]/30 overflow-hidden flex flex-col group hover:border-emerald-500/50 transition-colors">
+            <div class="relative aspect-[2/3] w-full overflow-hidden bg-black/10">
+              <img
+                src={movie.cover_proxy || movie.cover}
+                alt={movie.title}
+                class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                loading="lazy"
+              />
+              <span class="absolute top-1.5 left-1.5 flex h-5 w-5 items-center justify-center rounded bg-black/70 text-[10px] font-bold text-white mono">
+                {movie.rank}
+              </span>
+              <span class="absolute bottom-1.5 right-1.5 rounded bg-black/70 px-1.5 py-0.5 text-[10px] font-bold text-amber-400 mono">
+                ★ {movie.rating}
+              </span>
+            </div>
+            <div class="p-2 flex-1 flex flex-col justify-between">
+              <p class="text-xs font-semibold text-[var(--text-primary)] line-clamp-1 group-hover:text-emerald-600 transition-colors" title={movie.title}>
+                {movie.title}
+              </p>
+              <p class="text-[10px] text-[var(--text-tertiary)] line-clamp-1 mt-0.5">
+                {movie.card_subtitle || '高分精选'}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  <!-- Channel 8: Geek Tools (Whois & QR Generator) -->
+  <div id="panel-tools" class="viki-channel-panel hidden space-y-4">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <!-- Tool 1: Whois Domain Lookup -->
+      <div class="rounded-xl border border-[var(--border-primary)] bg-[var(--card-bg)] p-4 sm:p-5 shadow-xs">
+        <div class="flex items-center gap-2 pb-3 border-b border-[var(--border-secondary)] mb-3">
+          <span class="text-base">🌐</span>
+          <h3 class="text-sm font-bold text-[var(--text-primary)]">
+            Whois 域名信息查询
+          </h3>
+        </div>
+
+        <div class="flex items-center gap-2 mb-3">
+          <input
+            id="whois-input"
+            type="text"
+            value="xujiuran.top"
+            class="flex-1 rounded-lg border border-[var(--border-primary)] bg-[var(--bg-secondary)] px-3 py-1.5 text-xs text-[var(--text-primary)] focus:border-[var(--accent)] focus:outline-hidden mono"
+          />
+          <button
+            id="btn-whois-query"
+            type="button"
+            class="rounded-lg bg-[var(--accent)] text-white px-3 py-1.5 text-xs font-semibold hover:opacity-90 active:scale-95 transition-all"
+          >
+            查询
+          </button>
+        </div>
+
+        <div id="whois-result-box" class="rounded-lg bg-[var(--bg-secondary)] p-3 text-xs space-y-1.5 mono">
+          <div class="flex justify-between">
+            <span class="text-[var(--text-tertiary)]">查询域名:</span>
+            <span class="font-bold text-[var(--text-primary)]">{whois?.domain || 'xujiuran.top'}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-[var(--text-tertiary)]">注册机构:</span>
+            <span class="text-[var(--text-secondary)]">{whois?.registrar || 'Spaceship, Inc.'}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-[var(--text-tertiary)]">注册时间:</span>
+            <span class="text-[var(--text-secondary)]">{whois?.created || '2026/09/30'}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-[var(--text-tertiary)]">到期时间:</span>
+            <span class="text-emerald-600 dark:text-emerald-400 font-semibold">{whois?.expires || '2027/09/30'}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-[var(--text-tertiary)]">DNS 服务器:</span>
+            <span class="text-[var(--text-secondary)] text-[11px] truncate max-w-[160px]">Cloudflare NS</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tool 2: QR Code Generator -->
+      <div class="rounded-xl border border-[var(--border-primary)] bg-[var(--card-bg)] p-4 sm:p-5 shadow-xs flex flex-col justify-between">
+        <div>
+          <div class="flex items-center gap-2 pb-3 border-b border-[var(--border-secondary)] mb-3">
+            <span class="text-base">📱</span>
+            <h3 class="text-sm font-bold text-[var(--text-primary)]">
+              二维码极速生成器
+            </h3>
+          </div>
+
+          <div class="flex items-center gap-2 mb-3">
+            <input
+              id="qr-input"
+              type="text"
+              value="https://xujiuran.top"
+              placeholder="输入网址或文本..."
+              class="flex-1 rounded-lg border border-[var(--border-primary)] bg-[var(--bg-secondary)] px-3 py-1.5 text-xs text-[var(--text-primary)] focus:border-[var(--accent)] focus:outline-hidden mono"
+            />
+            <button
+              id="btn-qr-gen"
+              type="button"
+              class="rounded-lg bg-[var(--accent)] text-white px-3 py-1.5 text-xs font-semibold hover:opacity-90 active:scale-95 transition-all"
+            >
+              生成
+            </button>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-center p-3 rounded-lg bg-[var(--bg-secondary)]">
+          <img
+            id="qr-preview-img"
+            src="https://60s.mizhoubaobei.top/v2/qrcode?text=https://xujiuran.top"
+            alt="QR Code"
+            class="h-28 w-28 rounded border border-[var(--border-secondary)] bg-white p-1"
+          />
+        </div>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-  // Client-side interactions for 60s
-  function setup60sInteractions() {
-    const list = document.getElementById('news-list');
-    const copyBtn = document.getElementById('btn-copy-60s');
-    const copyBtnBottom = document.getElementById('btn-copy-bottom');
-    const copyText = document.getElementById('copy-btn-text');
-    const refreshBtn = document.getElementById('btn-refresh-60s');
-    const spinner = document.getElementById('refresh-spinner');
+  function setupVikiChannelTabs() {
+    const pills = document.querySelectorAll('.viki-pill');
+    const panels = document.querySelectorAll('.viki-channel-panel');
 
-    // Click to toggle read state
-    list?.addEventListener('click', (e) => {
-      const item = (e.target as HTMLElement).closest('.news-item');
-      if (!item) return;
-      item.classList.toggle('opacity-40');
-      const check = item.querySelector('.read-check');
-      if (check) {
-        check.classList.toggle('opacity-100');
-        check.classList.toggle('text-emerald-500');
-      }
+    pills.forEach((pill) => {
+      pill.addEventListener('click', () => {
+        const targetId = (pill as HTMLElement).dataset.target;
+
+        // Switch pills
+        pills.forEach((p) => {
+          p.classList.remove('active', 'bg-[var(--accent)]', 'text-white', 'font-semibold');
+          p.classList.add('text-[var(--text-secondary)]');
+        });
+        pill.classList.add('active', 'bg-[var(--accent)]', 'text-white', 'font-semibold');
+        pill.classList.remove('text-[var(--text-secondary)]');
+
+        // Switch panels
+        panels.forEach((panel) => {
+          if (panel.id === targetId) {
+            panel.classList.remove('hidden');
+          } else {
+            panel.classList.add('hidden');
+          }
+        });
+      });
     });
 
-    // Copy to clipboard
-    const handleCopy = async () => {
+    // Copy早报文本
+    const copyBtn = document.getElementById('btn-copy-60s');
+    const copyText = document.getElementById('copy-btn-text');
+    copyBtn?.addEventListener('click', async () => {
       const items = Array.from(document.querySelectorAll('.news-text')).map((el, idx) => {
         return `${idx + 1}. ${(el.textContent || '').trim()}`;
       });
-      const dateText = document.getElementById('news-date-text')?.textContent?.trim() || '';
       const tipText = document.getElementById('tip-text')?.textContent?.trim() || '';
 
       const fullText = [
-        `【每天 60 秒读懂世界】(${dateText})`,
+        `【每天 60 秒读懂世界】`,
         '',
         ...items,
         '',
@@ -193,63 +720,70 @@ const { initialData } = Astro.props;
 
       try {
         await navigator.clipboard.writeText(fullText);
-        if (copyText) copyText.textContent = '已复制！';
+        if (copyText) copyText.textContent = '已复制成功！';
         setTimeout(() => {
-          if (copyText) copyText.textContent = '复制早报';
+          if (copyText) copyText.textContent = '复制早报文本';
         }, 2000);
       } catch (err) {
         console.error('Copy failed', err);
       }
-    };
+    });
 
-    copyBtn?.addEventListener('click', handleCopy);
-    copyBtnBottom?.addEventListener('click', handleCopy);
+    // Read state toggle
+    const newsList = document.getElementById('news-list');
+    newsList?.addEventListener('click', (e) => {
+      const item = (e.target as HTMLElement).closest('.news-item');
+      if (!item) return;
+      item.classList.toggle('opacity-40');
+      const check = item.querySelector('.read-check');
+      if (check) {
+        check.classList.toggle('opacity-100');
+        check.classList.toggle('text-emerald-500');
+      }
+    });
 
-    // Refresh data
-    refreshBtn?.addEventListener('click', async () => {
-      spinner?.classList.add('animate-spin');
+    // Whois interactive query
+    const whoisBtn = document.getElementById('btn-whois-query');
+    const whoisInput = document.getElementById('whois-input') as HTMLInputElement | null;
+    const whoisBox = document.getElementById('whois-result-box');
+
+    whoisBtn?.addEventListener('click', async () => {
+      const domain = whoisInput?.value.trim();
+      if (!domain || !whoisBox) return;
+      whoisBox.innerHTML = '<p class="text-center text-[var(--text-tertiary)] py-4">正在检索 Whois 记录...</p>';
       try {
-        const today = new Date().toISOString().slice(0, 10);
-        const res = await fetch(`https://cdn.jsdelivr.net/gh/vikiboss/60s-static-host@main/static/60s/${today}.json?t=${Date.now()}`);
-        if (res.ok) {
-          const data = await res.json();
-          if (Array.isArray(data.news)) {
-            // Update items
-            if (list) {
-              list.innerHTML = data.news.map((item: string, idx: number) => {
-                const num = String(idx + 1).padStart(2, '0');
-                return `
-                  <li class="news-item group flex items-start gap-3.5 py-3.5 transition-colors hover:bg-[var(--bg-secondary)]/50 rounded-lg px-2 -mx-2 cursor-pointer select-none">
-                    <span class="mono text-xs font-semibold text-[var(--text-tertiary)] group-hover:text-[var(--accent)] transition-colors mt-0.5 shrink-0 w-6">
-                      ${num}
-                    </span>
-                    <div class="flex-1 min-w-0">
-                      <p class="news-text text-sm sm:text-[14.5px] leading-relaxed text-[var(--text-primary)]">
-                        ${item}
-                      </p>
-                    </div>
-                    <span class="read-check opacity-0 group-hover:opacity-40 transition-opacity text-xs text-[var(--text-tertiary)] shrink-0 mt-0.5">
-                      ✓
-                    </span>
-                  </li>
-                `;
-              }).join('');
-            }
-            const tipEl = document.getElementById('tip-text');
-            if (tipEl && data.tip) tipEl.textContent = data.tip;
-          }
+        const res = await fetch(`https://60s.mizhoubaobei.top/v2/whois?domain=${encodeURIComponent(domain)}`);
+        const json = await res.json();
+        if (json?.data) {
+          const d = json.data;
+          whoisBox.innerHTML = `
+            <div class="flex justify-between"><span class="text-[var(--text-tertiary)]">查询域名:</span><span class="font-bold text-[var(--text-primary)]">${d.domain || domain}</span></div>
+            <div class="flex justify-between"><span class="text-[var(--text-tertiary)]">注册机构:</span><span class="text-[var(--text-secondary)]">${d.registrar || '未知'}</span></div>
+            <div class="flex justify-between"><span class="text-[var(--text-tertiary)]">注册时间:</span><span class="text-[var(--text-secondary)]">${d.created || '-'}</span></div>
+            <div class="flex justify-between"><span class="text-[var(--text-tertiary)]">到期时间:</span><span class="text-emerald-600 dark:text-emerald-400 font-semibold">${d.expires || '-'}</span></div>
+            <div class="flex justify-between"><span class="text-[var(--text-tertiary)]">状态:</span><span class="text-[var(--text-secondary)]">${Array.isArray(d.status) ? d.status[0] : (d.status || '-')}</span></div>
+          `;
+        } else {
+          whoisBox.innerHTML = '<p class="text-center text-red-500 py-2">未找到该域名的 Whois 记录</p>';
         }
       } catch (e) {
-        console.warn('Refresh error', e);
-      } finally {
-        setTimeout(() => {
-          spinner?.classList.remove('animate-spin');
-        }, 500);
+        whoisBox.innerHTML = '<p class="text-center text-red-500 py-2">查询超时，请稍后重试</p>';
+      }
+    });
+
+    // QR Code generation
+    const qrBtn = document.getElementById('btn-qr-gen');
+    const qrInput = document.getElementById('qr-input') as HTMLInputElement | null;
+    const qrImg = document.getElementById('qr-preview-img') as HTMLImageElement | null;
+
+    qrBtn?.addEventListener('click', () => {
+      const text = qrInput?.value.trim();
+      if (text && qrImg) {
+        qrImg.src = `https://60s.mizhoubaobei.top/v2/qrcode?text=${encodeURIComponent(text)}&t=${Date.now()}`;
       }
     });
   }
 
-  // Run on mount
-  setup60sInteractions();
-  document.addEventListener('astro:page-load', setup60sInteractions);
+  setupVikiChannelTabs();
+  document.addEventListener('astro:page-load', setupVikiChannelTabs);
 </script>
