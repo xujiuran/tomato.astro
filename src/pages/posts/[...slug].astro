@@ -1,5 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import MoyuCalendarSidebar from '../../components/MoyuCalendarSidebar.astro';
+import { fetch60sHubData } from '../../lib/newsService';
 
 export function getStaticPaths() {
   return [
@@ -70,41 +72,52 @@ export function getStaticPaths() {
   ];
 }
 
+const hubData = await fetch60sHubData();
 const { title, date, readTime, words, content } = Astro.props;
 ---
 
-<BaseLayout title={`${title} · TomatoX 随笔`} currentPath="/posts">
-  <article class="space-y-6">
-    <!-- Post Header -->
-    <header class="border-b border-[var(--border-secondary)] pb-6 space-y-3">
-      <div class="flex items-center gap-2 text-xs text-[var(--text-secondary)]">
-        <a href="/posts" class="text-[var(--accent)] hover:underline">← 返回文章列表</a>
-        <span>·</span>
-        <time class="mono">{date}</time>
-        <span>·</span>
-        <span>约需 {readTime}</span>
-        <span>·</span>
-        <span>{words} 字</span>
-      </div>
+<BaseLayout title={`${title} · TomatoX 随笔`} currentPath="/posts" containerClass="max-w-6xl">
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+    <!-- Main Content (8 cols on lg) -->
+    <div class="lg:col-span-8 min-w-0">
+      <article class="space-y-6">
+        <!-- Post Header -->
+        <header class="border-b border-[var(--border-secondary)] pb-6 space-y-3">
+          <div class="flex items-center gap-2 text-xs text-[var(--text-secondary)]">
+            <a href="/posts" class="text-[var(--accent)] hover:underline">← 返回文章列表</a>
+            <span>·</span>
+            <time class="mono">{date}</time>
+            <span>·</span>
+            <span>约需 {readTime}</span>
+            <span>·</span>
+            <span>{words} 字</span>
+          </div>
 
-      <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-[var(--text-primary)] leading-tight">
-        {title}
-      </h1>
-    </header>
+          <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-[var(--text-primary)] leading-tight">
+            {title}
+          </h1>
+        </header>
 
-    <!-- Post Body -->
-    <div class="prose prose-stone dark:prose-invert max-w-none text-sm sm:text-base leading-relaxed text-[var(--text-primary)] whitespace-pre-line space-y-4">
-      {content}
+        <!-- Post Body -->
+        <div class="prose prose-stone dark:prose-invert max-w-none text-sm sm:text-base leading-relaxed text-[var(--text-primary)] whitespace-pre-line space-y-4">
+          {content}
+        </div>
+
+        <!-- Post Footer -->
+        <footer class="mt-12 rounded-xl border border-[var(--border-primary)] bg-[var(--bg-secondary)] p-4 text-xs text-[var(--text-secondary)]">
+          <p>
+            文章标题：<strong class="text-[var(--text-primary)]">{title}</strong>
+          </p>
+          <p class="mt-1">
+            发布日期：{date} ｜ 许可协议：CC BY-SA 4.0 转载请注明出处。
+          </p>
+        </footer>
+      </article>
     </div>
 
-    <!-- Post Footer -->
-    <footer class="mt-12 rounded-xl border border-[var(--border-primary)] bg-[var(--bg-secondary)] p-4 text-xs text-[var(--text-secondary)]">
-      <p>
-        文章标题：<strong class="text-[var(--text-primary)]">{title}</strong>
-      </p>
-      <p class="mt-1">
-        发布日期：{date} ｜ 许可协议：CC BY-SA 4.0 转载请注明出处。
-      </p>
-    </footer>
-  </article>
+    <!-- Right Companion Sidebar (4 cols on lg, sticky) -->
+    <aside id="moyu-sidebar" class="lg:col-span-4 space-y-4 lg:sticky lg:top-[68px]">
+      <MoyuCalendarSidebar moyu={hubData.moyu} />
+    </aside>
+  </div>
 </BaseLayout>

@@ -1,6 +1,10 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ThoughtCard from '../../components/ThoughtCard.astro';
+import MoyuCalendarSidebar from '../../components/MoyuCalendarSidebar.astro';
+import { fetch60sHubData } from '../../lib/newsService';
+
+const hubData = await fetch60sHubData();
 
 const allThoughts = [
   {
@@ -26,21 +30,29 @@ const allThoughts = [
 ];
 ---
 
-<BaseLayout title="碎碎念 · TomatoX 随笔" currentPath="/thoughts">
-  <div class="space-y-6">
-    <div class="border-b border-[var(--border-secondary)] pb-4">
-      <h1 class="text-2xl font-bold tracking-tight text-[var(--text-primary)]">
-        碎碎念
-      </h1>
-      <p class="mt-1 text-xs sm:text-sm text-[var(--text-secondary)]">
-        日常即刻闪念、开发微吐槽与生活切片，不拘形式。
-      </p>
+<BaseLayout title="碎碎念 · TomatoX 随笔" currentPath="/thoughts" containerClass="max-w-6xl">
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+    <!-- Main Content (8 cols on lg) -->
+    <div class="lg:col-span-8 min-w-0 space-y-6">
+      <div class="border-b border-[var(--border-secondary)] pb-4">
+        <h1 class="text-2xl font-bold tracking-tight text-[var(--text-primary)]">
+          碎碎念
+        </h1>
+        <p class="mt-1 text-xs sm:text-sm text-[var(--text-secondary)]">
+          日常即刻闪念、开发微吐槽与生活切片，不拘形式。
+        </p>
+      </div>
+
+      <div class="space-y-4">
+        {allThoughts.map((t) => (
+          <ThoughtCard {...t} />
+        ))}
+      </div>
     </div>
 
-    <div class="space-y-4">
-      {allThoughts.map((t) => (
-        <ThoughtCard {...t} />
-      ))}
-    </div>
+    <!-- Right Companion Sidebar (4 cols on lg, sticky) -->
+    <aside id="moyu-sidebar" class="lg:col-span-4 space-y-4 lg:sticky lg:top-[68px]">
+      <MoyuCalendarSidebar moyu={hubData.moyu} />
+    </aside>
   </div>
 </BaseLayout>

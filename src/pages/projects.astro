@@ -1,8 +1,11 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ProjectCard from '../components/ProjectCard.astro';
-
+import MoyuCalendarSidebar from '../components/MoyuCalendarSidebar.astro';
+import { fetch60sHubData } from '../lib/newsService';
 import { recommendedProjects } from '../data/projects';
+
+const hubData = await fetch60sHubData();
 
 const categories = [
   { id: 'all', label: '全部利器', count: recommendedProjects.length },
@@ -17,78 +20,87 @@ const categories = [
   title="极客利器 · 推荐项目 · TomatoX 随笔"
   description="暂无个人开源作品，这里精选整理了伴随我日常高频使用、体验惊艳的优秀开源项目、生产力软件与数字生活利器。"
   currentPath="/projects"
+  containerClass="max-w-6xl"
 >
-  <div class="space-y-6 pb-12">
-    <!-- Header Section -->
-    <div class="border-b border-[var(--border-secondary)] pb-5">
-      <div class="flex items-center gap-2 mb-1.5">
-        <span class="mono text-[11px] font-semibold text-[var(--accent)] tracking-wider uppercase bg-[var(--accent)]/10 px-2 py-0.5 rounded">
-          Curated Toolkit & Apps
-        </span>
-        <span class="mono text-xs text-[var(--text-tertiary)]">
-          共 {recommendedProjects.length} 款自用好物
-        </span>
-      </div>
-      <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-[var(--text-primary)]">
-        极客利器 · 推荐项目
-      </h1>
-      <p class="mt-1 text-xs sm:text-sm text-[var(--text-secondary)] leading-relaxed max-w-2xl">
-        “工欲善其事，必先利其器。” 暂无个人开源作品，这里真诚记录并分享我日常高频使用、体验极佳的优秀开源项目与生产力工具。
-      </p>
-
-      <!-- Search & Note banner -->
-      <div class="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-3 border-t border-[var(--border-secondary)]">
-        <div class="flex items-center gap-1.5 text-xs text-[var(--text-tertiary)]">
-          <span>💡</span>
-          <span>点击任意卡片可直达官网或 GitHub 源码仓库</span>
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+    <!-- Main Content (8 cols on lg) -->
+    <div class="lg:col-span-8 min-w-0 space-y-6 pb-12">
+      <!-- Header Section -->
+      <div class="border-b border-[var(--border-secondary)] pb-5">
+        <div class="flex items-center gap-2 mb-1.5">
+          <span class="mono text-[11px] font-semibold text-[var(--accent)] tracking-wider uppercase bg-[var(--accent)]/10 px-2 py-0.5 rounded">
+            Curated Toolkit & Apps
+          </span>
+          <span class="mono text-xs text-[var(--text-tertiary)]">
+            共 {recommendedProjects.length} 款自用好物
+          </span>
         </div>
+        <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-[var(--text-primary)]">
+          极客利器 · 推荐项目
+        </h1>
+        <p class="mt-1 text-xs sm:text-sm text-[var(--text-secondary)] leading-relaxed max-w-2xl">
+          “工欲善其事，必先利其器。” 暂无个人开源作品，这里真诚记录并分享我日常高频使用、体验极佳的优秀开源项目与生产力工具。
+        </p>
 
-        <div class="relative w-full sm:w-56">
-          <input
-            id="project-search-input"
-            type="text"
-            placeholder="搜索工具名称或关键词..."
-            class="w-full rounded-lg border border-[var(--border-primary)] bg-[var(--bg-secondary)] px-3 py-1.5 pl-8 text-xs text-[var(--text-primary)] placeholder-[var(--text-tertiary)] focus:border-[var(--accent)] focus:outline-hidden transition-colors"
-          />
-          <svg class="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-[var(--text-tertiary)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="11" cy="11" r="8"></circle>
-            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-          </svg>
+        <!-- Search & Note banner -->
+        <div class="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-3 border-t border-[var(--border-secondary)]">
+          <div class="flex items-center gap-1.5 text-xs text-[var(--text-tertiary)]">
+            <span>💡</span>
+            <span>点击任意卡片可直达官网或 GitHub 源码仓库</span>
+          </div>
+
+          <div class="relative w-full sm:w-56">
+            <input
+              id="project-search-input"
+              type="text"
+              placeholder="搜索工具名称或关键词..."
+              class="w-full rounded-lg border border-[var(--border-primary)] bg-[var(--bg-secondary)] px-3 py-1.5 pl-8 text-xs text-[var(--text-primary)] placeholder-[var(--text-tertiary)] focus:border-[var(--accent)] focus:outline-hidden transition-colors"
+            />
+            <svg class="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-[var(--text-tertiary)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+          </div>
         </div>
+      </div>
+
+      <!-- Category Filter Tabs -->
+      <div id="project-category-tabs" class="flex flex-wrap items-center gap-1.5 text-xs font-medium">
+        {categories.map((cat, idx) => (
+          <button
+            type="button"
+            class:list={[
+              'proj-cat-tab rounded-lg px-3 py-1.5 transition-all text-xs cursor-pointer',
+              idx === 0
+                ? 'active bg-[var(--accent)] text-white font-semibold'
+                : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]'
+            ]}
+            data-category={cat.id}
+          >
+            {cat.label} ({cat.count})
+          </button>
+        ))}
+      </div>
+
+      <!-- Projects Grid -->
+      <div id="projects-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {recommendedProjects.map((p) => (
+          <ProjectCard {...p} />
+        ))}
+      </div>
+
+      <!-- Empty search state -->
+      <div id="projects-empty-state" class="hidden rounded-xl border border-dashed border-[var(--border-primary)] p-10 text-center">
+        <span class="text-3xl">🔍</span>
+        <p class="mt-2 text-sm font-semibold text-[var(--text-primary)]">未找到匹配的推荐利器</p>
+        <p class="mt-1 text-xs text-[var(--text-tertiary)]">尝试更换关键词或切换到“全部利器”分类查看</p>
       </div>
     </div>
 
-    <!-- Category Filter Tabs -->
-    <div id="project-category-tabs" class="flex flex-wrap items-center gap-1.5 text-xs font-medium">
-      {categories.map((cat, idx) => (
-        <button
-          type="button"
-          class:list={[
-            'proj-cat-tab rounded-lg px-3 py-1.5 transition-all text-xs cursor-pointer',
-            idx === 0
-              ? 'active bg-[var(--accent)] text-white font-semibold'
-              : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]'
-          ]}
-          data-category={cat.id}
-        >
-          {cat.label} ({cat.count})
-        </button>
-      ))}
-    </div>
-
-    <!-- Projects Grid -->
-    <div id="projects-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-      {recommendedProjects.map((p) => (
-        <ProjectCard {...p} />
-      ))}
-    </div>
-
-    <!-- Empty search state -->
-    <div id="projects-empty-state" class="hidden rounded-xl border border-dashed border-[var(--border-primary)] p-10 text-center">
-      <span class="text-3xl">🔍</span>
-      <p class="mt-2 text-sm font-semibold text-[var(--text-primary)]">未找到匹配的推荐利器</p>
-      <p class="mt-1 text-xs text-[var(--text-tertiary)]">尝试更换关键词或切换到“全部利器”分类查看</p>
-    </div>
+    <!-- Right Companion Sidebar (4 cols on lg, sticky) -->
+    <aside id="moyu-sidebar" class="lg:col-span-4 space-y-4 lg:sticky lg:top-[68px]">
+      <MoyuCalendarSidebar moyu={hubData.moyu} />
+    </aside>
   </div>
 </BaseLayout>
 
