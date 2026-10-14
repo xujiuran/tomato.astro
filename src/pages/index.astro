@@ -49,24 +49,10 @@ const recentThoughts = [
   }
 ];
 
-const projects = [
-  {
-    name: 'InkFlow',
-    desc: '极简本地优先的写作排版工具，支持 Markdown 实时双向渲染与优雅中英文混排。',
-    tags: ['Astro', 'TypeScript', 'Tailwind'],
-    link: 'https://github.com',
-    icon: '✍️',
-    stars: '1.2k'
-  },
-  {
-    name: 'QuickMole',
-    desc: '跨平台轻量系统清理与开发环境分析 CLI，所有破坏性操作均支持 Dry-run 预演。',
-    tags: ['Rust', 'CLI', 'macOS'],
-    link: 'https://github.com',
-    icon: '⚡',
-    stars: '860'
-  }
-];
+import { recommendedProjects } from '../data/projects';
+
+// Featured tools displayed on homepage (2x2 grid)
+const featuredProjects = recommendedProjects.slice(0, 4);
 ---
 
 <BaseLayout currentPath="/">
@@ -158,19 +144,22 @@ const projects = [
 
   <hr class="my-8 border-[var(--border-secondary)]" />
 
-  <!-- Indie Projects / Open Source (Tw93-style) -->
+  <!-- Recommended Tools / Open Source (Curated) -->
   <section class="space-y-4">
     <div class="flex items-center justify-between">
-      <h2 class="text-lg sm:text-xl font-bold text-[var(--text-primary)] flex items-center gap-2">
-        <span>🛠️</span> 作品与开源
-      </h2>
+      <div class="flex items-baseline gap-2">
+        <h2 class="text-lg sm:text-xl font-bold text-[var(--text-primary)] flex items-center gap-2">
+          <span>🛠️</span> 极客利器 · 推荐项目
+        </h2>
+        <span class="text-xs text-[var(--text-tertiary)] hidden sm:inline">自用常驻与高频利器</span>
+      </div>
       <a href="/projects" class="text-xs sm:text-sm text-[var(--accent)] hover:underline flex items-center gap-1">
-        所有项目 →
+        查看全部 ({recommendedProjects.length}) →
       </a>
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-      {projects.map((p) => (
+      {featuredProjects.map((p) => (
         <ProjectCard {...p} />
       ))}
     </div>
