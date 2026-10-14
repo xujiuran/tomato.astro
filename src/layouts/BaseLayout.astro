@@ -2,6 +2,7 @@
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import ZenBackground from '../components/ZenBackground.astro';
+import BackToTop from '../components/BackToTop.astro';
 import '../styles/global.css';
 
 interface Props {
@@ -56,5 +57,8 @@ const {
     <div class="relative z-10">
       <Footer />
     </div>
+
+    <!-- Floating Back to Top Button -->
+    <BackToTop />
   </body>
 </html>
