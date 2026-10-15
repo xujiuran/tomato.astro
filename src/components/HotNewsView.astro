@@ -435,14 +435,7 @@ const financeSources = initialSources.filter((s) => s.column === 'finance');
     refreshBtn?.addEventListener('click', async () => {
       spinner?.classList.add('animate-spin');
       try {
-        const sources = Array.from(sourceBlocks).map((b) => (b as HTMLElement).dataset.sourceId).filter(Boolean);
-        const res = await fetch('https://newsnow.busiyi.world/api/s/entire', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ sources }),
-        });
+        const res = await fetch('/api/hotnews.json');
 
         if (res.ok) {
           const data = await res.json();

@@ -583,7 +583,7 @@ export async function fetchGitHubTrendingDirect(): Promise<HotNewsItem[]> {
         'Accept-Language': 'en-US,en;q=0.9',
         'Accept': 'text/html',
       },
-      signal: AbortSignal.timeout(3500),
+      signal: AbortSignal.timeout(6000),
     });
 
     if (!res.ok) return [];
@@ -640,17 +640,19 @@ export async function fetchHotNews(sourceIds: string[] = Object.keys(SOURCE_CONF
 
   const resultMap = new Map<string, HotNewsSource>();
 
-  // 1. Try fetching from newsnow entire endpoint
+  // 1. Try fetching from newsnow entire endpoint with browser identity & ample timeout
   try {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 2000);
+    const timeoutId = setTimeout(() => controller.abort(), 12000);
 
     const res = await fetch('https://newsnow.busiyi.world/api/s/entire', {
       method: 'POST',
       signal: controller.signal,
       headers: {
         'Content-Type': 'application/json',
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko)',
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Referer': 'https://newsnow.busiyi.world/',
+        'Origin': 'https://newsnow.busiyi.world',
       },
       body: JSON.stringify({ sources: sourceIds }),
     });
@@ -669,15 +671,15 @@ export async function fetchHotNews(sourceIds: string[] = Object.keys(SOURCE_CONF
               column: cfg.column,
               home: cfg.home,
               color: cfg.color,
-              items: s.items.slice(0, 20),
+              items: s.items.slice(0, 25),
               updatedTime: s.updatedTime || Date.now(),
             });
           }
         }
       }
     }
-  } catch {
-    // newsnow unreachable or Cloudflare challenge, proceed to live augmentation & robust defaults
+  } catch (err) {
+    console.warn('[newsService] newsnow fetch failed or timed out:', err);
   }
 
   // 2. Fetch live data directly from official https://github.com/trending
