@@ -651,18 +651,23 @@ const financeSources = initialSources.filter((s) => s.column === 'finance');
 
     refreshBtn?.addEventListener('click', () => refreshHotNews(true));
 
-    // Defer background refresh so tab switching and page interaction remain completely unblocked
+    // Check if current page rendered with fallback mock data, and silently upgrade in background
     setTimeout(() => {
-      const firstTitle = document.querySelector('.hot-title')?.textContent || '';
-      if (
-        firstTitle.includes('全国秋季气温') ||
-        firstTitle.includes('热门聚焦') ||
-        firstTitle.includes('新一代开源科技成果') ||
-        firstTitle.includes('打工人周三劳逸结合')
-      ) {
+      const allText = Array.from(document.querySelectorAll('.hot-title'))
+        .slice(0, 30)
+        .map((el) => el.textContent || '')
+        .join(' ');
+      const isMock =
+        allText.includes('全国秋季气温') ||
+        allText.includes('如何评价最新发布的全球开源大模型评测') ||
+        allText.includes('2026 前端工程化新范式') ||
+        allText.includes('打工人周三劳逸结合') ||
+        allText.includes('热门聚焦与前沿讨论');
+
+      if (isMock) {
         refreshHotNews(false);
       }
-    }, 2000);
+    }, 600);
 
     // Initialize with saved density
     applyDensity(currentDensity);

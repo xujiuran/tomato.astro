@@ -422,11 +422,15 @@ export async function getMoyuData(): Promise<MoyuData> {
 export function isMockHotData(data?: HotNewsSource[] | null): boolean {
   if (!data || data.length === 0) return true;
   const weibo = data.find((s) => s.id === 'weibo');
-  if (weibo?.items?.some((i) => i.title.includes('全国秋季气温') || i.id.startsWith('wb-'))) {
+  if (weibo?.items?.some((i) => i.title.includes('全国秋季气温') || i.id.includes('-sample-'))) {
     return true;
   }
   const juejin = data.find((s) => s.id === 'juejin');
-  if (juejin?.items?.some((i) => i.title.includes('2026 前端工程化新范式') || i.id.startsWith('jj-'))) {
+  if (juejin?.items?.some((i) => i.title.includes('2026 前端工程化新范式') || i.id.includes('-sample-'))) {
+    return true;
+  }
+  const zhihu = data.find((s) => s.id === 'zhihu');
+  if (zhihu?.items?.some((i) => i.title.includes('如何评价最新发布的全球开源大模型评测') || i.id.includes('-sample-'))) {
     return true;
   }
   return false;
@@ -767,7 +771,7 @@ export async function fetchHotNews(
   sourceIds: string[] = Object.keys(SOURCE_CONFIGS),
   forceFresh = false
 ): Promise<HotNewsSource[]> {
-  if (!forceFresh && hotCache && Date.now() - hotCache.timestamp < CACHE_TTL_MS) {
+  if (!forceFresh && hotCache && Date.now() - hotCache.timestamp < CACHE_TTL_MS && !isMockHotData(hotCache.data)) {
     return hotCache.data;
   }
 
@@ -790,7 +794,7 @@ export async function fetchHotNews(
       const [newsnowResult, githubResult] = await Promise.allSettled([
         (async () => {
           const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), 3500); // 3.5s max timeout to prevent blocking SSR
+          const timeoutId = setTimeout(() => controller.abort(), 8000); // 8s timeout to allow full platform aggregator
           try {
             const res = await fetch(`${newsnowBase}/api/s/entire`, {
               method: 'POST',
@@ -888,8 +892,10 @@ export async function fetchHotNews(
         }
       }
 
-      // Always save to cache so subsequent page navigations return instantly (0ms)
-      hotCache = { data: finalSources, timestamp: Date.now() };
+      // Only cache when live data was successfully fetched, never poison cache with fallback data
+      if (hasLiveItems && !isMockHotData(finalSources)) {
+        hotCache = { data: finalSources, timestamp: Date.now() };
+      }
 
       return finalSources;
     } finally {
