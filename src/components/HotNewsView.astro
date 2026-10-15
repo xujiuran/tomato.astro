@@ -305,7 +305,7 @@ const financeSources = initialSources.filter((s) => s.column === 'finance');
                 <!-- Title & Meta -->
                 <div class="flex-1 min-w-0">
                   <a
-                    href={item.url}
+                    href={item.url.startsWith('/') ? `${source.home.replace(/\/+$/, '')}${item.url}` : item.url}
                     target="_blank"
                     rel="noopener noreferrer"
                     class="hot-title text-sm text-[var(--text-primary)] hover:text-[var(--accent)] font-normal transition-colors line-clamp-2 leading-snug group-hover:underline"
@@ -632,25 +632,54 @@ const financeSources = initialSources.filter((s) => s.column === 'finance');
           } catch (_localErr) {}
         }
 
+        const PLATFORM_HOMES: Record<string, string> = {
+          ithome: 'https://www.ithome.com',
+          weibo: 'https://s.weibo.com',
+          zhihu: 'https://www.zhihu.com',
+          bilibili: 'https://www.bilibili.com',
+          baidu: 'https://www.baidu.com',
+          douyin: 'https://www.douyin.com',
+          toutiao: 'https://www.toutiao.com',
+          sspai: 'https://sspai.com',
+          juejin: 'https://juejin.cn',
+          hackernews: 'https://news.ycombinator.com',
+          v2ex: 'https://v2ex.com',
+          github: 'https://github.com',
+          wallstreetcn: 'https://wallstreetcn.com',
+          'cls-hot': 'https://www.cls.cn',
+          '36kr': 'https://36kr.com',
+        };
+
         if (Array.isArray(sourcesData)) {
           sourcesData.forEach((s) => {
             const block = document.querySelector(`[data-source-id="${s.id}"]`);
             if (block && Array.isArray(s.items) && s.items.length > 0) {
               const list = block.querySelector('ul');
               if (list) {
+                const home = PLATFORM_HOMES[s.id] || '';
                 list.innerHTML = s.items.slice(0, 25).map((item: any, idx: number) => {
                   const rank = idx + 1;
                   const rankClass = rank === 1 ? 'bg-red-500 text-white' :
                     rank === 2 ? 'bg-orange-500 text-white' :
                     rank === 3 ? 'bg-amber-500 text-white' :
                     'text-[var(--text-tertiary)] bg-[var(--bg-secondary)] font-medium';
+                  
+                  let itemUrl = (item.url || '').trim();
+                  if (itemUrl.startsWith('/')) {
+                    itemUrl = `${home}${itemUrl}`;
+                  } else if (itemUrl && !itemUrl.startsWith('http://') && !itemUrl.startsWith('https://')) {
+                    itemUrl = `${home}/${itemUrl.replace(/^\/+/, '')}`;
+                  } else if (!itemUrl) {
+                    itemUrl = home;
+                  }
+
                   return `
                     <li class="hot-item group flex items-start gap-3 py-2.5 hover:bg-[var(--bg-secondary)]/40 rounded-lg px-2 -mx-2 transition-colors" data-rank="${rank}">
                       <span class="mono text-xs font-bold shrink-0 mt-0.5 flex h-5 w-5 items-center justify-center rounded ${rankClass}">
                         ${rank}
                       </span>
                       <div class="flex-1 min-w-0">
-                        <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="hot-title text-sm text-[var(--text-primary)] hover:text-[var(--accent)] font-normal transition-colors line-clamp-2 leading-snug group-hover:underline">
+                        <a href="${itemUrl}" target="_blank" rel="noopener noreferrer" class="hot-title text-sm text-[var(--text-primary)] hover:text-[var(--accent)] font-normal transition-colors line-clamp-2 leading-snug group-hover:underline">
                           ${item.title}
                         </a>
                         ${item.extra?.hover ? `<p class="text-[12px] text-[var(--text-tertiary)] line-clamp-1 mt-0.5">${item.extra.hover}</p>` : ''}
@@ -681,6 +710,18 @@ const financeSources = initialSources.filter((s) => s.column === 'finance');
         }
       }
     }
+
+    // Fail-safe link click handler: never let platform-relative urls result in 404 on blog
+    const sourcesContainer = document.getElementById('sources-container');
+    sourcesContainer?.addEventListener('click', (e) => {
+      const link = (e.target as HTMLElement).closest('a');
+      if (!link) return;
+      const href = link.getAttribute('href') || '';
+      if (href.startsWith('/1/') || href.startsWith('/0/') || href.endsWith('.htm')) {
+        e.preventDefault();
+        window.open(`https://www.ithome.com/${href.replace(/^\/+/, '')}`, '_blank', 'noopener,noreferrer');
+      }
+    });
 
     refreshBtn?.addEventListener('click', () => refreshHotNews(true));
 

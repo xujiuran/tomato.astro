@@ -828,13 +828,27 @@ export async function fetchHotNews(
         for (const s of newsnowResult.value) {
           const cfg = SOURCE_CONFIGS[s.id];
           if (cfg && Array.isArray(s.items) && s.items.length > 0) {
+            const sanitizedItems = s.items.slice(0, 25).map((item: any) => {
+              let url = (item.url || '').trim();
+              if (url.startsWith('/')) {
+                url = `${cfg.home.replace(/\/+$/, '')}${url}`;
+              } else if (url && !url.startsWith('http://') && !url.startsWith('https://')) {
+                url = `${cfg.home.replace(/\/+$/, '')}/${url.replace(/^\/+/, '')}`;
+              } else if (!url) {
+                url = cfg.home;
+              }
+              return {
+                ...item,
+                url,
+              };
+            });
             resultMap.set(s.id, {
               id: s.id,
               name: cfg.name,
               column: cfg.column,
               home: cfg.home,
               color: cfg.color,
-              items: s.items.slice(0, 25),
+              items: sanitizedItems,
               updatedTime: s.updatedTime || Date.now(),
             });
             hasLiveItems = true;
