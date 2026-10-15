@@ -3,15 +3,13 @@
 ---
 
 <button
-  id="theme-toggle"
   type="button"
   aria-label="切换浅色/深色主题"
-  class="relative inline-flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--border-primary)] bg-[var(--bg-secondary)] text-[var(--text-secondary)] transition-all hover:border-[var(--text-secondary)] hover:text-[var(--text-primary)] active:scale-95"
+  class="theme-toggle-btn relative inline-flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--border-primary)] bg-[var(--bg-secondary)] text-[var(--text-secondary)] transition-all hover:border-[var(--text-secondary)] hover:text-[var(--text-primary)] active:scale-95 cursor-pointer shadow-2xs"
 >
   <!-- Sun Icon (shows in dark mode) -->
   <svg
-    id="sun-icon"
-    class="hidden h-4 w-4"
+    class="sun-icon hidden h-4 w-4"
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 24 24"
     fill="none"
@@ -33,8 +31,7 @@
 
   <!-- Moon Icon (shows in light mode) -->
   <svg
-    id="moon-icon"
-    class="h-4 w-4"
+    class="moon-icon h-4 w-4"
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 24 24"
     fill="none"
@@ -49,26 +46,32 @@
 
 <script>
   function setupThemeToggle() {
-    const btn = document.getElementById('theme-toggle');
-    const sunIcon = document.getElementById('sun-icon');
-    const moonIcon = document.getElementById('moon-icon');
+    const buttons = document.querySelectorAll('.theme-toggle-btn');
+    if (!buttons.length) return;
 
-    function updateIcons(isDark: boolean) {
-      if (isDark) {
-        sunIcon?.classList.remove('hidden');
-        moonIcon?.classList.add('hidden');
-      } else {
-        sunIcon?.classList.add('hidden');
-        moonIcon?.classList.remove('hidden');
-      }
+    function updateAllIcons(isDark: boolean) {
+      buttons.forEach((btn) => {
+        const sun = btn.querySelector('.sun-icon');
+        const moon = btn.querySelector('.moon-icon');
+        if (isDark) {
+          sun?.classList.remove('hidden');
+          moon?.classList.add('hidden');
+        } else {
+          sun?.classList.add('hidden');
+          moon?.classList.remove('hidden');
+        }
+      });
     }
 
     const isDark = document.documentElement.classList.contains('dark');
-    updateIcons(isDark);
+    updateAllIcons(isDark);
 
-    if (btn && !(btn as any)._hasThemeListener) {
+    buttons.forEach((btn) => {
+      if ((btn as any)._hasThemeListener) return;
       (btn as any)._hasThemeListener = true;
-      btn.addEventListener('click', () => {
+
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
         const currentlyDark = document.documentElement.classList.contains('dark');
         const nextDark = !currentlyDark;
         if (nextDark) {
@@ -78,9 +81,9 @@
           document.documentElement.classList.remove('dark');
           localStorage.setItem('theme', 'light');
         }
-        updateIcons(nextDark);
+        updateAllIcons(nextDark);
       });
-    }
+    });
   }
 
   setupThemeToggle();

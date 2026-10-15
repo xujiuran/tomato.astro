@@ -312,7 +312,21 @@ export async function fetchDaily60s(specificDate?: string): Promise<Daily60sData
 
 let hubCache: { data: Daily60sHubData; timestamp: number } | null = null;
 let hotCache: { data: HotNewsSource[]; timestamp: number } | null = null;
+let activeHotFetchPromise: Promise<HotNewsSource[]> | null = null;
 const CACHE_TTL_MS = 10 * 60 * 1000; // 10 minutes cache
+
+export function isMockHotData(data?: HotNewsSource[] | null): boolean {
+  if (!data || data.length === 0) return true;
+  const weibo = data.find((s) => s.id === 'weibo');
+  if (weibo?.items?.some((i) => i.title.includes('全国秋季气温') || i.id.startsWith('wb-'))) {
+    return true;
+  }
+  const juejin = data.find((s) => s.id === 'juejin');
+  if (juejin?.items?.some((i) => i.title.includes('2026 前端工程化新范式') || i.id.startsWith('jj-'))) {
+    return true;
+  }
+  return false;
+}
 
 /**
  * Fetch full 60s Multi-channel Hub Data
@@ -585,7 +599,7 @@ export async function fetchGitHubTrendingDirect(): Promise<HotNewsItem[]> {
         'Accept-Language': 'en-US,en;q=0.9',
         'Accept': 'text/html',
       },
-      signal: AbortSignal.timeout(6000),
+      signal: AbortSignal.timeout(4000),
     });
 
     if (!res.ok) return [];
@@ -626,8 +640,8 @@ export async function fetchGitHubTrendingDirect(): Promise<HotNewsItem[]> {
     }
 
     return items;
-  } catch (err) {
-    console.warn('[newsService] fetchGitHubTrendingDirect failed:', err);
+  } catch (_err) {
+    // Gracefully fall back to pre-configured trending items; silence console timeout noise
     return [];
   }
 }
@@ -635,42 +649,65 @@ export async function fetchGitHubTrendingDirect(): Promise<HotNewsItem[]> {
 /**
  * Fetch hot news across platforms using newsnext/newsnow API with robust fallback & live augmentation
  */
-export async function fetchHotNews(sourceIds: string[] = Object.keys(SOURCE_CONFIGS)): Promise<HotNewsSource[]> {
-  if (hotCache && Date.now() - hotCache.timestamp < CACHE_TTL_MS) {
+export async function fetchHotNews(
+  sourceIds: string[] = Object.keys(SOURCE_CONFIGS),
+  forceFresh = false
+): Promise<HotNewsSource[]> {
+  if (!forceFresh && hotCache && Date.now() - hotCache.timestamp < CACHE_TTL_MS && !isMockHotData(hotCache.data)) {
     return hotCache.data;
   }
 
-  const resultMap = new Map<string, HotNewsSource>();
+  // Deduplicate in-flight requests so concurrent calls share the exact same fetch
+  if (activeHotFetchPromise && !forceFresh) {
+    return activeHotFetchPromise;
+  }
 
-  // 1. Try fetching from newsnow entire endpoint with browser identity & ample timeout
-  const newsnowBase = (
-    (typeof process !== 'undefined' && process.env?.NEWSNOW_BASE_URL) ||
-    import.meta.env?.NEWSNOW_BASE_URL ||
-    'https://newsnow.busiyi.world'
-  ).replace(/\/+$/, '');
+  activeHotFetchPromise = (async () => {
+    try {
+      const resultMap = new Map<string, HotNewsSource>();
 
-  try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 12000);
+      const newsnowBase = (
+        (typeof process !== 'undefined' && process.env?.NEWSNOW_BASE_URL) ||
+        import.meta.env?.NEWSNOW_BASE_URL ||
+        'https://news.xujiuran.top'
+      ).replace(/\/+$/, '');
 
-    const res = await fetch(`${newsnowBase}/api/s/entire`, {
-      method: 'POST',
-      signal: controller.signal,
-      headers: {
-        'Content-Type': 'application/json',
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-        'Referer': `${newsnowBase}/`,
-        'Origin': newsnowBase,
-      },
-      body: JSON.stringify({ sources: sourceIds }),
-    });
+      // Run newsnow fetch and github live scraper in PARALLEL to eliminate serial latency
+      const [newsnowResult, githubResult] = await Promise.allSettled([
+        (async () => {
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 12000); // 12s timeout for upstream full aggregator
+          try {
+            const res = await fetch(`${newsnowBase}/api/s/entire`, {
+              method: 'POST',
+              signal: controller.signal,
+              headers: {
+                'Content-Type': 'application/json',
+                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                'Referer': `${newsnowBase}/`,
+                'Origin': newsnowBase,
+              },
+              body: JSON.stringify({ sources: sourceIds }),
+            });
+            clearTimeout(timeoutId);
+            if (res.ok) {
+              return await res.json();
+            }
+          } catch (_err) {
+            // Fallback gracefully without console pollution
+          } finally {
+            clearTimeout(timeoutId);
+          }
+          return null;
+        })(),
+        fetchGitHubTrendingDirect()
+      ]);
 
-    clearTimeout(timeoutId);
+      let hasLiveItems = false;
 
-    if (res.ok) {
-      const data = await res.json();
-      if (Array.isArray(data)) {
-        for (const s of data) {
+      // Process newsnow results
+      if (newsnowResult.status === 'fulfilled' && Array.isArray(newsnowResult.value)) {
+        for (const s of newsnowResult.value) {
           const cfg = SOURCE_CONFIGS[s.id];
           if (cfg && Array.isArray(s.items) && s.items.length > 0) {
             resultMap.set(s.id, {
@@ -682,66 +719,71 @@ export async function fetchHotNews(sourceIds: string[] = Object.keys(SOURCE_CONF
               items: s.items.slice(0, 25),
               updatedTime: s.updatedTime || Date.now(),
             });
+            hasLiveItems = true;
           }
         }
       }
+
+      // Process github direct scrape results if available
+      if (githubResult.status === 'fulfilled' && Array.isArray(githubResult.value) && githubResult.value.length > 0) {
+        const cfg = SOURCE_CONFIGS.github;
+        resultMap.set('github', {
+          id: 'github',
+          name: cfg.name,
+          column: cfg.column,
+          home: 'https://github.com/trending',
+          color: cfg.color,
+          items: githubResult.value,
+          updatedTime: Date.now(),
+        });
+        hasLiveItems = true;
+      }
+
+      // 3. Ensure EVERY requested source is covered with rich items
+      const finalSources: HotNewsSource[] = [];
+      for (const id of sourceIds) {
+        const cfg = SOURCE_CONFIGS[id];
+        if (!cfg) continue;
+
+        const maxCount = cfg.maxItems || DEFAULT_MAX_ITEMS;
+
+        if (resultMap.has(id)) {
+          const src = resultMap.get(id)!;
+          finalSources.push({
+            ...src,
+            items: src.items.slice(0, maxCount),
+          });
+        } else {
+          const defaultItems = DEFAULT_HOT_ITEMS[id] || [
+            {
+              id: `${id}-sample-1`,
+              title: `${cfg.name} 热门聚焦与前沿讨论`,
+              url: cfg.home,
+              extra: { info: '实时热搜', hover: `${cfg.name} 今日热点` },
+            },
+          ];
+          finalSources.push({
+            id,
+            name: cfg.name,
+            column: cfg.column,
+            home: cfg.home,
+            color: cfg.color,
+            items: defaultItems.slice(0, maxCount),
+            updatedTime: Date.now(),
+          });
+        }
+      }
+
+      // Only cache when live data was successfully fetched, never poison cache with fallback data
+      if (hasLiveItems && !isMockHotData(finalSources)) {
+        hotCache = { data: finalSources, timestamp: Date.now() };
+      }
+
+      return finalSources;
+    } finally {
+      activeHotFetchPromise = null;
     }
-  } catch (err) {
-    console.warn('[newsService] newsnow fetch failed or timed out:', err);
-  }
+  })();
 
-  // 2. Fetch live data directly from official https://github.com/trending
-  try {
-    const liveTrending = await fetchGitHubTrendingDirect();
-    if (liveTrending.length > 0) {
-      const cfg = SOURCE_CONFIGS.github;
-      resultMap.set('github', {
-        id: 'github',
-        name: cfg.name,
-        column: cfg.column,
-        home: 'https://github.com/trending',
-        color: cfg.color,
-        items: liveTrending,
-        updatedTime: Date.now(),
-      });
-    }
-  } catch {}
-
-  // 3. Ensure EVERY requested source is covered with rich items
-  const finalSources: HotNewsSource[] = [];
-  for (const id of sourceIds) {
-    const cfg = SOURCE_CONFIGS[id];
-    if (!cfg) continue;
-
-    const maxCount = cfg.maxItems || DEFAULT_MAX_ITEMS;
-
-    if (resultMap.has(id)) {
-      const src = resultMap.get(id)!;
-      finalSources.push({
-        ...src,
-        items: src.items.slice(0, maxCount),
-      });
-    } else {
-      const defaultItems = DEFAULT_HOT_ITEMS[id] || [
-        {
-          id: `${id}-sample-1`,
-          title: `${cfg.name} 热门聚焦与前沿讨论`,
-          url: cfg.home,
-          extra: { info: '实时热搜', hover: `${cfg.name} 今日热点` },
-        },
-      ];
-      finalSources.push({
-        id,
-        name: cfg.name,
-        column: cfg.column,
-        home: cfg.home,
-        color: cfg.color,
-        items: defaultItems.slice(0, maxCount),
-        updatedTime: Date.now(),
-      });
-    }
-  }
-
-  hotCache = { data: finalSources, timestamp: Date.now() };
-  return finalSources;
+  return activeHotFetchPromise;
 }

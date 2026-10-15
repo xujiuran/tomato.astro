@@ -1,0 +1,236 @@
+---
+import type { Daily60sHubData, HotNewsSource } from '../lib/newsService';
+
+interface Props {
+  hubData: Daily60sHubData;
+  hotNewsSources?: HotNewsSource[];
+}
+
+const { hubData, hotNewsSources = [] } = Astro.props;
+const digest = hubData?.digest || {
+  date: '今日',
+  dayOfWeek: '每日快讯',
+  news: [],
+  tip: '保持专注，敏锐前行。',
+  updated: '实时同步'
+};
+
+// Select first 5 highlights for homepage preview
+const previewNews = digest.news.slice(0, 5);
+
+// Curate preview sources for hot news column (GitHub Trending, Weibo, CLS, V2EX)
+const githubSource = hotNewsSources.find((s) => s.id === 'github');
+const weiboSource = hotNewsSources.find((s) => s.id === 'weibo');
+const clsSource = hotNewsSources.find((s) => s.id === 'cls-hot');
+const v2exSource = hotNewsSources.find((s) => s.id === 'v2ex');
+
+// Fallback preview items if hot news sources aren't loaded yet
+const topGithubItems = githubSource?.items.slice(0, 2) || [
+  { id: 'gh-1', title: 'anthropics/anthropic-quickstarts: 官方精选项目模板', url: 'https://github.com/trending' },
+  { id: 'gh-2', title: 'vllm-project/vllm: 高吞吐易用的大模型推理与部署引擎', url: 'https://github.com/trending' }
+];
+
+const topWeiboItems = weiboSource?.items.slice(0, 2) || [
+  { id: 'wb-1', title: '豆包对低认知人群有权威性 · 科技热议', url: 'https://weibo.com' },
+  { id: 'wb-2', title: '90多年前30万人严守一个秘密 · 历史长波', url: 'https://weibo.com' }
+];
+
+const topClsItems = clsSource?.items.slice(0, 2) || [
+  { id: 'cls-1', title: '美以领导人通话后商榷应对中东局势新方案', url: 'https://www.cls.cn' },
+  { id: 'cls-2', title: '美联储官员强化鹰派立场：抗通胀之战尚未落幕', url: 'https://www.cls.cn' }
+];
+---
+
+<section class="space-y-4">
+  <!-- Section Title Bar -->
+  <div class="flex items-center justify-between flex-wrap gap-2">
+    <div class="flex items-center gap-2.5">
+      <img
+        src="/images/icons/news.png"
+        alt="每日新闻"
+        class="h-6 w-6 sm:h-7 sm:w-7 object-contain inline-block shrink-0 rounded-lg shadow-xs"
+      />
+      <div>
+        <h2 class="text-lg sm:text-xl font-bold text-[var(--text-primary)] flex items-center gap-2">
+          <span>每日新闻 · 晨报与风向标</span>
+        </h2>
+      </div>
+      <span class="mono text-[11px] font-semibold text-[var(--accent)] bg-[var(--accent)]/10 px-2 py-0.5 rounded hidden sm:inline">
+        {digest.date} {digest.dayOfWeek}
+      </span>
+    </div>
+
+    <a
+      href="/news"
+      class="text-xs sm:text-sm text-[var(--accent)] hover:underline flex items-center gap-1 font-medium group"
+    >
+      <span>进入完整雷达 ({digest.news.length}条早报 · 15平台)</span>
+      <span class="group-hover:translate-x-0.5 transition-transform">→</span>
+    </a>
+  </div>
+
+  <!-- 2-Column Responsive Card Grid -->
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
+    <!-- Left Card: 60s Daily Digest Highlights (7 cols) -->
+    <div class="lg:col-span-7 rounded-2xl border border-[var(--border-primary)] bg-[var(--card-bg)] p-4 sm:p-5 shadow-xs flex flex-col justify-between hover:border-[var(--text-secondary)]/40 transition-colors">
+      <div class="space-y-3">
+        <!-- Card Header -->
+        <div class="flex items-center justify-between pb-2.5 border-b border-[var(--border-secondary)]">
+          <div class="flex items-center gap-2">
+            <span class="h-2 w-2 rounded-full bg-red-500 animate-pulse"></span>
+            <span class="text-xs font-bold text-[var(--text-primary)] tracking-wide">
+              60 秒晨读精选
+            </span>
+            <span class="text-[11px] text-[var(--text-tertiary)] mono">
+              TOP 5
+            </span>
+          </div>
+          <span class="text-[11px] text-[var(--text-tertiary)] mono">
+            {digest.date}
+          </span>
+        </div>
+
+        <!-- News Bullet List -->
+        <ul class="space-y-2.5 text-xs sm:text-sm leading-relaxed">
+          {previewNews.map((item, idx) => (
+            <li class="flex items-start gap-2.5 group">
+              <span class="mono text-[11px] font-bold shrink-0 mt-0.5 flex h-4.5 w-4.5 items-center justify-center rounded bg-[var(--bg-secondary)] text-[var(--text-secondary)] group-hover:bg-[var(--accent)] group-hover:text-white transition-colors">
+                {idx + 1}
+              </span>
+              <p class="text-[var(--text-primary)] group-hover:text-[var(--accent)] transition-colors line-clamp-2">
+                {item.replace(/^\d+[\.、\s]*/, '')}
+              </p>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <!-- Bottom Tip & Link -->
+      <div class="mt-4 pt-3 border-t border-[var(--border-secondary)] space-y-2.5">
+        {digest.tip && (
+          <div class="rounded-xl bg-[var(--bg-secondary)]/70 border border-[var(--border-secondary)] px-3 py-2 text-xs text-[var(--text-secondary)] flex items-start gap-2">
+            <span class="text-sm shrink-0 leading-none">💡</span>
+            <p class="line-clamp-2 leading-relaxed">
+              <span class="font-medium text-[var(--text-primary)]">微语：</span>{digest.tip.replace(/^【微语】\s*/, '')}
+            </p>
+          </div>
+        )}
+        <div class="flex items-center justify-between text-xs pt-0.5">
+          <span class="text-[var(--text-tertiary)] text-[11px]">
+            每日清晨持续同步全国与全球要闻
+          </span>
+          <a
+            href="/news#60s"
+            class="text-[var(--accent)] hover:underline font-medium inline-flex items-center gap-1"
+          >
+            阅读全部 {digest.news.length} 条 →
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Card: Real-time Hot Radar Preview (5 cols) -->
+    <div class="lg:col-span-5 rounded-2xl border border-[var(--border-primary)] bg-[var(--card-bg)] p-4 sm:p-5 shadow-xs flex flex-col justify-between hover:border-[var(--text-secondary)]/40 transition-colors">
+      <div class="space-y-3">
+        <!-- Card Header -->
+        <div class="flex items-center justify-between pb-2.5 border-b border-[var(--border-secondary)]">
+          <div class="flex items-center gap-2">
+            <span class="relative flex h-2 w-2">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+            </span>
+            <span class="text-xs font-bold text-[var(--text-primary)] tracking-wide">
+              全网风向标速递
+            </span>
+          </div>
+          <span class="mono text-[10px] text-[var(--text-tertiary)] bg-[var(--bg-secondary)] px-1.5 py-0.5 rounded">
+            实时抓取
+          </span>
+        </div>
+
+        <!-- Curated Trends Preview -->
+        <div class="space-y-3 text-xs">
+          <!-- 1. GitHub Trending -->
+          <div class="space-y-1">
+            <div class="flex items-center justify-between text-[11px] text-[var(--text-tertiary)] font-medium">
+              <span class="flex items-center gap-1.5">
+                <span class="h-1.5 w-1.5 rounded-full bg-[#181717] dark:bg-zinc-400"></span>
+                <span class="font-semibold text-[var(--text-secondary)]">GitHub Trending</span>
+              </span>
+              <a href="/news#hot" class="hover:text-[var(--accent)]">更多</a>
+            </div>
+            {topGithubItems.map((item, idx) => (
+              <a
+                href={item.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="block truncate text-[var(--text-primary)] hover:text-[var(--accent)] transition-colors py-0.5 leading-snug"
+              >
+                <span class="mono text-[11px] text-[var(--text-tertiary)] mr-1">#{idx + 1}</span>
+                {item.title}
+              </a>
+            ))}
+          </div>
+
+          <!-- 2. 微博热搜 -->
+          <div class="space-y-1 pt-1.5 border-t border-[var(--border-secondary)]">
+            <div class="flex items-center justify-between text-[11px] text-[var(--text-tertiary)] font-medium">
+              <span class="flex items-center gap-1.5">
+                <span class="h-1.5 w-1.5 rounded-full bg-[#e6162d]"></span>
+                <span class="font-semibold text-[var(--text-secondary)]">微博热搜榜</span>
+              </span>
+              <a href="/news#hot" class="hover:text-[var(--accent)]">更多</a>
+            </div>
+            {topWeiboItems.map((item, idx) => (
+              <a
+                href={item.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="block truncate text-[var(--text-primary)] hover:text-[var(--accent)] transition-colors py-0.5 leading-snug"
+              >
+                <span class="mono text-[11px] text-[var(--text-tertiary)] mr-1">#{idx + 1}</span>
+                {item.title}
+              </a>
+            ))}
+          </div>
+
+          <!-- 3. 财联社 -->
+          <div class="space-y-1 pt-1.5 border-t border-[var(--border-secondary)]">
+            <div class="flex items-center justify-between text-[11px] text-[var(--text-tertiary)] font-medium">
+              <span class="flex items-center gap-1.5">
+                <span class="h-1.5 w-1.5 rounded-full bg-[#d9232e]"></span>
+                <span class="font-semibold text-[var(--text-secondary)]">财联社热榜</span>
+              </span>
+              <a href="/news#hot" class="hover:text-[var(--accent)]">更多</a>
+            </div>
+            {topClsItems.map((item, idx) => (
+              <a
+                href={item.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="block truncate text-[var(--text-primary)] hover:text-[var(--accent)] transition-colors py-0.5 leading-snug"
+              >
+                <span class="mono text-[11px] text-[var(--text-tertiary)] mr-1">#{idx + 1}</span>
+                {item.title}
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <!-- Card CTA Button -->
+      <div class="mt-4 pt-3 border-t border-[var(--border-secondary)]">
+        <a
+          href="/news#hot"
+          class="w-full py-2 px-3 rounded-xl bg-[var(--bg-secondary)] hover:bg-[var(--accent)] hover:text-white transition-all text-xs font-medium text-[var(--text-primary)] flex items-center justify-between group shadow-2xs"
+        >
+          <span class="flex items-center gap-1.5">
+            <img src="/images/icons/trending.png" alt="热榜" class="h-3.5 w-3.5 object-contain rounded-xs" />
+            <span>浏览 15 平台全部热榜 (300+ 条实时)</span>
+          </span>
+          <span class="group-hover:translate-x-0.5 transition-transform">→</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

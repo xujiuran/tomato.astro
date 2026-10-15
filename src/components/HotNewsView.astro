@@ -63,93 +63,184 @@ const financeSources = initialSources.filter((s) => s.column === 'finance');
       </div>
     </div>
 
-    <!-- Category Switcher Tabs & Density Limit Switcher -->
-    <div class="mt-2.5 flex flex-wrap items-center justify-between gap-2 pb-0.5 text-xs font-medium">
-      <div class="flex flex-wrap items-center gap-1.5">
+    <!-- Category Switcher Tabs, Platform Dropdown & Density Limit Switcher -->
+    <div class="mt-2.5 flex flex-wrap items-center justify-between gap-2 text-xs font-medium">
+      <!-- Category Switcher Tabs -->
+      <div class="flex flex-wrap items-center gap-1 sm:gap-1.5">
         <button
           type="button"
-          class="category-tab active rounded-md px-3 py-1.5 transition-colors bg-[var(--bg-secondary)] text-[var(--accent)] font-semibold"
+          class="category-tab active rounded-md px-2.5 sm:px-3 py-1.5 transition-colors bg-[var(--bg-secondary)] text-[var(--accent)] font-semibold"
           data-category="all"
         >
           全部聚焦
         </button>
         <button
           type="button"
-          class="category-tab rounded-md px-3 py-1.5 transition-colors text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] inline-flex items-center gap-1.5"
+          class="category-tab rounded-md px-2 sm:px-2.5 py-1.5 transition-colors text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] inline-flex items-center gap-1.5"
           data-category="tech"
         >
           <img src="/images/icons/tools.png" alt="极客科技" class="h-3.5 w-3.5 object-contain rounded-xs shrink-0" />
-          <span>极客科技 ({techSources.length})</span>
+          <span>极客科技</span>
         </button>
         <button
           type="button"
-          class="category-tab rounded-md px-3 py-1.5 transition-colors text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] inline-flex items-center gap-1.5"
+          class="category-tab rounded-md px-2 sm:px-2.5 py-1.5 transition-colors text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] inline-flex items-center gap-1.5"
           data-category="general"
         >
           <img src="/images/icons/globe.png" alt="全网社会" class="h-3.5 w-3.5 object-contain rounded-xs shrink-0" />
-          <span>全网社会 ({generalSources.length})</span>
+          <span>全网社会</span>
         </button>
         <button
           type="button"
-          class="category-tab rounded-md px-3 py-1.5 transition-colors text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] inline-flex items-center gap-1.5"
+          class="category-tab rounded-md px-2 sm:px-2.5 py-1.5 transition-colors text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] inline-flex items-center gap-1.5"
           data-category="finance"
         >
           <img src="/images/icons/market.png" alt="商业财经" class="h-3.5 w-3.5 object-contain rounded-xs shrink-0" />
-          <span>商业财经 ({financeSources.length})</span>
+          <span>商业财经</span>
         </button>
       </div>
 
-      <!-- Max Display Density Switcher -->
-      <div class="inline-flex items-center gap-1 rounded-lg border border-[var(--border-primary)] bg-[var(--bg-secondary)] p-0.5 text-[11px] shrink-0">
-        <span class="text-[var(--text-tertiary)] px-1.5 select-none text-[10px] font-normal">单榜展示:</span>
-        <button
-          type="button"
-          class="density-btn rounded px-2 py-0.5 transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
-          data-density="6"
-          title="每平台最多展示前 6 条（不足则按实际条数展示）"
-        >
-          TOP 6
-        </button>
-        <button
-          type="button"
-          class="density-btn active rounded px-2 py-0.5 transition-all bg-[var(--card-bg)] text-[var(--text-primary)] font-semibold shadow-2xs"
-          data-density="10"
-          title="每平台最多展示前 10 条（默认推荐，不足则按实际条数展示）"
-        >
-          TOP 10
-        </button>
-        <button
-          type="button"
-          class="density-btn rounded px-2 py-0.5 transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
-          data-density="all"
-          title="展示平台抓取到的全部条目"
-        >
-          全部
-        </button>
-      </div>
-    </div>
+      <!-- Right Controls: Platform Dropdown & Density Switcher -->
+      <div class="flex items-center gap-2">
+        <!-- Platform Selector Dropdown -->
+        <div class="relative" id="platform-dropdown-wrapper">
+          <button
+            id="platform-dropdown-btn"
+            type="button"
+            class="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border-primary)] bg-[var(--bg-secondary)] px-2.5 py-1 text-xs font-medium text-[var(--text-primary)] hover:border-[var(--text-secondary)] transition-all cursor-pointer shadow-2xs"
+            aria-expanded="false"
+            aria-haspopup="listbox"
+            title="选择指定平台筛选"
+          >
+            <span id="platform-dropdown-dot" class="h-2 w-2 rounded-full bg-[var(--accent)] shrink-0"></span>
+            <span id="platform-dropdown-label" class="max-w-[85px] sm:max-w-[110px] truncate">全部平台</span>
+            <svg id="platform-dropdown-chevron" class="h-3.5 w-3.5 text-[var(--text-tertiary)] shrink-0 transition-transform duration-200" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+            </svg>
+          </button>
 
-    <!-- Platform Filter Pills (Flex Wrap, No Side Scrolling) -->
-    <div id="platform-pills" class="mt-2.5 flex flex-wrap items-center gap-1.5 pt-2.5 border-t border-[var(--border-secondary)] text-[11px] leading-relaxed">
-      <span class="text-[var(--text-tertiary)] select-none mr-0.5 py-0.5">平台：</span>
-      <button
-        type="button"
-        class="platform-pill active px-2.5 py-1 rounded-full border border-[var(--accent)] bg-[var(--accent)]/10 text-[var(--accent)] font-medium transition-all"
-        data-platform="all"
-      >
-        全部平台
-      </button>
-      {initialSources.map((source) => (
-        <button
-          type="button"
-          class="platform-pill px-2.5 py-1 rounded-full border border-[var(--border-secondary)] bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:border-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all flex items-center gap-1.5"
-          data-platform={source.id}
-          data-column={source.column}
-        >
-          <span class="h-1.5 w-1.5 rounded-full shrink-0" style={`background-color: ${source.color}`}></span>
-          <span>{source.name}</span>
-        </button>
-      ))}
+          <!-- Dropdown Popover Menu -->
+          <div
+            id="platform-dropdown-menu"
+            class="hidden absolute left-0 top-full mt-1.5 w-56 max-w-[calc(100vw-32px)] rounded-xl border border-[var(--border-primary)] bg-[var(--card-bg)]/98 backdrop-blur-md p-1.5 shadow-xl z-50 max-h-80 overflow-y-auto space-y-0.5 text-xs"
+            role="listbox"
+          >
+            <button
+              type="button"
+              class="platform-select-item active w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors text-left font-medium text-[var(--accent)] bg-[var(--accent)]/10"
+              data-platform="all"
+              data-name="全部平台"
+              data-color="var(--accent)"
+            >
+              <span class="flex items-center gap-2">
+                <span class="h-2 w-2 rounded-full bg-[var(--accent)]"></span>
+                <span>全部平台 <span id="dropdown-all-count">({initialSources.length})</span></span>
+              </span>
+              <svg class="check-icon h-3.5 w-3.5 text-[var(--accent)] shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+              </svg>
+            </button>
+
+            <!-- Tech Category Group -->
+            <div data-group-column="tech" class="category-group-header px-2 pt-2 pb-0.5 text-[10px] font-bold uppercase tracking-wider text-[var(--text-tertiary)] mono border-t border-[var(--border-secondary)]">
+              极客科技
+            </div>
+            {techSources.map((source) => (
+              <button
+                type="button"
+                class="platform-select-item w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors text-left text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+                data-platform={source.id}
+                data-name={source.name}
+                data-column={source.column}
+                data-color={source.color}
+              >
+                <span class="flex items-center gap-2">
+                  <span class="h-2 w-2 rounded-full shrink-0" style={`background-color: ${source.color}`}></span>
+                  <span>{source.name}</span>
+                </span>
+                <svg class="check-icon hidden h-3.5 w-3.5 text-[var(--accent)] shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+                </svg>
+              </button>
+            ))}
+
+            <!-- General Category Group -->
+            <div data-group-column="general" class="category-group-header px-2 pt-2 pb-0.5 text-[10px] font-bold uppercase tracking-wider text-[var(--text-tertiary)] mono border-t border-[var(--border-secondary)]">
+              全网社会
+            </div>
+            {generalSources.map((source) => (
+              <button
+                type="button"
+                class="platform-select-item w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors text-left text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+                data-platform={source.id}
+                data-name={source.name}
+                data-column={source.column}
+                data-color={source.color}
+              >
+                <span class="flex items-center gap-2">
+                  <span class="h-2 w-2 rounded-full shrink-0" style={`background-color: ${source.color}`}></span>
+                  <span>{source.name}</span>
+                </span>
+                <svg class="check-icon hidden h-3.5 w-3.5 text-[var(--accent)] shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+                </svg>
+              </button>
+            ))}
+
+            <!-- Finance Category Group -->
+            <div data-group-column="finance" class="category-group-header px-2 pt-2 pb-0.5 text-[10px] font-bold uppercase tracking-wider text-[var(--text-tertiary)] mono border-t border-[var(--border-secondary)]">
+              商业财经
+            </div>
+            {financeSources.map((source) => (
+              <button
+                type="button"
+                class="platform-select-item w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors text-left text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+                data-platform={source.id}
+                data-name={source.name}
+                data-column={source.column}
+                data-color={source.color}
+              >
+                <span class="flex items-center gap-2">
+                  <span class="h-2 w-2 rounded-full shrink-0" style={`background-color: ${source.color}`}></span>
+                  <span>{source.name}</span>
+                </span>
+                <svg class="check-icon hidden h-3.5 w-3.5 text-[var(--accent)] shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+                </svg>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <!-- Density Limit Switcher -->
+        <div class="inline-flex items-center gap-1 rounded-lg border border-[var(--border-primary)] bg-[var(--bg-secondary)] p-0.5 text-[11px] shrink-0">
+          <span class="text-[var(--text-tertiary)] px-1.5 select-none text-[10px] font-normal hidden sm:inline">单榜展示:</span>
+          <button
+            type="button"
+            class="density-btn rounded px-2 py-0.5 transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+            data-density="6"
+            title="每平台最多展示前 6 条"
+          >
+            TOP 6
+          </button>
+          <button
+            type="button"
+            class="density-btn active rounded px-2 py-0.5 transition-all bg-[var(--card-bg)] text-[var(--text-primary)] font-semibold shadow-2xs"
+            data-density="10"
+            title="每平台最多展示前 10 条"
+          >
+            TOP 10
+          </button>
+          <button
+            type="button"
+            class="density-btn rounded px-2 py-0.5 transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+            data-density="all"
+            title="展示全部条目"
+          >
+            全部
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -252,10 +343,19 @@ const financeSources = initialSources.filter((s) => s.column === 'finance');
 
 <script>
   function setupHotNewsInteractions() {
+    const dropdownWrapper = document.getElementById('platform-dropdown-wrapper');
+    if (!dropdownWrapper || (dropdownWrapper as any)._hasHotNewsInteractions) return;
+    (dropdownWrapper as any)._hasHotNewsInteractions = true;
+
     const densityBtns = document.querySelectorAll('.density-btn');
     const categoryTabs = document.querySelectorAll('.category-tab');
-    const platformPills = document.querySelectorAll('.platform-pill');
     const sourceBlocks = document.querySelectorAll('.source-block');
+    const dropdownBtn = document.getElementById('platform-dropdown-btn');
+    const dropdownMenu = document.getElementById('platform-dropdown-menu');
+    const dropdownChevron = document.getElementById('platform-dropdown-chevron');
+    const dropdownDot = document.getElementById('platform-dropdown-dot');
+    const dropdownLabel = document.getElementById('platform-dropdown-label');
+    const platformItems = document.querySelectorAll('.platform-select-item');
     const searchInput = document.getElementById('hot-search-input') as HTMLInputElement | null;
     const emptyState = document.getElementById('search-empty-state');
     const refreshBtn = document.getElementById('btn-refresh-hot');
@@ -372,6 +472,77 @@ const financeSources = initialSources.filter((s) => s.column === 'finance');
       });
     });
 
+    // Platform Dropdown Toggle Logic
+    function toggleDropdown(open?: boolean) {
+      const isCurrentlyOpen = !dropdownMenu?.classList.contains('hidden');
+      const shouldOpen = open !== undefined ? open : !isCurrentlyOpen;
+
+      if (shouldOpen) {
+        dropdownMenu?.classList.remove('hidden');
+        dropdownBtn?.setAttribute('aria-expanded', 'true');
+        dropdownChevron?.classList.add('rotate-180');
+      } else {
+        dropdownMenu?.classList.add('hidden');
+        dropdownBtn?.setAttribute('aria-expanded', 'false');
+        dropdownChevron?.classList.remove('rotate-180');
+      }
+    }
+
+    dropdownBtn?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleDropdown();
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!dropdownWrapper?.contains(e.target as Node)) {
+        toggleDropdown(false);
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        toggleDropdown(false);
+      }
+    });
+
+    // Function to set active platform
+    function setPlatform(platformId: string, name: string, color?: string) {
+      currentPlatform = platformId;
+
+      if (dropdownLabel) dropdownLabel.textContent = name;
+      if (dropdownDot && color) dropdownDot.style.backgroundColor = color;
+
+      platformItems.forEach((item) => {
+        const itemEl = item as HTMLElement;
+        const checkIcon = itemEl.querySelector('.check-icon');
+        const isSelected = itemEl.dataset.platform === platformId;
+
+        if (isSelected) {
+          itemEl.classList.add('active', 'text-[var(--accent)]', 'bg-[var(--accent)]/10', 'font-medium');
+          itemEl.classList.remove('text-[var(--text-secondary)]');
+          checkIcon?.classList.remove('hidden');
+        } else {
+          itemEl.classList.remove('active', 'text-[var(--accent)]', 'bg-[var(--accent)]/10', 'font-medium');
+          itemEl.classList.add('text-[var(--text-secondary)]');
+          checkIcon?.classList.add('hidden');
+        }
+      });
+
+      toggleDropdown(false);
+      filterView();
+    }
+
+    // Platform items click
+    platformItems.forEach((item) => {
+      item.addEventListener('click', () => {
+        const itemEl = item as HTMLElement;
+        const pid = itemEl.dataset.platform || 'all';
+        const name = itemEl.dataset.name || '全部平台';
+        const color = itemEl.dataset.color || 'var(--accent)';
+        setPlatform(pid, name, color);
+      });
+    });
+
     // Category Tabs click
     categoryTabs.forEach((tab) => {
       tab.addEventListener('click', () => {
@@ -384,44 +555,39 @@ const financeSources = initialSources.filter((s) => s.column === 'finance');
 
         currentCategory = (tab as HTMLElement).dataset.category || 'all';
 
-        // Filter platform pills shown
-        platformPills.forEach((p) => {
-          const pEl = p as HTMLElement;
-          const pCol = pEl.dataset.column;
-          if (pEl.dataset.platform === 'all' || currentCategory === 'all' || pCol === currentCategory) {
-            pEl.style.display = 'inline-flex';
+        // Filter platform items inside dropdown to match current category
+        let visibleCount = 0;
+        platformItems.forEach((item) => {
+          const itemEl = item as HTMLElement;
+          const col = itemEl.dataset.column;
+          if (itemEl.dataset.platform === 'all' || currentCategory === 'all' || col === currentCategory) {
+            itemEl.style.display = 'flex';
+            if (itemEl.dataset.platform !== 'all') visibleCount++;
           } else {
-            pEl.style.display = 'none';
+            itemEl.style.display = 'none';
           }
         });
 
-        // Reset platform filter to all on category change
-        currentPlatform = 'all';
-        platformPills.forEach((p) => {
-          const pEl = p as HTMLElement;
-          if (pEl.dataset.platform === 'all') {
-            pEl.classList.add('border-[var(--accent)]', 'bg-[var(--accent)]/10', 'text-[var(--accent)]');
+        // Hide/show group headers inside dropdown
+        const groupHeaders = dropdownMenu?.querySelectorAll('.category-group-header');
+        groupHeaders?.forEach((h) => {
+          const hEl = h as HTMLElement;
+          const col = hEl.dataset.groupColumn;
+          // Show all group headers if 'all' is selected, otherwise hide section titles for single category
+          if (currentCategory === 'all') {
+            hEl.style.display = 'block';
           } else {
-            pEl.classList.remove('border-[var(--accent)]', 'bg-[var(--accent)]/10', 'text-[var(--accent)]');
+            hEl.style.display = 'none';
           }
         });
 
-        filterView();
-      });
-    });
+        const allCountEl = document.getElementById('dropdown-all-count');
+        if (allCountEl) {
+          allCountEl.textContent = `(${visibleCount})`;
+        }
 
-    // Platform Pills click
-    platformPills.forEach((pill) => {
-      pill.addEventListener('click', () => {
-        platformPills.forEach((p) => {
-          p.classList.remove('active', 'border-[var(--accent)]', 'bg-[var(--accent)]/10', 'text-[var(--accent)]');
-          p.classList.add('border-[var(--border-secondary)]', 'bg-[var(--bg-secondary)]', 'text-[var(--text-secondary)]');
-        });
-        pill.classList.add('active', 'border-[var(--accent)]', 'bg-[var(--accent)]/10', 'text-[var(--accent)]');
-        pill.classList.remove('border-[var(--border-secondary)]', 'text-[var(--text-secondary)]');
-
-        currentPlatform = (pill as HTMLElement).dataset.platform || 'all';
-        filterView();
+        // Reset platform selection to all on category switch
+        setPlatform('all', '全部平台', 'var(--accent)');
       });
     });
 
@@ -435,7 +601,7 @@ const financeSources = initialSources.filter((s) => s.column === 'finance');
     async function refreshHotNews(showSpinner = true) {
       if (showSpinner) spinner?.classList.add('animate-spin');
       try {
-        const res = await fetch('/api/hotnews.json');
+        const res = await fetch(`/api/hotnews.json?refresh=true&_t=${Date.now()}`);
 
         if (res.ok) {
           const data = await res.json();
@@ -487,7 +653,12 @@ const financeSources = initialSources.filter((s) => s.column === 'finance');
 
     // Auto-refresh in background if initial render contains fallback mock content
     const firstTitle = document.querySelector('.hot-title')?.textContent || '';
-    if (firstTitle.includes('全国秋季气温') || firstTitle.includes('热门聚焦')) {
+    if (
+      firstTitle.includes('全国秋季气温') ||
+      firstTitle.includes('热门聚焦') ||
+      firstTitle.includes('新一代开源科技成果') ||
+      firstTitle.includes('打工人周三劳逸结合')
+    ) {
       refreshHotNews(false);
     }
 
