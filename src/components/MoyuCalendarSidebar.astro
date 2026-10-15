@@ -312,65 +312,96 @@ const moyuQuote = moyu?.moyuQuote || defaultQuote;
       }
     }
 
+    let lastDateKey = '';
+    let lastStatusKey = '';
+
     function updateClock() {
       const now = new Date();
       const h = now.getHours();
       const m = now.getMinutes();
       const s = now.getSeconds();
 
-      if (clockEl) {
-        clockEl.textContent = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+      const timeStr = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+      if (clockEl && clockEl.textContent !== timeStr) {
+        clockEl.textContent = timeStr;
       }
 
-      if (weekdayEl) weekdayEl.textContent = weekdays[now.getDay()];
-      if (dateEl) dateEl.textContent = `${now.getFullYear()}年${now.getMonth() + 1}月${now.getDate()}日`;
-      
-      const lunarStr = getLunarDayText(now);
-      if (lunarEl && lunarStr) {
-        lunarEl.textContent = `农历${lunarStr}`;
+      const dateKey = `${now.getFullYear()}-${now.getMonth()}-${now.getDate()}`;
+      if (dateKey !== lastDateKey) {
+        lastDateKey = dateKey;
+        if (weekdayEl) weekdayEl.textContent = weekdays[now.getDay()];
+        if (dateEl) dateEl.textContent = `${now.getFullYear()}年${now.getMonth() + 1}月${now.getDate()}日`;
+        const lunarStr = getLunarDayText(now);
+        if (lunarEl && lunarStr) {
+          lunarEl.textContent = `农历${lunarStr}`;
+        }
       }
 
       // Workday Status Calculation
       const isWeekend = now.getDay() === 0 || now.getDay() === 6;
+      let statusIcon = '/images/icons/coffee.png';
+      let statusAlt = '工作状态';
+      let statusTitle = '工时进行中';
+      let statusBadge = '进行中';
+      let statusDesc = '保持好心情，适度喝水与活动双眼';
+
       if (isWeekend) {
-        if (emojiEl) emojiEl.innerHTML = '<img src="/images/icons/coffee.png" alt="周末休假" class="h-5 w-5 object-contain rounded-xs inline-block" />';
-        if (titleEl) titleEl.textContent = '周末休假时光';
-        if (badgeEl) badgeEl.textContent = '尽情享受';
-        if (descEl) descEl.textContent = '远离代码与打卡，充分享受生活与休息';
+        statusIcon = '/images/icons/coffee.png';
+        statusAlt = '周末休假';
+        statusTitle = '周末休假时光';
+        statusBadge = '尽情享受';
+        statusDesc = '远离代码与打卡，充分享受生活与休息';
       } else {
         const currentMins = h * 60 + m;
-        // 09:00 -> 540, 12:00 -> 720, 13:30 -> 810, 18:00 -> 1080
-        const coffeeImg = '<img src="/images/icons/coffee.png" alt="工作状态" class="h-5 w-5 object-contain rounded-xs inline-block" />';
         if (currentMins < 540) {
-          if (emojiEl) emojiEl.innerHTML = '<img src="/images/icons/news.png" alt="清晨" class="h-5 w-5 object-contain rounded-xs inline-block" />';
-          if (titleEl) titleEl.textContent = '清晨准备';
-          if (badgeEl) badgeEl.textContent = '开启一天';
-          if (descEl) descEl.textContent = '吃一顿营养早餐，清醒大脑迎接新挑战';
+          statusIcon = '/images/icons/news.png';
+          statusAlt = '清晨';
+          statusTitle = '清晨准备';
+          statusBadge = '开启一天';
+          statusDesc = '吃一顿营养早餐，清醒大脑迎接新挑战';
         } else if (currentMins >= 540 && currentMins < 720) {
           const toLunchMins = 720 - currentMins;
-          if (emojiEl) emojiEl.innerHTML = '<img src="/images/icons/tools.png" alt="专注" class="h-5 w-5 object-contain rounded-xs inline-block" />';
-          if (titleEl) titleEl.textContent = '上午专注时刻';
-          if (badgeEl) badgeEl.textContent = `距午餐 ${toLunchMins}分`;
-          if (descEl) descEl.textContent = '精力最充沛时段，专攻关键核心任务';
+          statusIcon = '/images/icons/tools.png';
+          statusAlt = '专注';
+          statusTitle = '上午专注时刻';
+          statusBadge = `距午餐 ${toLunchMins}分`;
+          statusDesc = '精力最充沛时段，专攻关键核心任务';
         } else if (currentMins >= 720 && currentMins < 810) {
-          if (emojiEl) emojiEl.innerHTML = coffeeImg;
-          if (titleEl) titleEl.textContent = '午休干饭充能';
-          if (badgeEl) badgeEl.textContent = '午休中';
-          if (descEl) descEl.textContent = '好好吃饭，小憩片刻为下午续航';
+          statusIcon = '/images/icons/coffee.png';
+          statusAlt = '午休';
+          statusTitle = '午休干饭充能';
+          statusBadge = '午休中';
+          statusDesc = '好好吃饭，小憩片刻为下午续航';
         } else if (currentMins >= 810 && currentMins < 1080) {
           const toOffMins = 1080 - currentMins;
           const toOffH = Math.floor(toOffMins / 60);
           const toOffM = toOffMins % 60;
-          if (emojiEl) emojiEl.innerHTML = coffeeImg;
-          if (titleEl) titleEl.textContent = '午后推进中';
-          if (badgeEl) badgeEl.textContent = `距下班 ${toOffH}h ${toOffM}m`;
-          if (descEl) descEl.textContent = '站起来喝口水，眺望远方让双眼放松';
+          statusIcon = '/images/icons/coffee.png';
+          statusAlt = '下午工作';
+          statusTitle = '午后推进中';
+          statusBadge = `距下班 ${toOffH}h ${toOffM}m`;
+          statusDesc = '站起来喝口水，眺望远方让双眼放松';
         } else {
-          if (emojiEl) emojiEl.innerHTML = '<img src="/images/icons/moyu.png" alt="自由" class="h-5 w-5 object-contain rounded-xs inline-block" />';
-          if (titleEl) titleEl.textContent = '下班自由时光';
-          if (badgeEl) badgeEl.textContent = '自由状态';
-          if (descEl) descEl.textContent = '打卡完成，享受个人项目与美好夜晚';
+          statusIcon = '/images/icons/moyu.png';
+          statusAlt = '自由';
+          statusTitle = '下班自由时光';
+          statusBadge = '自由状态';
+          statusDesc = '打卡完成，享受个人项目与美好夜晚';
         }
+      }
+
+      const statusKey = `${statusIcon}|${statusTitle}|${statusBadge}`;
+      if (statusKey !== lastStatusKey) {
+        lastStatusKey = statusKey;
+        if (emojiEl) {
+          const currentImg = emojiEl.querySelector('img');
+          if (!currentImg || currentImg.getAttribute('src') !== statusIcon) {
+            emojiEl.innerHTML = `<img src="${statusIcon}" alt="${statusAlt}" class="h-5 w-5 object-contain rounded-xs inline-block" />`;
+          }
+        }
+        if (titleEl && titleEl.textContent !== statusTitle) titleEl.textContent = statusTitle;
+        if (badgeEl && badgeEl.textContent !== statusBadge) badgeEl.textContent = statusBadge;
+        if (descEl && descEl.textContent !== statusDesc) descEl.textContent = statusDesc;
       }
     }
 
