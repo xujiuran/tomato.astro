@@ -643,18 +643,24 @@ export async function fetchHotNews(sourceIds: string[] = Object.keys(SOURCE_CONF
   const resultMap = new Map<string, HotNewsSource>();
 
   // 1. Try fetching from newsnow entire endpoint with browser identity & ample timeout
+  const newsnowBase = (
+    (typeof process !== 'undefined' && process.env?.NEWSNOW_BASE_URL) ||
+    import.meta.env?.NEWSNOW_BASE_URL ||
+    'https://newsnow.busiyi.world'
+  ).replace(/\/+$/, '');
+
   try {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 12000);
 
-    const res = await fetch('https://newsnow.busiyi.world/api/s/entire', {
+    const res = await fetch(`${newsnowBase}/api/s/entire`, {
       method: 'POST',
       signal: controller.signal,
       headers: {
         'Content-Type': 'application/json',
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-        'Referer': 'https://newsnow.busiyi.world/',
-        'Origin': 'https://newsnow.busiyi.world',
+        'Referer': `${newsnowBase}/`,
+        'Origin': newsnowBase,
       },
       body: JSON.stringify({ sources: sourceIds }),
     });
