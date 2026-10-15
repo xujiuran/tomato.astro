@@ -9,8 +9,10 @@ import MoyuWeeklySection from '../components/MoyuWeeklySection.astro';
 import HomeDailyNewsSection from '../components/HomeDailyNewsSection.astro';
 import { fetch60sHubData, fetchHotNews } from '../lib/newsService';
 
-const hubData = await fetch60sHubData();
-const hotNewsSources = await fetchHotNews();
+const [hubData, hotNewsSources] = await Promise.all([
+  fetch60sHubData(),
+  fetchHotNews(),
+]);
 
 const recentPosts = [
   {

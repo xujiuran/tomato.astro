@@ -651,16 +651,18 @@ const financeSources = initialSources.filter((s) => s.column === 'finance');
 
     refreshBtn?.addEventListener('click', () => refreshHotNews(true));
 
-    // Auto-refresh in background if initial render contains fallback mock content
-    const firstTitle = document.querySelector('.hot-title')?.textContent || '';
-    if (
-      firstTitle.includes('全国秋季气温') ||
-      firstTitle.includes('热门聚焦') ||
-      firstTitle.includes('新一代开源科技成果') ||
-      firstTitle.includes('打工人周三劳逸结合')
-    ) {
-      refreshHotNews(false);
-    }
+    // Defer background refresh so tab switching and page interaction remain completely unblocked
+    setTimeout(() => {
+      const firstTitle = document.querySelector('.hot-title')?.textContent || '';
+      if (
+        firstTitle.includes('全国秋季气温') ||
+        firstTitle.includes('热门聚焦') ||
+        firstTitle.includes('新一代开源科技成果') ||
+        firstTitle.includes('打工人周三劳逸结合')
+      ) {
+        refreshHotNews(false);
+      }
+    }, 2000);
 
     // Initialize with saved density
     applyDensity(currentDensity);

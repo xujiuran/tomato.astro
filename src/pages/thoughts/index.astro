@@ -2,9 +2,9 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ThoughtCard from '../../components/ThoughtCard.astro';
 import MoyuCalendarSidebar from '../../components/MoyuCalendarSidebar.astro';
-import { fetch60sHubData } from '../../lib/newsService';
+import { getMoyuData } from '../../lib/newsService';
 
-const hubData = await fetch60sHubData();
+const moyu = await getMoyuData();
 
 const allThoughts = [
   {
@@ -53,7 +53,7 @@ const allThoughts = [
 
     <!-- Right Companion Sidebar (4 cols on lg) -->
     <aside id="moyu-sidebar" class="lg:col-span-4 space-y-4">
-      <MoyuCalendarSidebar moyu={hubData.moyu} />
+      <MoyuCalendarSidebar moyu={moyu} />
     </aside>
   </div>
 </BaseLayout>

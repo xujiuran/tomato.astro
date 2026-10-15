@@ -1,9 +1,9 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import MoyuCalendarSidebar from '../components/MoyuCalendarSidebar.astro';
-import { fetch60sHubData } from '../lib/newsService';
+import { getMoyuData } from '../lib/newsService';
 
-const hubData = await fetch60sHubData();
+const moyu = await getMoyuData();
 ---
 
 <BaseLayout title="关于我 · TomatoX 随笔" currentPath="/about" containerClass="max-w-6xl">
@@ -53,7 +53,7 @@ const hubData = await fetch60sHubData();
 
     <!-- Right Companion Sidebar (4 cols on lg) -->
     <aside id="moyu-sidebar" class="lg:col-span-4 space-y-4">
-      <MoyuCalendarSidebar moyu={hubData.moyu} />
+      <MoyuCalendarSidebar moyu={moyu} />
     </aside>
   </div>
 </BaseLayout>

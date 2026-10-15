@@ -6,9 +6,11 @@ import MoyuCalendarSidebar from '../../components/MoyuCalendarSidebar.astro';
 import { fetch60sHubData, fetchHotNews } from '../../lib/newsService';
 
 // Fetch initial data at build time for instant loading and SEO
-const hubData = await fetch60sHubData();
+const [hubData, hotNewsSources] = await Promise.all([
+  fetch60sHubData(),
+  fetchHotNews(),
+]);
 const daily60sData = hubData.digest;
-const hotNewsSources = await fetchHotNews();
 ---
 
 <BaseLayout
@@ -145,6 +147,13 @@ const hotNewsSources = await fetchHotNews();
         history.replaceState(null, '', '#hot');
       }
     }
+
+    if ((tab60s as any)._hasMainTabListener) {
+      if (window.location.hash === '#hot') switchTab(false);
+      else if (window.location.hash === '#60s') switchTab(true);
+      return;
+    }
+    (tab60s as any)._hasMainTabListener = true;
 
     tab60s.addEventListener('click', () => switchTab(true));
     tabHot.addEventListener('click', () => switchTab(false));

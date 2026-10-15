@@ -556,6 +556,10 @@ const daysToLaborDay = moyu?.countdown?.laborDay ?? 198;
 
 <script>
   function setupVikiChannelTabs() {
+    const pillsContainer = document.getElementById('viki-channel-pills');
+    if (!pillsContainer || (pillsContainer as any)._hasVikiPillsListener) return;
+    (pillsContainer as any)._hasVikiPillsListener = true;
+
     const pills = document.querySelectorAll('.viki-pill');
     const panels = document.querySelectorAll('.viki-channel-panel');
 

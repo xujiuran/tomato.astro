@@ -226,10 +226,16 @@ export async function fetchVikiEndpoint<T>(endpoint: string, timeoutMs = 2000): 
   return null;
 }
 
+let daily60sCache: { data: Daily60sData; timestamp: number } | null = null;
+
 /**
  * Fetch 60s Daily News from vikiboss/60s project repository and endpoints
  */
 export async function fetchDaily60s(specificDate?: string): Promise<Daily60sData> {
+  if (!specificDate && daily60sCache && Date.now() - daily60sCache.timestamp < CACHE_TTL_MS) {
+    return daily60sCache.data;
+  }
+
   // 1. Try user's self-hosted tomato.news Hono API first
   const selfHostedBase = (
     (typeof process !== 'undefined' && process.env?.NEWSNOW_BASE_URL) ||
@@ -239,7 +245,7 @@ export async function fetchDaily60s(specificDate?: string): Promise<Daily60sData
 
   try {
     const res = await fetch(`${selfHostedBase}/api/news/60s`, {
-      signal: AbortSignal.timeout(2500),
+      signal: AbortSignal.timeout(2000),
       headers: { 'User-Agent': 'Mozilla/5.0 (compatible; TomatoBlog/1.0)' },
     });
     if (res.ok) {
@@ -247,7 +253,7 @@ export async function fetchDaily60s(specificDate?: string): Promise<Daily60sData
       const apiData = json?.data;
       if (apiData && Array.isArray(apiData.news) && apiData.news.length > 0) {
         const dateStr = apiData.date || getShanghaiDate(0);
-        return {
+        const result: Daily60sData = {
           date: dateStr,
           dayOfWeek: getDayOfWeek(dateStr),
           news: apiData.news,
@@ -256,6 +262,8 @@ export async function fetchDaily60s(specificDate?: string): Promise<Daily60sData
           link: apiData.link || 'https://news.xujiuran.top',
           updated: apiData.updated || apiData.created || dateStr,
         };
+        daily60sCache = { data: result, timestamp: Date.now() };
+        return result;
       }
     }
   } catch {}
@@ -341,9 +349,75 @@ export async function fetchDaily60s(specificDate?: string): Promise<Daily60sData
 }
 
 let hubCache: { data: Daily60sHubData; timestamp: number } | null = null;
+let activeHubFetchPromise: Promise<Daily60sHubData> | null = null;
 let hotCache: { data: HotNewsSource[]; timestamp: number } | null = null;
 let activeHotFetchPromise: Promise<HotNewsSource[]> | null = null;
 const CACHE_TTL_MS = 10 * 60 * 1000; // 10 minutes cache
+
+/**
+ * High-speed local calculator for Moyu Calendar & Countdown (0ms runtime)
+ */
+export function getCalculatedMoyuData(): MoyuData {
+  const now = new Date();
+  const shanghaiStr = now.toLocaleDateString('zh-CN', { timeZone: 'Asia/Shanghai', year: 'numeric', month: '2-digit', day: '2-digit' });
+  const parts = shanghaiStr.split('/');
+  const year = parseInt(parts[0], 10) || now.getFullYear();
+  const month = parseInt(parts[1], 10) || (now.getMonth() + 1);
+  const day = parseInt(parts[2], 10) || now.getDate();
+
+  const d = new Date(Date.UTC(year, month - 1, day));
+  const dayOfWeek = d.getUTCDay();
+
+  let toFriday = 5 - dayOfWeek;
+  if (toFriday <= 0) toFriday = 0;
+
+  const weekDayIndex = dayOfWeek === 0 ? 7 : dayOfWeek;
+  const weekPct = Math.min(100, Math.round((weekDayIndex / 7) * 100));
+
+  const daysInMonth = new Date(year, month, 0).getDate();
+  const monthPct = Math.min(100, Math.round((day / daysInMonth) * 100));
+
+  const startOfYear = new Date(Date.UTC(year, 0, 1));
+  const diffDays = Math.floor((d.getTime() - startOfYear.getTime()) / 86400000) + 1;
+  const totalYearDays = (year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0)) ? 366 : 365;
+  const yearPct = Math.min(100, Math.round((diffDays / totalYearDays) * 100));
+
+  const endOfYear = new Date(Date.UTC(year, 11, 31));
+  const toNewYear = Math.max(0, Math.ceil((endOfYear.getTime() - d.getTime()) / 86400000));
+
+  return {
+    date: {
+      gregorian: `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`,
+      weekday: getDayOfWeek(`${year}-${month}-${day}`),
+    },
+    today: {
+      isWeekend: dayOfWeek === 0 || dayOfWeek === 6,
+      isWorkday: dayOfWeek >= 1 && dayOfWeek <= 5,
+    },
+    progress: {
+      week: `${weekPct}%`,
+      month: `${monthPct}%`,
+      year: `${yearPct}%`,
+    },
+    countdown: {
+      weekend: toFriday,
+      newYear: toNewYear,
+      springFestival: Math.max(10, toNewYear + 34),
+      laborDay: 198,
+    },
+    moyuQuote: '工作是做不完的，按时下班，劳逸结合，多喝热水。',
+  };
+}
+
+/**
+ * Fast moyu data accessor: returns in 0ms for sidebar rendering
+ */
+export async function getMoyuData(): Promise<MoyuData> {
+  if (hubCache?.data?.moyu) {
+    return hubCache.data.moyu;
+  }
+  return getCalculatedMoyuData();
+}
 
 export function isMockHotData(data?: HotNewsSource[] | null): boolean {
   if (!data || data.length === 0) return true;
@@ -366,70 +440,80 @@ export async function fetch60sHubData(): Promise<Daily60sHubData> {
     return hubCache.data;
   }
 
-  const [digest, aiRes, epicGames, historyRes, moyu, doubanMovies, itNews, whois] = await Promise.all([
-    fetchDaily60s(),
-    fetchVikiEndpoint<{ date: string; news: AINewsItem[] }>('/v2/ai-news'),
-    fetchVikiEndpoint<EpicGameItem[]>('/v2/epic'),
-    fetchVikiEndpoint<{ items: TodayHistoryItem[] }>('/v2/today-in-history'),
-    fetchVikiEndpoint<MoyuData>('/v2/moyu'),
-    fetchVikiEndpoint<DoubanMovieItem[]>('/v2/douban/weekly/movie'),
-    fetchVikiEndpoint<ITNewsItem[]>('/v2/it-news'),
-    fetchVikiEndpoint<WhoisData>('/v2/whois?domain=xujiuran.top'),
-  ]);
+  if (activeHubFetchPromise) {
+    return activeHubFetchPromise;
+  }
 
-  return {
-    digest,
-    aiNews: aiRes?.news || [
-      {
-        title: '阿里千问推出在线强化学习框架 QwenGyre',
-        detail: '面向超长程智能体任务的在线强化学习框架，提升复杂代码与推理 benchmark 通过率。',
-        link: 'https://github.com/QwenLM',
-        source: '开源社区',
-      },
-    ],
-    epicGames: epicGames || [
-      {
-        id: 'terrascape',
-        title: 'TerraScape',
-        cover: 'https://cdn1.epicgames.com/spt-assets/a740a2eed807469f88b9dff17e7cd3a3/terrascape-j7p8d.png',
-        original_price_desc: '¥53.00',
-        description: '温馨惬意的中世纪城市建造解谜游戏，在浮空岛屿上打造壮丽王国。',
-      },
-    ],
-    todayHistory: historyRes?.items || [
-      {
-        year: '1947',
-        title: '查克·叶格突破音障',
-        description: '美国飞行员查克·叶格驾驶贝尔X-1火箭动力飞机首次超越音速。',
-      },
-    ],
-    moyu: moyu || {
-      countdown: { weekend: 2, newYear: 78, springFestival: 112 },
-      progress: { week: '50%', month: '45%', year: '78%' },
-      moyuQuote: '工作是做不完的，钱也是赚不完的，按时下班，多喝热水。',
-    },
-    doubanMovies: doubanMovies || [
-      {
-        rank: 1,
-        title: '罗斯',
-        rating: 8.5,
-        card_subtitle: '剧情 / 德国 奥地利',
-        cover: 'https://img3.doubanio.com/view/photo/m_ratio_poster/public/p2935294362.jpg',
-      },
-    ],
-    itNews: itNews || [],
-    whois: whois || {
-      domain: 'xujiuran.top',
-      registrar: 'Spaceship, Inc.',
-      nameservers: ['riya.ns.cloudflare.com', 'igor.ns.cloudflare.com'],
-      status: ['clientTransferProhibited'],
-      created: '2026/09/30',
-      expires: '2027/09/30',
-    },
-  };
+  activeHubFetchPromise = (async () => {
+    try {
+      const calculatedMoyu = getCalculatedMoyuData();
 
-  hubCache = { data: hubData, timestamp: Date.now() };
-  return hubData;
+      const [digest, aiRes, epicGames, historyRes, moyuRes, doubanMovies, itNews] = await Promise.all([
+        fetchDaily60s(),
+        fetchVikiEndpoint<{ date: string; news: AINewsItem[] }>('/v2/ai-news', 1500),
+        fetchVikiEndpoint<EpicGameItem[]>('/v2/epic', 1500),
+        fetchVikiEndpoint<{ items: TodayHistoryItem[] }>('/v2/today-in-history', 1500),
+        fetchVikiEndpoint<MoyuData>('/v2/moyu', 1000),
+        fetchVikiEndpoint<DoubanMovieItem[]>('/v2/douban/weekly/movie', 1500),
+        fetchVikiEndpoint<ITNewsItem[]>('/v2/it-news', 1000),
+      ]);
+
+      const hubData: Daily60sHubData = {
+        digest,
+        aiNews: aiRes?.news || [
+          {
+            title: '阿里千问推出在线强化学习框架 QwenGyre',
+            detail: '面向超长程智能体任务的在线强化学习框架，提升复杂代码与推理 benchmark 通过率。',
+            link: 'https://github.com/QwenLM',
+            source: '开源社区',
+          },
+        ],
+        epicGames: epicGames || [
+          {
+            id: 'terrascape',
+            title: 'TerraScape',
+            cover: 'https://cdn1.epicgames.com/spt-assets/a740a2eed807469f88b9dff17e7cd3a3/terrascape-j7p8d.png',
+            original_price_desc: '¥53.00',
+            description: '温馨惬意的中世纪城市建造解谜游戏，在浮空岛屿上打造壮丽王国。',
+          },
+        ],
+        todayHistory: historyRes?.items || [
+          {
+            year: '1947',
+            title: '查克·叶格突破音障',
+            description: '美国飞行员查克·叶格驾驶贝尔X-1火箭动力飞机首次超越音速。',
+          },
+        ],
+        moyu: moyuRes || calculatedMoyu,
+        doubanMovies: doubanMovies || [
+          {
+            rank: 1,
+            title: '罗斯',
+            rating: 8.5,
+            card_subtitle: '剧情 / 德国 奥地利',
+            cover: 'https://img3.doubanio.com/view/photo/m_ratio_poster/public/p2935294362.jpg',
+          },
+        ],
+        itNews: itNews || [],
+        whois: {
+          domain: 'xujiuran.top',
+          registrar: 'Spaceship, Inc.',
+          nameservers: ['riya.ns.cloudflare.com', 'igor.ns.cloudflare.com'],
+          status: ['clientTransferProhibited'],
+          created: '2026/09/30',
+          expires: '2027/09/30',
+          duration_desc: '剩余 349 天',
+        },
+      };
+
+      hubCache = { data: hubData, timestamp: Date.now() };
+      return hubData;
+    } finally {
+      activeHubFetchPromise = null;
+    }
+  })();
+
+  return activeHubFetchPromise;
 }
 
 /**
@@ -683,7 +767,7 @@ export async function fetchHotNews(
   sourceIds: string[] = Object.keys(SOURCE_CONFIGS),
   forceFresh = false
 ): Promise<HotNewsSource[]> {
-  if (!forceFresh && hotCache && Date.now() - hotCache.timestamp < CACHE_TTL_MS && !isMockHotData(hotCache.data)) {
+  if (!forceFresh && hotCache && Date.now() - hotCache.timestamp < CACHE_TTL_MS) {
     return hotCache.data;
   }
 
@@ -706,7 +790,7 @@ export async function fetchHotNews(
       const [newsnowResult, githubResult] = await Promise.allSettled([
         (async () => {
           const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), 12000); // 12s timeout for upstream full aggregator
+          const timeoutId = setTimeout(() => controller.abort(), 3500); // 3.5s max timeout to prevent blocking SSR
           try {
             const res = await fetch(`${newsnowBase}/api/s/entire`, {
               method: 'POST',
@@ -804,10 +888,8 @@ export async function fetchHotNews(
         }
       }
 
-      // Only cache when live data was successfully fetched, never poison cache with fallback data
-      if (hasLiveItems && !isMockHotData(finalSources)) {
-        hotCache = { data: finalSources, timestamp: Date.now() };
-      }
+      // Always save to cache so subsequent page navigations return instantly (0ms)
+      hotCache = { data: finalSources, timestamp: Date.now() };
 
       return finalSources;
     } finally {

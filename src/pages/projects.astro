@@ -2,10 +2,10 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import MoyuCalendarSidebar from '../components/MoyuCalendarSidebar.astro';
-import { fetch60sHubData } from '../lib/newsService';
+import { getMoyuData } from '../lib/newsService';
 import { recommendedProjects } from '../data/projects';
 
-const hubData = await fetch60sHubData();
+const moyu = await getMoyuData();
 
 const categories = [
   { id: 'all', label: '全部利器', count: recommendedProjects.length, icon: null },
@@ -103,13 +103,17 @@ const categories = [
 
     <!-- Right Companion Sidebar (4 cols on lg) -->
     <aside id="moyu-sidebar" class="lg:col-span-4 space-y-4">
-      <MoyuCalendarSidebar moyu={hubData.moyu} />
+      <MoyuCalendarSidebar moyu={moyu} />
     </aside>
   </div>
 </BaseLayout>
 
 <script>
   function setupProjectsFilter() {
+    const tabsContainer = document.getElementById('project-category-tabs');
+    if (!tabsContainer || (tabsContainer as any)._hasProjectsFilter) return;
+    (tabsContainer as any)._hasProjectsFilter = true;
+
     const tabs = document.querySelectorAll('.proj-cat-tab');
     const cards = document.querySelectorAll('.project-card');
     const searchInput = document.getElementById('project-search-input') as HTMLInputElement | null;
