@@ -431,9 +431,9 @@ const financeSources = initialSources.filter((s) => s.column === 'finance');
       filterView();
     });
 
-    // Live refresh via newsnow API
-    refreshBtn?.addEventListener('click', async () => {
-      spinner?.classList.add('animate-spin');
+    // Live refresh via newsnow API proxy
+    async function refreshHotNews(showSpinner = true) {
+      if (showSpinner) spinner?.classList.add('animate-spin');
       try {
         const res = await fetch('/api/hotnews.json');
 
@@ -442,7 +442,7 @@ const financeSources = initialSources.filter((s) => s.column === 'finance');
           if (Array.isArray(data)) {
             data.forEach((s) => {
               const block = document.querySelector(`[data-source-id="${s.id}"]`);
-              if (block && Array.isArray(s.items)) {
+              if (block && Array.isArray(s.items) && s.items.length > 0) {
                 const list = block.querySelector('ul');
                 if (list) {
                   list.innerHTML = s.items.slice(0, 25).map((item: any, idx: number) => {
@@ -475,11 +475,21 @@ const financeSources = initialSources.filter((s) => s.column === 'finance');
       } catch (err) {
         console.warn('Hot news refresh failed', err);
       } finally {
-        setTimeout(() => {
-          spinner?.classList.remove('animate-spin');
-        }, 500);
+        if (showSpinner) {
+          setTimeout(() => {
+            spinner?.classList.remove('animate-spin');
+          }, 500);
+        }
       }
-    });
+    }
+
+    refreshBtn?.addEventListener('click', () => refreshHotNews(true));
+
+    // Auto-refresh in background if initial render contains fallback mock content
+    const firstTitle = document.querySelector('.hot-title')?.textContent || '';
+    if (firstTitle.includes('全国秋季气温') || firstTitle.includes('热门聚焦')) {
+      refreshHotNews(false);
+    }
 
     // Initialize with saved density
     applyDensity(currentDensity);

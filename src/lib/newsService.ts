@@ -196,6 +196,8 @@ export function getShanghaiDate(offsetDays = 0): string {
 }
 
 export const VIKI_60S_HOSTS = [
+  'https://60s.viki.moe',
+  'https://60s-api.viki.moe',
   'https://60s.mizhoubaobei.top',
 ];
 
