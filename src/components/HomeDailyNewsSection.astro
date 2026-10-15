@@ -55,7 +55,7 @@ const topClsItems = clsSource?.items.slice(0, 2) || [
           <span>每日新闻 · 晨报与风向标</span>
         </h2>
       </div>
-      <span class="mono text-[11px] font-semibold text-[var(--accent)] bg-[var(--accent)]/10 px-2 py-0.5 rounded hidden sm:inline">
+      <span id="home-digest-date-badge" class="mono text-[11px] font-semibold text-[var(--accent)] bg-[var(--accent)]/10 px-2 py-0.5 rounded hidden sm:inline">
         {digest.date} {digest.dayOfWeek}
       </span>
     </div>
@@ -85,13 +85,13 @@ const topClsItems = clsSource?.items.slice(0, 2) || [
               TOP 5
             </span>
           </div>
-          <span class="text-[11px] text-[var(--text-tertiary)] mono">
+          <span id="home-digest-date-badge-2" class="text-[11px] text-[var(--text-tertiary)] mono">
             {digest.date}
           </span>
         </div>
 
         <!-- News Bullet List -->
-        <ul class="space-y-2.5 text-xs sm:text-sm leading-relaxed">
+        <ul id="home-preview-news-list" class="space-y-2.5 text-xs sm:text-sm leading-relaxed">
           {previewNews.map((item, idx) => (
             <li class="flex items-start gap-2.5 group">
               <span class="mono text-[11px] font-bold shrink-0 mt-0.5 flex h-4.5 w-4.5 items-center justify-center rounded bg-[var(--bg-secondary)] text-[var(--text-secondary)] group-hover:bg-[var(--accent)] group-hover:text-white transition-colors">
@@ -110,7 +110,7 @@ const topClsItems = clsSource?.items.slice(0, 2) || [
         {digest.tip && (
           <div class="rounded-xl bg-[var(--bg-secondary)]/70 border border-[var(--border-secondary)] px-3 py-2 text-xs text-[var(--text-secondary)] flex items-start gap-2">
             <span class="text-sm shrink-0 leading-none">💡</span>
-            <p class="line-clamp-2 leading-relaxed">
+            <p id="home-digest-tip" class="line-clamp-2 leading-relaxed">
               <span class="font-medium text-[var(--text-primary)]">微语：</span>{digest.tip.replace(/^【微语】\s*/, '')}
             </p>
           </div>
@@ -120,6 +120,7 @@ const topClsItems = clsSource?.items.slice(0, 2) || [
             每日清晨持续同步全国与全球要闻
           </span>
           <a
+            id="home-60s-read-all-link"
             href="/news#60s"
             class="text-[var(--accent)] hover:underline font-medium inline-flex items-center gap-1"
           >
@@ -159,17 +160,19 @@ const topClsItems = clsSource?.items.slice(0, 2) || [
               </span>
               <a href="/news#hot" class="hover:text-[var(--accent)]">更多</a>
             </div>
-            {topGithubItems.map((item, idx) => (
-              <a
-                href={item.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                class="block truncate text-[var(--text-primary)] hover:text-[var(--accent)] transition-colors py-0.5 leading-snug"
-              >
-                <span class="mono text-[11px] text-[var(--text-tertiary)] mr-1">#{idx + 1}</span>
-                {item.title}
-              </a>
-            ))}
+            <div id="home-hot-github-items" class="space-y-0.5">
+              {topGithubItems.map((item, idx) => (
+                <a
+                  href={item.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="block truncate text-[var(--text-primary)] hover:text-[var(--accent)] transition-colors py-0.5 leading-snug"
+                >
+                  <span class="mono text-[11px] text-[var(--text-tertiary)] mr-1">#{idx + 1}</span>
+                  {item.title}
+                </a>
+              ))}
+            </div>
           </div>
 
           <!-- 2. 微博热搜 -->
@@ -181,17 +184,19 @@ const topClsItems = clsSource?.items.slice(0, 2) || [
               </span>
               <a href="/news#hot" class="hover:text-[var(--accent)]">更多</a>
             </div>
-            {topWeiboItems.map((item, idx) => (
-              <a
-                href={item.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                class="block truncate text-[var(--text-primary)] hover:text-[var(--accent)] transition-colors py-0.5 leading-snug"
-              >
-                <span class="mono text-[11px] text-[var(--text-tertiary)] mr-1">#{idx + 1}</span>
-                {item.title}
-              </a>
-            ))}
+            <div id="home-hot-weibo-items" class="space-y-0.5">
+              {topWeiboItems.map((item, idx) => (
+                <a
+                  href={item.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="block truncate text-[var(--text-primary)] hover:text-[var(--accent)] transition-colors py-0.5 leading-snug"
+                >
+                  <span class="mono text-[11px] text-[var(--text-tertiary)] mr-1">#{idx + 1}</span>
+                  {item.title}
+                </a>
+              ))}
+            </div>
           </div>
 
           <!-- 3. 财联社 -->
@@ -203,17 +208,19 @@ const topClsItems = clsSource?.items.slice(0, 2) || [
               </span>
               <a href="/news#hot" class="hover:text-[var(--accent)]">更多</a>
             </div>
-            {topClsItems.map((item, idx) => (
-              <a
-                href={item.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                class="block truncate text-[var(--text-primary)] hover:text-[var(--accent)] transition-colors py-0.5 leading-snug"
-              >
-                <span class="mono text-[11px] text-[var(--text-tertiary)] mr-1">#{idx + 1}</span>
-                {item.title}
-              </a>
-            ))}
+            <div id="home-hot-cls-items" class="space-y-0.5">
+              {topClsItems.map((item, idx) => (
+                <a
+                  href={item.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="block truncate text-[var(--text-primary)] hover:text-[var(--accent)] transition-colors py-0.5 leading-snug"
+                >
+                  <span class="mono text-[11px] text-[var(--text-tertiary)] mr-1">#{idx + 1}</span>
+                  {item.title}
+                </a>
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -234,3 +241,101 @@ const topClsItems = clsSource?.items.slice(0, 2) || [
     </div>
   </div>
 </section>
+
+<script>
+  function setupHomeNewsSWR() {
+    // 1. Sync 60s News preview
+    async function syncHome60s() {
+      try {
+        const res = await fetch(`https://news.xujiuran.top/api/news/60s?_t=${Date.now()}`, {
+          signal: AbortSignal.timeout(5000),
+          headers: { Accept: 'application/json' },
+        });
+        if (!res.ok) return;
+        const json = await res.json();
+        const data = json?.data;
+        if (!data || !Array.isArray(data.news) || data.news.length === 0) return;
+
+        const dateStr = data.date || '';
+        const dayStr = data.day_of_week || '';
+        const badge1 = document.getElementById('home-digest-date-badge');
+        if (badge1 && dateStr) badge1.textContent = `${dateStr} ${dayStr}`;
+
+        const badge2 = document.getElementById('home-digest-date-badge-2');
+        if (badge2 && dateStr) badge2.textContent = dateStr;
+
+        const listEl = document.getElementById('home-preview-news-list');
+        if (listEl) {
+          const top5 = data.news.slice(0, 5);
+          listEl.innerHTML = top5.map((item: string, idx: number) => {
+            const clean = item.replace(/^\d+[\.、\s]*/, '');
+            return `
+              <li class="flex items-start gap-2.5 group">
+                <span class="mono text-[11px] font-bold shrink-0 mt-0.5 flex h-4.5 w-4.5 items-center justify-center rounded bg-[var(--bg-secondary)] text-[var(--text-secondary)] group-hover:bg-[var(--accent)] group-hover:text-white transition-colors">
+                  ${idx + 1}
+                </span>
+                <p class="text-[var(--text-primary)] group-hover:text-[var(--accent)] transition-colors line-clamp-2">
+                  ${clean}
+                </p>
+              </li>
+            `;
+          }).join('');
+        }
+
+        const tipEl = document.getElementById('home-digest-tip');
+        if (tipEl && data.tip) {
+          tipEl.innerHTML = `<span class="font-medium text-[var(--text-primary)]">微语：</span>${data.tip.replace(/^【微语】\s*/, '')}`;
+        }
+
+        const readAllEl = document.getElementById('home-60s-read-all-link');
+        if (readAllEl) {
+          readAllEl.textContent = `阅读全部 ${data.news.length} 条 →`;
+        }
+      } catch {}
+    }
+
+    // 2. Sync Hot News Preview (GitHub, Weibo, CLS)
+    async function syncHomeHot() {
+      try {
+        const res = await fetch(`https://news.xujiuran.top/api/news/hot?_t=${Date.now()}`, {
+          signal: AbortSignal.timeout(6000),
+          headers: { Accept: 'application/json' },
+        });
+        if (!res.ok) return;
+        const sources = await res.json();
+        if (!Array.isArray(sources)) return;
+
+        function renderItems(containerId: string, sourceId: string) {
+          const s = sources.find((x: any) => x.id === sourceId);
+          if (!s || !Array.isArray(s.items) || s.items.length === 0) return;
+          const container = document.getElementById(containerId);
+          if (!container) return;
+          const top2 = s.items.slice(0, 2);
+          container.innerHTML = top2.map((item: any, idx: number) => {
+            return `
+              <a
+                href="${item.url}"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="block truncate text-[var(--text-primary)] hover:text-[var(--accent)] transition-colors py-0.5 leading-snug"
+              >
+                <span class="mono text-[11px] text-[var(--text-tertiary)] mr-1">#${idx + 1}</span>
+                ${item.title}
+              </a>
+            `;
+          }).join('');
+        }
+
+        renderItems('home-hot-github-items', 'github');
+        renderItems('home-hot-weibo-items', 'weibo');
+        renderItems('home-hot-cls-items', 'cls-hot');
+      } catch {}
+    }
+
+    syncHome60s();
+    syncHomeHot();
+  }
+
+  setupHomeNewsSWR();
+  document.addEventListener('astro:page-load', setupHomeNewsSWR);
+</script>

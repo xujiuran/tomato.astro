@@ -28,7 +28,7 @@ const financeSources = initialSources.filter((s) => s.column === 'finance');
           </span>
         </div>
         <p class="text-xs text-[var(--text-secondary)]">
-          数据来源于 <a href="https://github.com/newsnext/newsnow" target="_blank" rel="noopener noreferrer" class="underline hover:text-[var(--text-primary)]">newsnext/newsnow</a> · 实时动态抓取
+          聚合多维实时榜单 · 联动自建微服务实时抓取
         </p>
       </div>
 
@@ -597,45 +597,78 @@ const financeSources = initialSources.filter((s) => s.column === 'finance');
       filterView();
     });
 
-    // Live refresh via newsnow API proxy
+    // Live refresh via tomato.news VPS API (with graceful fallback)
     async function refreshHotNews(showSpinner = true) {
       if (showSpinner) spinner?.classList.add('animate-spin');
       try {
-        const res = await fetch(`/api/hotnews.json?refresh=true&_t=${Date.now()}`);
+        let sourcesData: any[] | null = null;
 
-        if (res.ok) {
-          const data = await res.json();
-          if (Array.isArray(data)) {
-            data.forEach((s) => {
-              const block = document.querySelector(`[data-source-id="${s.id}"]`);
-              if (block && Array.isArray(s.items) && s.items.length > 0) {
-                const list = block.querySelector('ul');
-                if (list) {
-                  list.innerHTML = s.items.slice(0, 25).map((item: any, idx: number) => {
-                    const rank = idx + 1;
-                    const rankClass = rank === 1 ? 'bg-red-500 text-white' :
-                      rank === 2 ? 'bg-orange-500 text-white' :
-                      rank === 3 ? 'bg-amber-500 text-white' :
-                      'text-[var(--text-tertiary)] bg-[var(--bg-secondary)] font-medium';
-                    return `
-                      <li class="hot-item group flex items-start gap-3 py-2.5 hover:bg-[var(--bg-secondary)]/40 rounded-lg px-2 -mx-2 transition-colors" data-rank="${rank}">
-                        <span class="mono text-xs font-bold shrink-0 mt-0.5 flex h-5 w-5 items-center justify-center rounded ${rankClass}">
-                          ${rank}
-                        </span>
-                        <div class="flex-1 min-w-0">
-                          <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="hot-title text-sm text-[var(--text-primary)] hover:text-[var(--accent)] font-normal transition-colors line-clamp-2 leading-snug group-hover:underline">
-                            ${item.title}
-                          </a>
-                          ${item.extra?.hover ? `<p class="text-[12px] text-[var(--text-tertiary)] line-clamp-1 mt-0.5">${item.extra.hover}</p>` : ''}
-                        </div>
-                        ${item.extra?.info ? `<span class="mono text-[11px] text-[var(--text-tertiary)] group-hover:text-[var(--text-secondary)] shrink-0 mt-0.5 bg-[var(--bg-secondary)] px-1.5 py-0.5 rounded transition-colors">${item.extra.info}</span>` : ''}
-                      </li>
-                    `;
-                  }).join('');
-                }
+        // 1. Direct fetch to self-hosted tomato.news VPS API (CORS enabled)
+        try {
+          const res = await fetch(`https://news.xujiuran.top/api/news/hot?_t=${Date.now()}`, {
+            signal: AbortSignal.timeout(8000),
+            headers: { Accept: 'application/json' },
+          });
+          if (res.ok) {
+            const json = await res.json();
+            if (Array.isArray(json) && json.length > 0) {
+              sourcesData = json;
+            }
+          }
+        } catch (_vpsErr) {
+          // Fallback to static snapshot or local proxy
+        }
+
+        // 2. Fallback attempt: static build snapshot or local proxy
+        if (!sourcesData) {
+          try {
+            const localRes = await fetch(`/api/hotnews.json?refresh=true&_t=${Date.now()}`);
+            if (localRes.ok) {
+              const localJson = await localRes.json();
+              if (Array.isArray(localJson)) {
+                sourcesData = localJson;
               }
-            });
-            applyDensity(currentDensity);
+            }
+          } catch (_localErr) {}
+        }
+
+        if (Array.isArray(sourcesData)) {
+          sourcesData.forEach((s) => {
+            const block = document.querySelector(`[data-source-id="${s.id}"]`);
+            if (block && Array.isArray(s.items) && s.items.length > 0) {
+              const list = block.querySelector('ul');
+              if (list) {
+                list.innerHTML = s.items.slice(0, 25).map((item: any, idx: number) => {
+                  const rank = idx + 1;
+                  const rankClass = rank === 1 ? 'bg-red-500 text-white' :
+                    rank === 2 ? 'bg-orange-500 text-white' :
+                    rank === 3 ? 'bg-amber-500 text-white' :
+                    'text-[var(--text-tertiary)] bg-[var(--bg-secondary)] font-medium';
+                  return `
+                    <li class="hot-item group flex items-start gap-3 py-2.5 hover:bg-[var(--bg-secondary)]/40 rounded-lg px-2 -mx-2 transition-colors" data-rank="${rank}">
+                      <span class="mono text-xs font-bold shrink-0 mt-0.5 flex h-5 w-5 items-center justify-center rounded ${rankClass}">
+                        ${rank}
+                      </span>
+                      <div class="flex-1 min-w-0">
+                        <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="hot-title text-sm text-[var(--text-primary)] hover:text-[var(--accent)] font-normal transition-colors line-clamp-2 leading-snug group-hover:underline">
+                          ${item.title}
+                        </a>
+                        ${item.extra?.hover ? `<p class="text-[12px] text-[var(--text-tertiary)] line-clamp-1 mt-0.5">${item.extra.hover}</p>` : ''}
+                      </div>
+                      ${item.extra?.info ? `<span class="mono text-[11px] text-[var(--text-tertiary)] group-hover:text-[var(--text-secondary)] shrink-0 mt-0.5 bg-[var(--bg-secondary)] px-1.5 py-0.5 rounded transition-colors">${item.extra.info}</span>` : ''}
+                    </li>
+                  `;
+                }).join('');
+              }
+            }
+          });
+          applyDensity(currentDensity);
+
+          // Update sync timestamp if element exists
+          const statusTime = document.getElementById('status-timestamp');
+          if (statusTime) {
+            const now = new Date();
+            statusTime.textContent = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')} 实时同步`;
           }
         }
       } catch (err) {
@@ -651,23 +684,10 @@ const financeSources = initialSources.filter((s) => s.column === 'finance');
 
     refreshBtn?.addEventListener('click', () => refreshHotNews(true));
 
-    // Check if current page rendered with fallback mock data, and silently upgrade in background
+    // SWR: Silently revalidate hot news from live VPS in background on load
     setTimeout(() => {
-      const allText = Array.from(document.querySelectorAll('.hot-title'))
-        .slice(0, 30)
-        .map((el) => el.textContent || '')
-        .join(' ');
-      const isMock =
-        allText.includes('全国秋季气温') ||
-        allText.includes('如何评价最新发布的全球开源大模型评测') ||
-        allText.includes('2026 前端工程化新范式') ||
-        allText.includes('打工人周三劳逸结合') ||
-        allText.includes('热门聚焦与前沿讨论');
-
-      if (isMock) {
-        refreshHotNews(false);
-      }
-    }, 600);
+      refreshHotNews(false);
+    }, 400);
 
     // Initialize with saved density
     applyDensity(currentDensity);
