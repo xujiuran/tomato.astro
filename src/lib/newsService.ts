@@ -230,7 +230,37 @@ export async function fetchVikiEndpoint<T>(endpoint: string, timeoutMs = 2000): 
  * Fetch 60s Daily News from vikiboss/60s project repository and endpoints
  */
 export async function fetchDaily60s(specificDate?: string): Promise<Daily60sData> {
-  // 1. Try fast dynamic API endpoint first (< 200ms)
+  // 1. Try user's self-hosted tomato.news Hono API first
+  const selfHostedBase = (
+    (typeof process !== 'undefined' && process.env?.NEWSNOW_BASE_URL) ||
+    import.meta.env?.NEWSNOW_BASE_URL ||
+    'https://news.xujiuran.top'
+  ).replace(/\/+$/, '');
+
+  try {
+    const res = await fetch(`${selfHostedBase}/api/news/60s`, {
+      signal: AbortSignal.timeout(2500),
+      headers: { 'User-Agent': 'Mozilla/5.0 (compatible; TomatoBlog/1.0)' },
+    });
+    if (res.ok) {
+      const json = await res.json();
+      const apiData = json?.data;
+      if (apiData && Array.isArray(apiData.news) && apiData.news.length > 0) {
+        const dateStr = apiData.date || getShanghaiDate(0);
+        return {
+          date: dateStr,
+          dayOfWeek: getDayOfWeek(dateStr),
+          news: apiData.news,
+          tip: apiData.tip || '保持好奇与专注，在平淡的日常里蓄力前行。',
+          image: apiData.image || `https://cdn.jsdmirror.com/gh/vikiboss/60s-static-host@main/static/images/${dateStr}.png`,
+          link: apiData.link || 'https://news.xujiuran.top',
+          updated: apiData.updated || apiData.created || dateStr,
+        };
+      }
+    }
+  } catch {}
+
+  // 2. Fallback to public dynamic API endpoint (< 200ms)
   try {
     const apiData = await fetchVikiEndpoint<any>('/v2/60s', 2000);
     if (apiData && Array.isArray(apiData.news) && apiData.news.length > 0) {
