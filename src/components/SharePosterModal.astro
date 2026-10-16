@@ -98,12 +98,15 @@
 
 <script>
   interface PosterData {
-    type: 'thought' | 'news';
+    type: 'thought' | 'news' | 'post';
     id?: number | string;
     date: string;
     title?: string;
     content: string;
     items?: string[];
+    readTime?: string;
+    words?: number;
+    slug?: string;
   }
 
   function initSharePosterModal() {
@@ -214,6 +217,8 @@
       } else if (currentData.type === 'news') {
         const itemCount = currentData.items?.length || 6;
         height = 540 + itemCount * 36;
+      } else if (currentData.type === 'post') {
+        height = 560 + Math.min(240, Math.floor((currentData.content?.length || 100) * 1.1));
       }
 
       canvas.width = width * dpr;
@@ -292,19 +297,21 @@
       // Brand Title
       ctx.font = 'bold 16px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
       ctx.fillStyle = textPrimaryColor;
-      ctx.fillText('TomatoX · 随笔与微思考', 64, 42);
+      const brandSub = currentData.type === 'post' ? 'TomatoX · 精选深度长文' : 'TomatoX · 随笔与微思考';
+      ctx.fillText(brandSub, 64, 42);
 
       ctx.font = '11px ui-monospace, SFMono-Regular, Menlo, monospace';
       ctx.fillStyle = textSecondaryColor;
       ctx.fillText('xujiuran.top · 代码、产品与数字生活', 64, 58);
 
       // Top Right Badge
-      if (currentData.id) {
+      if (currentData.id || currentData.type === 'post') {
+        const badgeLabel = currentData.type === 'post' ? 'ARTICLE' : `#${currentData.id}`;
         ctx.fillStyle = isDarkStyle ? '#27272A' : '#ECE9DF';
-        ctx.fillRect(width - 110, 36, 70, 22);
+        ctx.fillRect(width - 110, 36, 74, 22);
         ctx.fillStyle = accentColor;
-        ctx.font = 'bold 11px ui-monospace, Menlo, monospace';
-        ctx.fillText(`#${currentData.id}`, width - 96, 51);
+        ctx.font = 'bold 10px ui-monospace, Menlo, monospace';
+        ctx.fillText(badgeLabel, width - 98, 51);
       }
 
       // Divider Line
@@ -348,6 +355,44 @@
           lineY = wrapText(ctx, itemText, 42, lineY, width - 84, 26);
           lineY += 6;
         }
+      } else if (currentData.type === 'post') {
+        // Article Title
+        ctx.font = 'bold 22px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+        ctx.fillStyle = textPrimaryColor;
+        let lineY = wrapText(ctx, currentData.title || '随笔文章', 42, 125, width - 84, 32);
+
+        // Meta Info
+        ctx.font = '12px ui-monospace, SFMono-Regular, Menlo, monospace';
+        ctx.fillStyle = textSecondaryColor;
+        const metaStr = `${currentData.date}  ·  约需 ${currentData.readTime || '5 分钟'}  ·  ${currentData.words || '2000'} 字`;
+        ctx.fillText(metaStr, 42, lineY + 8);
+        lineY += 28;
+
+        // Divider
+        ctx.strokeStyle = isDarkStyle ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.06)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(42, lineY);
+        ctx.lineTo(width - 42, lineY);
+        ctx.stroke();
+        lineY += 26;
+
+        // Decorative Opening Quote
+        ctx.font = 'bold 44px serif';
+        ctx.fillStyle = isDarkStyle ? 'rgba(220, 38, 38, 0.45)' : 'rgba(220, 38, 38, 0.25)';
+        ctx.fillText('“', 38, lineY + 6);
+
+        // Excerpt
+        ctx.font = '15px "Songti SC", "Source Han Serif SC", Georgia, serif';
+        ctx.fillStyle = isDarkStyle ? '#E4E4E7' : '#3F3F46';
+        const excerpt = currentData.content || '';
+        lineY = wrapText(ctx, excerpt, 42, lineY + 16, width - 84, 28);
+
+        // Tag / Footnote note
+        lineY += 16;
+        ctx.fillStyle = accentColor;
+        ctx.font = '12px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+        ctx.fillText('✦ 扫码或访问 xujiuran.top 阅读全文全文与高亮代码', 42, lineY);
       }
 
       // 4. Footer Section
@@ -372,7 +417,7 @@
     downloadBtn?.addEventListener('click', () => {
       if (!canvas || !currentData) return;
       const link = document.createElement('a');
-      link.download = `tomatox-${currentData.type}-${currentData.id || 'poster'}.png`;
+      link.download = `tomatox-${currentData.type}-${currentData.slug || currentData.id || 'poster'}.png`;
       link.href = canvas.toDataURL('image/png');
       link.click();
     });

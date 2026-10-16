@@ -60,17 +60,33 @@ const { toc, title = '目录' } = Astro.props;
           id="toc-scroll-top-btn"
           type="button"
           class="inline-flex items-center gap-1 hover:text-[var(--text-primary)] transition-colors cursor-pointer"
+          title="平滑回到顶部"
         >
           <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <polyline points="18 15 12 9 6 15"></polyline>
           </svg>
-          <span>回顶部</span>
+          <span>顶部</span>
+        </button>
+
+        <button
+          id="toc-poster-btn"
+          type="button"
+          class="inline-flex items-center gap-1 hover:text-[var(--accent)] transition-colors cursor-pointer"
+          title="生成长图分享海报"
+        >
+          <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
+            <polyline points="16 6 12 2 8 6"></polyline>
+            <line x1="12" y1="2" x2="12" y2="15"></line>
+          </svg>
+          <span>海报</span>
         </button>
 
         <button
           id="toc-share-btn"
           type="button"
           class="inline-flex items-center gap-1 hover:text-[var(--text-primary)] transition-colors cursor-pointer"
+          title="复制文章链接"
         >
           <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="18" cy="5" r="3"></circle>
@@ -79,7 +95,7 @@ const { toc, title = '目录' } = Astro.props;
             <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
             <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
           </svg>
-          <span>分享</span>
+          <span>链接</span>
         </button>
       </div>
     </div>
@@ -104,6 +120,7 @@ const { toc, title = '目录' } = Astro.props;
     const progressBadge = document.getElementById('toc-progress-badge');
     const tocLinks = document.querySelectorAll('.toc-link');
     const scrollTopBtn = document.getElementById('toc-scroll-top-btn');
+    const posterBtn = document.getElementById('toc-poster-btn');
     const shareBtn = document.getElementById('toc-share-btn');
 
     // 1. Reading Progress Bar & Percentage
@@ -197,6 +214,10 @@ const { toc, title = '目录' } = Astro.props;
     // 3. Quick Action Buttons
     scrollTopBtn?.addEventListener('click', () => {
       window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    posterBtn?.addEventListener('click', () => {
+      document.getElementById('btn-post-share-poster')?.click();
     });
 
     shareBtn?.addEventListener('click', () => {

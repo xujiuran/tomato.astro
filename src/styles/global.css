@@ -129,6 +129,22 @@ html:not(.dark) .theme-toggle-btn .moon-icon {
   color: var(--text-primary);
   font-size: 1.025rem;
   line-height: 1.85;
+  transition: font-size 0.2s ease, line-height 0.2s ease;
+}
+
+.article-content[data-font-size="sm"] {
+  font-size: 0.9375rem;
+  line-height: 1.75;
+}
+
+.article-content[data-font-size="base"] {
+  font-size: 1.025rem;
+  line-height: 1.85;
+}
+
+.article-content[data-font-size="lg"] {
+  font-size: 1.15rem;
+  line-height: 1.95;
 }
 
 .article-content p {
