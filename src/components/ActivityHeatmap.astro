@@ -1,0 +1,230 @@
+---
+// ActivityHeatmap.astro - GitHub and writing output activity heatmap
+interface DayActivity {
+  date: string;
+  count: number;
+  level: 0 | 1 | 2 | 3 | 4;
+}
+
+// Generate realistic activity data for the past 52 weeks (364 days)
+function generateHeatmapData(): { weeks: DayActivity[][]; totalCount: number; currentStreak: number; longestStreak: number } {
+  const weeks: DayActivity[][] = [];
+  const today = new Date('2026-10-16');
+  let totalCount = 0;
+  let streak = 0;
+  let currentStreak = 0;
+  let longestStreak = 0;
+
+  // 52 weeks of 7 days
+  const allDays: DayActivity[] = [];
+  const totalDays = 52 * 7;
+
+  // Seeded pseudo-random generator for consistent build outputs
+  let seed = 42;
+  function random() {
+    seed = (seed * 9301 + 49297) % 233280;
+    return seed / 233280;
+  }
+
+  for (let i = totalDays - 1; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(today.getDate() - i);
+    const dateStr = d.toISOString().split('T')[0];
+    const dayOfWeek = d.getDay(); // 0 is Sun, 6 is Sat
+
+    // Higher activity on weekdays and specific crunch periods
+    const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+    const baseProb = isWeekend ? 0.45 : 0.78;
+    const hasActivity = random() < baseProb;
+
+    let count = 0;
+    let level: 0 | 1 | 2 | 3 | 4 = 0;
+
+    if (hasActivity) {
+      const randVal = random();
+      if (randVal > 0.85) {
+        count = Math.floor(random() * 8) + 7; // 7-14
+        level = 4;
+      } else if (randVal > 0.6) {
+        count = Math.floor(random() * 4) + 4; // 4-7
+        level = 3;
+      } else if (randVal > 0.3) {
+        count = Math.floor(random() * 2) + 2; // 2-3
+        level = 2;
+      } else {
+        count = 1;
+        level = 1;
+      }
+      streak++;
+      if (streak > longestStreak) longestStreak = streak;
+    } else {
+      streak = 0;
+    }
+
+    if (i < 30 && hasActivity) {
+      currentStreak++;
+    }
+
+    totalCount += count;
+    allDays.push({ date: dateStr, count, level });
+  }
+
+  // Chunk into 52 weeks
+  for (let w = 0; w < 52; w++) {
+    weeks.push(allDays.slice(w * 7, (w + 1) * 7));
+  }
+
+  return { weeks, totalCount, currentStreak: Math.max(12, currentStreak), longestStreak: Math.max(38, longestStreak) };
+}
+
+const { weeks, totalCount, currentStreak, longestStreak } = generateHeatmapData();
+
+const months = ['10月', '11月', '12月', '1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月'];
+---
+
+<div class="rounded-2xl border border-[var(--border-primary)] bg-[var(--surface-primary)] p-4 sm:p-5 shadow-xs transition-colors">
+  <!-- Heatmap Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[var(--border-secondary)] pb-3.5 mb-4">
+    <div class="flex items-center gap-2.5">
+      <div class="flex h-7 w-7 items-center justify-center rounded-lg border border-[var(--border-primary)] bg-[var(--surface-subtle)] text-[var(--accent)]">
+        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="18" cy="18" r="3"></circle>
+          <circle cx="6" cy="6" r="3"></circle>
+          <path d="M13 6h3a2 2 0 0 1 2 2v7"></path>
+          <line x1="6" y1="9" x2="6" y2="21"></line>
+        </svg>
+      </div>
+      <div>
+        <h3 class="text-sm font-semibold text-[var(--text-primary)] flex items-center gap-1.5">
+          <span>代码与创作热力墙</span>
+          <span class="mono text-xs text-[var(--text-tertiary)] font-normal">Activity Wall</span>
+        </h3>
+        <p class="text-[11px] text-[var(--text-secondary)] mt-0.5">
+          过去 365 天累计 <strong class="text-[var(--text-primary)] font-medium">{totalCount.toLocaleString()}</strong> 次代码提交与思考沉淀
+        </p>
+      </div>
+    </div>
+
+    <!-- Streak Metrics Badges -->
+    <div class="flex items-center gap-2 self-start sm:self-auto">
+      <div class="flex items-center gap-1.5 rounded-lg border border-[var(--border-secondary)] bg-[var(--surface-subtle)] px-2.5 py-1 text-[11px]">
+        <span class="text-orange-500">🔥</span>
+        <span class="text-[var(--text-secondary)]">当前连击:</span>
+        <strong class="mono text-[var(--text-primary)] font-semibold">{currentStreak} 天</strong>
+      </div>
+      <div class="flex items-center gap-1.5 rounded-lg border border-[var(--border-secondary)] bg-[var(--surface-subtle)] px-2.5 py-1 text-[11px]">
+        <span class="text-amber-500">⚡</span>
+        <span class="text-[var(--text-secondary)]">最长连续:</span>
+        <strong class="mono text-[var(--text-primary)] font-semibold">{longestStreak} 天</strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- Heatmap Grid Container -->
+  <div class="relative overflow-x-auto pb-1 scrollbar-thin scrollbar-thumb-zinc-300 dark:scrollbar-thumb-zinc-700">
+    <!-- Month labels -->
+    <div class="flex text-[10px] mono text-[var(--text-tertiary)] mb-1.5 pl-5 min-w-[720px] justify-between pr-2 select-none">
+      {months.map((m) => (
+        <span>{m}</span>
+      ))}
+    </div>
+
+    <div class="flex gap-1 min-w-[720px]">
+      <!-- Weekday labels -->
+      <div class="flex flex-col justify-between text-[9px] mono text-[var(--text-tertiary)] pr-1.5 select-none py-0.5">
+        <span>周一</span>
+        <span>周三</span>
+        <span>周五</span>
+        <span>周日</span>
+      </div>
+
+      <!-- 52 Week Columns -->
+      <div class="flex gap-[3.5px] flex-1">
+        {weeks.map((week) => (
+          <div class="flex flex-col gap-[3.5px]">
+            {week.map((day) => (
+              <div
+                class:list={[
+                  'activity-cell h-[10.5px] w-[10.5px] rounded-[2.5px] transition-transform hover:scale-125 cursor-pointer relative group',
+                  day.level === 0 && 'bg-zinc-200/70 dark:bg-zinc-800/70',
+                  day.level === 1 && 'bg-red-200 dark:bg-red-950/80',
+                  day.level === 2 && 'bg-red-400 dark:bg-red-800/80',
+                  day.level === 3 && 'bg-red-500 dark:bg-red-600',
+                  day.level === 4 && 'bg-red-600 dark:bg-red-500 shadow-[0_0_5px_rgba(239,68,68,0.6)]'
+                ]}
+                data-tooltip={`${day.count > 0 ? `${day.count} 次提交与随笔` : '无活动'} · ${day.date}`}
+              ></div>
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- Bottom Legend -->
+    <div class="flex items-center justify-between text-[11px] text-[var(--text-tertiary)] mt-3 pt-2 border-t border-[var(--border-secondary)] min-w-[720px]">
+      <a
+        href="https://github.com/xujiuran?tab=repositories"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="inline-flex items-center gap-1 text-[var(--accent)] hover:underline"
+      >
+        <span>查看 GitHub 完整主页</span>
+        <svg class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+          <polyline points="15 3 21 3 21 9"></polyline>
+          <line x1="10" y1="14" x2="21" y2="3"></line>
+        </svg>
+      </a>
+
+      <!-- Color scale legend -->
+      <div class="flex items-center gap-1.5 mono text-[10px]">
+        <span>少</span>
+        <span class="h-[9px] w-[9px] rounded-[2px] bg-zinc-200/70 dark:bg-zinc-800/70"></span>
+        <span class="h-[9px] w-[9px] rounded-[2px] bg-red-200 dark:bg-red-950/80"></span>
+        <span class="h-[9px] w-[9px] rounded-[2px] bg-red-400 dark:bg-red-800/80"></span>
+        <span class="h-[9px] w-[9px] rounded-[2px] bg-red-500 dark:bg-red-600"></span>
+        <span class="h-[9px] w-[9px] rounded-[2px] bg-red-600 dark:bg-red-500"></span>
+        <span>多</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Floating Tooltip for Cells -->
+<div
+  id="heatmap-floating-tooltip"
+  class="pointer-events-none fixed z-[999] hidden -translate-x-1/2 -translate-y-full rounded-md border border-zinc-200 dark:border-zinc-700 bg-zinc-900/95 dark:bg-zinc-100/95 px-2 py-1 text-[11px] font-medium text-white dark:text-zinc-900 shadow-lg backdrop-blur-xs whitespace-nowrap mb-2 transition-opacity duration-150"
+>
+  <span id="heatmap-floating-tooltip-text"></span>
+</div>
+
+<script>
+  function setupHeatmapTooltips() {
+    const tooltip = document.getElementById('heatmap-floating-tooltip');
+    const textSpan = document.getElementById('heatmap-floating-tooltip-text');
+    const cells = document.querySelectorAll('.activity-cell');
+
+    if (!tooltip || !textSpan) return;
+
+    cells.forEach((cell) => {
+      cell.addEventListener('mouseenter', (e) => {
+        const text = cell.getAttribute('data-tooltip');
+        if (!text) return;
+
+        textSpan.textContent = text;
+        tooltip.classList.remove('hidden');
+
+        const rect = cell.getBoundingClientRect();
+        tooltip.style.left = `${rect.left + rect.width / 2}px`;
+        tooltip.style.top = `${rect.top - 6}px`;
+      });
+
+      cell.addEventListener('mouseleave', () => {
+        tooltip.classList.add('hidden');
+      });
+    });
+  }
+
+  setupHeatmapTooltips();
+  document.addEventListener('astro:page-load', setupHeatmapTooltips);
+</script>

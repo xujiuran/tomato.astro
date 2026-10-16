@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import MoyuCalendarSidebar from '../components/MoyuCalendarSidebar.astro';
+import ActivityHeatmap from '../components/ActivityHeatmap.astro';
 import { getMoyuData } from '../lib/newsService';
 
 const moyu = await getMoyuData();
@@ -47,6 +48,11 @@ const moyu = await getMoyuData();
           <p>
             全站采用「SSG 静态骨架 + 客户端 SWR 静默水合」架构：首屏零白屏极速直出，同时在后台无感同步最新晨间早报与全网多维实时热榜。无第三方追踪与干扰广告，追求极简、克制、持久的阅读与信息获取体验。
           </p>
+        </section>
+
+        <!-- Activity Heatmap -->
+        <section class="pt-2">
+          <ActivityHeatmap />
         </section>
       </article>
     </div>
