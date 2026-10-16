@@ -7,7 +7,6 @@ import ProjectCard from '../components/ProjectCard.astro';
 import TomatoXWordmark from '../components/TomatoXWordmark.astro';
 import MoyuWeeklySection from '../components/MoyuWeeklySection.astro';
 import HomeDailyNewsSection from '../components/HomeDailyNewsSection.astro';
-import ActivityHeatmap from '../components/ActivityHeatmap.astro';
 import { fetch60sHubData, fetchHotNews } from '../lib/newsService';
 import { posts } from '../data/posts';
 
@@ -82,9 +81,6 @@ const featuredProjects = recommendedProjects.slice(0, 4);
 
   <!-- Aesthetic Motto Banner -->
   <MottoBanner />
-
-  <!-- GitHub Activity & Writing Heatmap Wall -->
-  <ActivityHeatmap />
 
   <hr class="my-8 border-[var(--border-secondary)]" />
 

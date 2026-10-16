@@ -1,65 +1,53 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import MoyuCalendarSidebar from '../components/MoyuCalendarSidebar.astro';
 import ActivityHeatmap from '../components/ActivityHeatmap.astro';
-import { getMoyuData } from '../lib/newsService';
-
-const moyu = await getMoyuData();
 ---
 
-<BaseLayout title="关于我 · TomatoX 随笔" currentPath="/about" containerClass="max-w-6xl">
-  <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-    <!-- Main Content (8 cols on lg) -->
-    <div class="lg:col-span-8 min-w-0 space-y-6 pb-12">
-      <article class="space-y-6 text-sm sm:text-base leading-relaxed text-[var(--text-secondary)]">
-        <div class="border-b border-[var(--border-secondary)] pb-4">
-          <h1 class="text-2xl font-bold tracking-tight text-[var(--text-primary)]">
-            关于 TomatoX
-          </h1>
-          <p class="mt-1 text-xs sm:text-sm text-[var(--text-secondary)]">
-            写代码、做工具、认真生活的数字手艺人 · 域名：xujiuran.top
-          </p>
-        </div>
+<BaseLayout title="关于我 · TomatoX 随笔" currentPath="/about" containerClass="max-w-4xl">
+  <div class="space-y-8 pb-12">
+    <article class="space-y-6 text-sm sm:text-base leading-relaxed text-[var(--text-secondary)]">
+      <div class="border-b border-[var(--border-secondary)] pb-4">
+        <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-[var(--text-primary)]">
+          关于 TomatoX
+        </h1>
+        <p class="mt-1 text-xs sm:text-sm text-[var(--text-secondary)]">
+          写代码、做工具、认真生活的数字手艺人 · 域名：xujiuran.top
+        </p>
+      </div>
 
-        <section class="space-y-3">
-          <h2 class="text-lg font-bold text-[var(--text-primary)]">我是谁</h2>
-          <p>
-            你好！我是 TomatoX，一名热衷于探索产品工程、现代前端架构与 AI Coding 工作流的开发者。这里是我的个人站点 <a href="https://xujiuran.top" class="text-[var(--accent)] underline">xujiuran.top</a>，开源代码与项目沉淀欢迎访问我的 <a href="https://github.com/xujiuran?tab=repositories" target="_blank" rel="noopener noreferrer" class="text-[var(--accent)] underline font-medium">GitHub 仓库</a>。
-          </p>
-          <p>
-            我相信优雅的代码和克制的设计拥有长久的生命力。很多时候，我们不需要把简单的工具做成庞然大物。一个轻巧、快速、不打扰用户的程序往往最能打动人心。
-          </p>
-        </section>
+      <section class="space-y-3">
+        <h2 class="text-lg font-bold text-[var(--text-primary)]">我是谁</h2>
+        <p>
+          你好！我是 TomatoX，一名热衷于探索产品工程、现代前端架构与 AI Coding 工作流的开发者。这里是我的个人站点 <a href="https://xujiuran.top" class="text-[var(--accent)] underline">xujiuran.top</a>，开源代码与项目沉淀欢迎访问我的 <a href="https://github.com/xujiuran?tab=repositories" target="_blank" rel="noopener noreferrer" class="text-[var(--accent)] underline font-medium">GitHub 仓库</a>。
+        </p>
+        <p>
+          我相信优雅的代码和克制的设计拥有长久的生命力。很多时候，我们不需要把简单的工具做成庞然大物。一个轻巧、快速、不打扰用户的程序往往最能打动人心。
+        </p>
+      </section>
 
-        <section class="space-y-3">
-          <h2 class="text-lg font-bold text-[var(--text-primary)]">常用技术与工具</h2>
-          <ul class="list-disc pl-5 space-y-1">
-            <li><strong class="text-[var(--text-primary)]">前端领域：</strong>TypeScript, Astro, React, Tailwind CSS, Vite</li>
-            <li><strong class="text-[var(--text-primary)]">系统与后端：</strong>Node.js, Rust, Go, SQLite</li>
-            <li><strong class="text-[var(--text-primary)]">日常利器：</strong>Neovim, Raycast, Claude / Gemini, Ghostty</li>
-          </ul>
-        </section>
+      <section class="space-y-3">
+        <h2 class="text-lg font-bold text-[var(--text-primary)]">常用技术与工具</h2>
+        <ul class="list-disc pl-5 space-y-1">
+          <li><strong class="text-[var(--text-primary)]">前端领域：</strong>TypeScript, Astro, React, Tailwind CSS, Vite</li>
+          <li><strong class="text-[var(--text-primary)]">系统与后端：</strong>Node.js, Rust, Go, SQLite</li>
+          <li><strong class="text-[var(--text-primary)]">日常利器：</strong>Neovim, Raycast, Claude / Gemini, Ghostty</li>
+        </ul>
+      </section>
 
-        <section class="space-y-3">
-          <h2 class="text-lg font-bold text-[var(--text-primary)]">关于本站</h2>
-          <p>
-            本站基于 <a href="https://astro.build" target="_blank" rel="noopener noreferrer" class="text-[var(--accent)] underline">Astro</a> 与 Tailwind CSS 构建，采用自主设计的极简纸质读物级排版风格，以标志性的 Tomato 硬核极客红作为视觉基调，适配深浅双模自适应切换。
-          </p>
-          <p>
-            全站采用「SSG 静态骨架 + 客户端 SWR 静默水合」架构：首屏零白屏极速直出，同时在后台无感同步最新晨间早报与全网多维实时热榜。无第三方追踪与干扰广告，追求极简、克制、持久的阅读与信息获取体验。
-          </p>
-        </section>
+      <section class="space-y-3">
+        <h2 class="text-lg font-bold text-[var(--text-primary)]">关于本站</h2>
+        <p>
+          本站基于 <a href="https://astro.build" target="_blank" rel="noopener noreferrer" class="text-[var(--accent)] underline">Astro</a> 与 Tailwind CSS 构建，采用自主设计的极简纸质读物级排版风格，以标志性的 Tomato 硬核极客红作为视觉基调，适配深浅双模自适应切换。
+        </p>
+        <p>
+          全站采用「SSG 静态骨架 + 客户端 SWR 静默水合」架构：首屏零白屏极速直出，同时在后台无感同步最新晨间早报与全网多维实时热榜。无第三方追踪与干扰广告，追求极简、克制、持久的阅读与信息获取体验。
+        </p>
+      </section>
 
-        <!-- Activity Heatmap -->
-        <section class="pt-2">
-          <ActivityHeatmap />
-        </section>
-      </article>
-    </div>
-
-    <!-- Right Companion Sidebar (4 cols on lg) -->
-    <aside id="moyu-sidebar" class="lg:col-span-4 space-y-4">
-      <MoyuCalendarSidebar moyu={moyu} />
-    </aside>
+      <!-- Activity Heatmap Wall -->
+      <section class="pt-4 border-t border-[var(--border-secondary)]">
+        <ActivityHeatmap />
+      </section>
+    </article>
   </div>
 </BaseLayout>

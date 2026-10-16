@@ -229,36 +229,9 @@
       }
     }
 
-    // 1. Deep Night Rain: Brown noise with lowpass filter
+    // 1. Deep Soft Rain: Pink noise with highpass (eliminates 50Hz electrical hum) & smooth lowpass
     private playRain(ctx: AudioContext) {
-      const bufferSize = ctx.sampleRate * 2;
-      const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-      const data = buffer.getChannelData(0);
-      let lastOut = 0.0;
-      for (let i = 0; i < bufferSize; i++) {
-        const white = Math.random() * 2 - 1;
-        data[i] = (lastOut + 0.02 * white) / 1.02;
-        lastOut = data[i];
-        data[i] *= 3.5;
-      }
-
-      const noise = ctx.createBufferSource();
-      noise.buffer = buffer;
-      noise.loop = true;
-
-      const filter = ctx.createBiquadFilter();
-      filter.type = 'lowpass';
-      filter.frequency.setValueAtTime(750, ctx.currentTime);
-
-      noise.connect(filter);
-      filter.connect(this.gainNode!);
-      noise.start();
-      this.currentSource = noise;
-    }
-
-    // 2. Waves: Pink noise modulated by LFO swell
-    private playWaves(ctx: AudioContext) {
-      const bufferSize = ctx.sampleRate * 2;
+      const bufferSize = ctx.sampleRate * 4;
       const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
       const data = buffer.getChannelData(0);
       let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
@@ -270,7 +243,7 @@
         b3 = 0.86650 * b3 + white * 0.3104856;
         b4 = 0.55000 * b4 + white * 0.5329522;
         b5 = -0.7616 * b5 - white * 0.0168980;
-        data[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362) * 0.11;
+        data[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362) * 0.12;
         b6 = white * 0.115926;
       }
 
@@ -278,22 +251,54 @@
       noise.buffer = buffer;
       noise.loop = true;
 
-      const swellGain = ctx.createGain();
-      swellGain.gain.setValueAtTime(0.3, ctx.currentTime);
+      // Highpass filter: completely eliminates the <280Hz electrical hum/drone
+      const hp = ctx.createBiquadFilter();
+      hp.type = 'highpass';
+      hp.frequency.setValueAtTime(320, ctx.currentTime);
 
-      // Low frequency oscillator for wave swells (1 wave every ~9 seconds)
+      // Lowpass filter: softens harsh high-end hiss
+      const lp = ctx.createBiquadFilter();
+      lp.type = 'lowpass';
+      lp.frequency.setValueAtTime(2400, ctx.currentTime);
+
+      noise.connect(hp);
+      hp.connect(lp);
+      lp.connect(this.gainNode!);
+      noise.start();
+      this.currentSource = noise;
+    }
+
+    // 2. Waves: Soft ocean swells without low-frequency rumble
+    private playWaves(ctx: AudioContext) {
+      const bufferSize = ctx.sampleRate * 4;
+      const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        data[i] = (Math.random() * 2 - 1) * 0.18;
+      }
+
+      const noise = ctx.createBufferSource();
+      noise.buffer = buffer;
+      noise.loop = true;
+
+      const swellGain = ctx.createGain();
+      swellGain.gain.setValueAtTime(0.25, ctx.currentTime);
+
+      // LFO for ocean wave breathing
       const lfo = ctx.createOscillator();
-      lfo.frequency.setValueAtTime(0.11, ctx.currentTime);
+      lfo.frequency.setValueAtTime(0.1, ctx.currentTime);
       const lfoGain = ctx.createGain();
-      lfoGain.gain.setValueAtTime(0.25, ctx.currentTime);
+      lfoGain.gain.setValueAtTime(0.2, ctx.currentTime);
       lfo.connect(lfoGain);
       lfoGain.connect(swellGain.gain);
       lfo.start();
       this.lfo = lfo;
 
+      // Bandpass centered at 800Hz: mimics wave foam, zero AC hum
       const filter = ctx.createBiquadFilter();
-      filter.type = 'lowpass';
-      filter.frequency.setValueAtTime(500, ctx.currentTime);
+      filter.type = 'bandpass';
+      filter.frequency.setValueAtTime(700, ctx.currentTime);
+      filter.Q.setValueAtTime(1.2, ctx.currentTime);
 
       noise.connect(filter);
       filter.connect(swellGain);
@@ -302,37 +307,56 @@
       this.currentSource = noise;
     }
 
-    // 3. Campfire: Soft warmth noise + random impulsive crackle pops
+    // 3. Campfire: Gentle warmth noise + random soft crackle pops
     private playFire(ctx: AudioContext) {
-      this.playRain(ctx); // background warmth rumble
+      // Gentle airy background, no heavy low-end rumble
+      const bufferSize = ctx.sampleRate * 3;
+      const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        data[i] = (Math.random() * 2 - 1) * 0.08;
+      }
 
-      // Random crackle pops
+      const noise = ctx.createBufferSource();
+      noise.buffer = buffer;
+      noise.loop = true;
+
+      const hp = ctx.createBiquadFilter();
+      hp.type = 'highpass';
+      hp.frequency.setValueAtTime(400, ctx.currentTime);
+
+      noise.connect(hp);
+      hp.connect(this.gainNode!);
+      noise.start();
+      this.currentSource = noise;
+
+      // Soft randomized crackle pops
       this.crackleTimer = window.setInterval(() => {
         if (!this.isPlaying || !this.ctx) return;
-        if (Math.random() > 0.65) {
+        if (Math.random() > 0.6) {
           const pop = ctx.createBufferSource();
-          const popBuf = ctx.createBuffer(1, ctx.sampleRate * 0.04, ctx.sampleRate);
+          const popBuf = ctx.createBuffer(1, ctx.sampleRate * 0.03, ctx.sampleRate);
           const pData = popBuf.getChannelData(0);
           for (let i = 0; i < pData.length; i++) {
-            pData[i] = (Math.random() * 2 - 1) * Math.exp(-i / (ctx.sampleRate * 0.008));
+            pData[i] = (Math.random() * 2 - 1) * Math.exp(-i / (ctx.sampleRate * 0.005));
           }
           pop.buffer = popBuf;
           const popGain = ctx.createGain();
-          popGain.gain.setValueAtTime(0.4 + Math.random() * 0.3, ctx.currentTime);
+          popGain.gain.setValueAtTime(0.25 + Math.random() * 0.2, ctx.currentTime);
           pop.connect(popGain);
           popGain.connect(this.gainNode!);
           pop.start();
         }
-      }, 120);
+      }, 150);
     }
 
-    // 4. Forest Breeze: bandpass wind with gentle frequency fluctuation
+    // 4. Forest Breeze: Gentle airy rustle (bandpass at 900Hz)
     private playForest(ctx: AudioContext) {
-      const bufferSize = ctx.sampleRate * 2;
+      const bufferSize = ctx.sampleRate * 3;
       const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
       const data = buffer.getChannelData(0);
       for (let i = 0; i < bufferSize; i++) {
-        data[i] = (Math.random() * 2 - 1) * 0.5;
+        data[i] = (Math.random() * 2 - 1) * 0.15;
       }
 
       const noise = ctx.createBufferSource();
@@ -341,8 +365,8 @@
 
       const filter = ctx.createBiquadFilter();
       filter.type = 'bandpass';
-      filter.frequency.setValueAtTime(400, ctx.currentTime);
-      filter.Q.setValueAtTime(3.0, ctx.currentTime);
+      filter.frequency.setValueAtTime(850, ctx.currentTime);
+      filter.Q.setValueAtTime(1.8, ctx.currentTime);
 
       noise.connect(filter);
       filter.connect(this.gainNode!);
@@ -350,25 +374,28 @@
       this.currentSource = noise;
     }
 
-    // 5. 432Hz Binaural Alpha Flow
+    // 5. 432Hz Meditation Pad: Harmonic chord wash instead of a buzzing single sine wave
     private playAlpha(ctx: AudioContext) {
-      const osc1 = ctx.createOscillator();
-      const osc2 = ctx.createOscillator();
-      osc1.type = 'sine';
-      osc2.type = 'sine';
-      osc1.frequency.setValueAtTime(432, ctx.currentTime);
-      osc2.frequency.setValueAtTime(440, ctx.currentTime); // 8Hz Alpha beat difference
+      // Soft ambient chord: F3 (174Hz), C4 (261Hz), A4 (440Hz), F4 (349Hz) with warm lowpass
+      const freqs = [174.6, 261.6, 349.2, 432.0];
+      const masterOscGain = ctx.createGain();
+      masterOscGain.gain.setValueAtTime(0.12, ctx.currentTime);
 
-      const toneGain = ctx.createGain();
-      toneGain.gain.setValueAtTime(0.18, ctx.currentTime);
+      const filter = ctx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(450, ctx.currentTime);
 
-      osc1.connect(toneGain);
-      osc2.connect(toneGain);
-      toneGain.connect(this.gainNode!);
+      freqs.forEach((f) => {
+        const osc = ctx.createOscillator();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(f, ctx.currentTime);
+        osc.connect(filter);
+        osc.start();
+      });
 
-      osc1.start();
-      osc2.start();
-      this.currentSource = osc1;
+      filter.connect(masterOscGain);
+      masterOscGain.connect(this.gainNode!);
+      this.currentSource = masterOscGain;
     }
   }
 
