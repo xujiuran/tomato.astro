@@ -4,6 +4,7 @@
 
 <div
   id="share-poster-backdrop"
+  transition:persist
   class="fixed inset-0 z-[120] hidden items-center justify-center p-3 sm:p-4 bg-zinc-950/65 backdrop-blur-md transition-opacity duration-200"
   role="dialog"
   aria-modal="true"
@@ -102,10 +103,13 @@
     id?: number | string;
     date: string;
     title?: string;
+    tag?: string;
     content: string;
+    description?: string;
+    toc?: string[];
     items?: string[];
     readTime?: string;
-    words?: number;
+    words?: string | number;
     slug?: string;
   }
 
@@ -183,24 +187,35 @@
       maxWidth: number,
       lineHeight: number
     ): number {
-      const words = text.split('');
-      let line = '';
+      const paragraphs = (text || '').split('\n');
       let currentY = y;
 
-      for (let n = 0; n < words.length; n++) {
-        const testLine = line + words[n];
-        const metrics = ctx.measureText(testLine);
-        const testWidth = metrics.width;
-        if (testWidth > maxWidth && n > 0) {
-          ctx.fillText(line, x, currentY);
-          line = words[n];
-          currentY += lineHeight;
-        } else {
-          line = testLine;
+      for (let p = 0; p < paragraphs.length; p++) {
+        const paragraph = paragraphs[p].trim();
+        if (!paragraph) {
+          currentY += lineHeight * 0.35;
+          continue;
         }
+
+        const chars = paragraph.split('');
+        let line = '';
+
+        for (let n = 0; n < chars.length; n++) {
+          const testLine = line + chars[n];
+          const metrics = ctx.measureText(testLine);
+          if (metrics.width > maxWidth && n > 0) {
+            ctx.fillText(line, x, currentY);
+            line = chars[n];
+            currentY += lineHeight;
+          } else {
+            line = testLine;
+          }
+        }
+        ctx.fillText(line, x, currentY);
+        currentY += lineHeight;
       }
-      ctx.fillText(line, x, currentY);
-      return currentY + lineHeight;
+
+      return currentY;
     }
 
     function renderPosterCanvas() {
@@ -218,7 +233,12 @@
         const itemCount = currentData.items?.length || 6;
         height = 540 + itemCount * 36;
       } else if (currentData.type === 'post') {
-        height = 560 + Math.min(240, Math.floor((currentData.content?.length || 100) * 1.1));
+        const titleLen = (currentData.title || '').length;
+        const extraTitleH = titleLen > 24 ? 36 : 0;
+        const summary = currentData.description || currentData.content || '';
+        const summaryLen = summary.length;
+        const tocCount = Math.min(3, (currentData.toc || []).length);
+        height = 500 + extraTitleH + Math.min(200, Math.floor(summaryLen * 0.85)) + (tocCount > 0 ? 36 + tocCount * 24 : 0);
       }
 
       canvas.width = width * dpr;
@@ -306,12 +326,13 @@
 
       // Top Right Badge
       if (currentData.id || currentData.type === 'post') {
-        const badgeLabel = currentData.type === 'post' ? 'ARTICLE' : `#${currentData.id}`;
+        const badgeLabel = currentData.tag || (currentData.type === 'post' ? '深度长文' : `#${currentData.id}`);
+        ctx.font = 'bold 10px ui-monospace, -apple-system, sans-serif';
+        const badgeWidth = Math.max(68, ctx.measureText(badgeLabel).width + 20);
         ctx.fillStyle = isDarkStyle ? '#27272A' : '#ECE9DF';
-        ctx.fillRect(width - 110, 36, 74, 22);
+        ctx.fillRect(width - badgeWidth - 36, 36, badgeWidth, 22);
         ctx.fillStyle = accentColor;
-        ctx.font = 'bold 10px ui-monospace, Menlo, monospace';
-        ctx.fillText(badgeLabel, width - 98, 51);
+        ctx.fillText(badgeLabel, width - badgeWidth - 26, 51);
       }
 
       // Divider Line
@@ -359,14 +380,16 @@
         // Article Title
         ctx.font = 'bold 22px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
         ctx.fillStyle = textPrimaryColor;
-        let lineY = wrapText(ctx, currentData.title || '随笔文章', 42, 125, width - 84, 32);
+        let lineY = wrapText(ctx, currentData.title || '随笔文章', 42, 122, width - 84, 32);
 
         // Meta Info
         ctx.font = '12px ui-monospace, SFMono-Regular, Menlo, monospace';
         ctx.fillStyle = textSecondaryColor;
-        const metaStr = `${currentData.date}  ·  约需 ${currentData.readTime || '5 分钟'}  ·  ${currentData.words || '2000'} 字`;
-        ctx.fillText(metaStr, 42, lineY + 8);
-        lineY += 28;
+        const readTimeStr = currentData.readTime || '5 分钟';
+        const wordsStr = currentData.words ? `${currentData.words} 字` : '2,000 字';
+        const metaStr = `${currentData.date}  ·  约需 ${readTimeStr}  ·  ${wordsStr}`;
+        ctx.fillText(metaStr, 42, lineY + 6);
+        lineY += 24;
 
         // Divider
         ctx.strokeStyle = isDarkStyle ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.06)';
@@ -375,23 +398,41 @@
         ctx.moveTo(42, lineY);
         ctx.lineTo(width - 42, lineY);
         ctx.stroke();
-        lineY += 26;
+        lineY += 24;
 
-        // Decorative Opening Quote
-        ctx.font = 'bold 44px serif';
-        ctx.fillStyle = isDarkStyle ? 'rgba(220, 38, 38, 0.45)' : 'rgba(220, 38, 38, 0.25)';
-        ctx.fillText('“', 38, lineY + 6);
+        // Core Abstract / 核心导读
+        const summaryText = currentData.description || currentData.content || '';
+        if (summaryText) {
+          ctx.font = 'bold 36px serif';
+          ctx.fillStyle = isDarkStyle ? 'rgba(220, 38, 38, 0.45)' : 'rgba(220, 38, 38, 0.25)';
+          ctx.fillText('“', 38, lineY + 4);
 
-        // Excerpt
-        ctx.font = '15px "Songti SC", "Source Han Serif SC", Georgia, serif';
-        ctx.fillStyle = isDarkStyle ? '#E4E4E7' : '#3F3F46';
-        const excerpt = currentData.content || '';
-        lineY = wrapText(ctx, excerpt, 42, lineY + 16, width - 84, 28);
+          ctx.font = '14.5px "Songti SC", "Source Han Serif SC", Georgia, serif';
+          ctx.fillStyle = isDarkStyle ? '#E4E4E7' : '#3F3F46';
+          lineY = wrapText(ctx, summaryText, 42, lineY + 14, width - 84, 26);
+          lineY += 10;
+        }
 
-        // Tag / Footnote note
-        lineY += 16;
+        // Section Headings Outline
+        const tocItems = currentData.toc || [];
+        if (tocItems.length > 0) {
+          ctx.font = 'bold 11px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+          ctx.fillStyle = accentColor;
+          ctx.fillText('✦ 核心章节大纲速览', 42, lineY);
+          lineY += 20;
+
+          ctx.font = '12.5px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+          ctx.fillStyle = isDarkStyle ? '#A1A1AA' : '#716B64';
+          for (let i = 0; i < Math.min(3, tocItems.length); i++) {
+            ctx.fillText(`•  ${tocItems[i]}`, 46, lineY);
+            lineY += 22;
+          }
+          lineY += 8;
+        }
+
+        // Reader Footnote
         ctx.fillStyle = accentColor;
-        ctx.font = '12px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+        ctx.font = '11px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
         ctx.fillText('✦ 扫码或访问 xujiuran.top 阅读全文全文与高亮代码', 42, lineY);
       }
 
@@ -442,12 +483,16 @@
       }, 'image/png');
     });
 
-    // Event bus listener for poster trigger buttons
-    window.addEventListener('tomatox:open-poster', ((e: CustomEvent<PosterData>) => {
-      if (e.detail) {
-        openModal(e.detail);
-      }
-    }) as EventListener);
+    // Global Event bus listener for poster trigger buttons
+    if (!(window as any)._hasPosterWindowListener) {
+      (window as any)._hasPosterWindowListener = true;
+      window.addEventListener('tomatox:open-poster', ((e: CustomEvent<PosterData>) => {
+        if (e.detail && (window as any)._openPosterModalFn) {
+          (window as any)._openPosterModalFn(e.detail);
+        }
+      }) as EventListener);
+    }
+    (window as any)._openPosterModalFn = openModal;
   }
 
   initSharePosterModal();

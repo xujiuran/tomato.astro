@@ -18,16 +18,15 @@ export function getStaticPaths() {
 }
 
 const hubData = await fetch60sHubData();
-const { title, date, readTime, words, content, prevPost, nextPost } = Astro.props;
+const { title, description, tag, date, readTime, words, content, prevPost, nextPost } = Astro.props;
 const { html, toc } = renderArticleMarkdown(content);
 const slug = Astro.params.slug;
+const tocHeadings = toc.slice(0, 4).map((t) => t.text);
 
-// Plain text excerpt for share poster
-const plainExcerpt = content
-  .replace(/<[^>]*>/g, '')
-  .replace(/[#*`>\[\]\(\)\-\_]/g, '')
-  .trim()
-  .slice(0, 150) + '...';
+// Curated or auto-generated clean plain excerpt for share poster
+const safeDescription = (description || content.replace(/<[^>]*>/g, '').replace(/[#*`>\[\]\(\)\-\_]/g, '').trim())
+  .replace(/\s+/g, ' ')
+  .slice(0, 130) + '...';
 ---
 
 <BaseLayout title={`${title} · TomatoX 随笔`} currentPath="/posts" containerClass="max-w-6xl">
@@ -87,6 +86,14 @@ const plainExcerpt = content
               <button
                 type="button"
                 id="btn-post-share-poster"
+                data-slug={slug}
+                data-title={title}
+                data-tag={tag || '深度长文'}
+                data-date={date}
+                data-read-time={readTime}
+                data-words={words}
+                data-description={safeDescription}
+                data-toc={JSON.stringify(tocHeadings)}
                 class="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border-secondary)] bg-[var(--surface-subtle)] hover:bg-[var(--surface-primary)] hover:border-[var(--accent)] px-2.5 py-1 text-xs text-[var(--text-secondary)] hover:text-[var(--accent)] transition-all cursor-pointer shadow-2xs"
                 title="生成长图分享海报"
               >
@@ -183,17 +190,17 @@ const plainExcerpt = content
   </div>
 </BaseLayout>
 
-<script define:vars={{ title, date, readTime, words, slug, plainExcerpt }}>
+<script>
   function initPostReadingToolkit() {
     const contentEl = document.querySelector('.article-content');
     const fontBtns = document.querySelectorAll('.font-size-btn');
-    const sharePosterBtn = document.getElementById('btn-post-share-poster');
+    const sharePosterBtn = document.getElementById('btn-post-share-poster') as HTMLButtonElement | null;
 
     // 1. Font Size preference
     const savedSize = localStorage.getItem('tomatox_post_font_size') || 'base';
     applyFontSize(savedSize);
 
-    function applyFontSize(size) {
+    function applyFontSize(size: string) {
       if (contentEl) {
         contentEl.setAttribute('data-font-size', size);
       }
@@ -217,22 +224,41 @@ const plainExcerpt = content
       });
     });
 
-    // 2. Open Share Poster
-    sharePosterBtn?.addEventListener('click', () => {
-      window.dispatchEvent(
-        new CustomEvent('tomatox:open-poster', {
-          detail: {
-            type: 'post',
-            slug: slug,
-            title: title,
-            date: date,
-            readTime: readTime,
-            words: words,
-            content: plainExcerpt,
-          },
-        })
-      );
-    });
+    // 2. Open Share Poster (reads directly from active button data attributes to avoid stale state)
+    if (sharePosterBtn) {
+      sharePosterBtn.onclick = () => {
+        const slug = sharePosterBtn.getAttribute('data-slug') || '';
+        const title = sharePosterBtn.getAttribute('data-title') || document.title;
+        const tag = sharePosterBtn.getAttribute('data-tag') || '深度长文';
+        const date = sharePosterBtn.getAttribute('data-date') || '';
+        const readTime = sharePosterBtn.getAttribute('data-read-time') || '5 分钟';
+        const words = sharePosterBtn.getAttribute('data-words') || '2,000';
+        const description = sharePosterBtn.getAttribute('data-description') || '';
+        let toc: string[] = [];
+        try {
+          toc = JSON.parse(sharePosterBtn.getAttribute('data-toc') || '[]');
+        } catch {
+          toc = [];
+        }
+
+        window.dispatchEvent(
+          new CustomEvent('tomatox:open-poster', {
+            detail: {
+              type: 'post',
+              slug,
+              title,
+              tag,
+              date,
+              readTime,
+              words,
+              description,
+              content: description,
+              toc,
+            },
+          })
+        );
+      };
+    }
   }
 
   initPostReadingToolkit();
