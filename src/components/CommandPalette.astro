@@ -352,6 +352,14 @@ import { searchIndex } from '../data/searchIndex';
             window.scrollTo({ top: 0, behavior: 'smooth' });
             break;
           }
+          case 'toggle-zen': {
+            const zenBtn = document.getElementById('zen-play-btn');
+            if (zenBtn) {
+              zenBtn.click();
+              showToast('Zen 专注白噪音已切换');
+            }
+            break;
+          }
         }
         return;
       }

@@ -47,6 +47,17 @@ export const searchIndex: SearchItem[] = [
     keywords: ['top', 'scroll', '顶部', '回顶'],
   },
   {
+    id: 'act-zen-audio',
+    title: '播放 / 暂停 Zen 专注白噪音',
+    description: '瞬时启停雨声、潮汐海浪、暖炉柴火与 432Hz 冥想氛围音',
+    category: 'action',
+    categoryLabel: '快捷指令',
+    actionId: 'toggle-zen',
+    iconType: 'action',
+    badge: 'Zen',
+    keywords: ['zen', 'music', 'audio', 'lofi', 'rain', '白噪音', '雨声', '音乐', '播放', '海浪', '声音', '专注', '柴火'],
+  },
+  {
     id: 'act-rss',
     title: '订阅博客 RSS 动态',
     description: '通过 RSS 订阅 TomatoX 的全部技术随笔更新',

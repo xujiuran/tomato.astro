@@ -1,0 +1,467 @@
+---
+// ZenPlayer.astro - Ambient Lo-Fi & procedural white noise player with View Transitions persistence
+---
+
+<div
+  id="zen-lofi-player"
+  transition:persist="zen-lofi-player"
+  class="fixed bottom-5 left-5 z-[80] select-none"
+  aria-label="Zen 白噪音播放器"
+>
+  <!-- Mini Capsule Pill Bar -->
+  <div class="relative flex items-center gap-2 rounded-full border border-zinc-200/90 dark:border-zinc-800 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-xl px-2.5 py-1.5 shadow-xl shadow-zinc-900/10 dark:shadow-black/50 transition-all hover:border-[var(--text-secondary)]">
+    <!-- Equalizer Animation / Play Toggle -->
+    <button
+      id="zen-play-btn"
+      type="button"
+      class="flex h-7 w-7 items-center justify-center rounded-full bg-red-600 text-white hover:bg-red-500 active:scale-95 transition-all cursor-pointer shadow-xs shadow-red-600/30"
+      aria-label="播放/暂停白噪音"
+      title="播放/暂停 Zen 专注音效"
+    >
+      <!-- Play Icon -->
+      <svg id="zen-icon-play" class="h-3.5 w-3.5 ml-0.5" viewBox="0 0 24 24" fill="currentColor">
+        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+      </svg>
+      <!-- Pause Icon -->
+      <svg id="zen-icon-pause" class="hidden h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor">
+        <rect x="6" y="4" width="4" height="16"></rect>
+        <rect x="14" y="4" width="4" height="16"></rect>
+      </svg>
+    </button>
+
+    <!-- Track Selector & Info -->
+    <div class="relative flex items-center">
+      <button
+        id="zen-track-menu-btn"
+        type="button"
+        class="flex items-center gap-1.5 px-1.5 py-1 text-xs font-medium text-[var(--text-primary)] hover:text-[var(--accent)] transition-colors cursor-pointer"
+        aria-expanded="false"
+      >
+        <span id="zen-current-track-icon">🌧️</span>
+        <span id="zen-current-track-name" class="font-medium truncate max-w-[85px] sm:max-w-[100px]">深夜雨声</span>
+        <svg class="h-3 w-3 opacity-60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="6 9 12 15 18 9"></polyline>
+        </svg>
+      </button>
+
+      <!-- Track Dropdown Menu -->
+      <div
+        id="zen-track-dropdown"
+        class="hidden absolute bottom-full left-0 mb-2.5 w-44 rounded-xl border border-zinc-200/90 dark:border-zinc-800 bg-white/98 dark:bg-zinc-900/98 backdrop-blur-xl p-1.5 shadow-2xl space-y-0.5"
+      >
+        <div class="px-2 py-1 text-[10px] font-semibold text-[var(--text-tertiary)] mono uppercase">
+          专注音效 · 纯净无广告
+        </div>
+        <button
+          type="button"
+          class="zen-track-option w-full flex items-center justify-between rounded-lg px-2.5 py-1.5 text-xs text-[var(--text-primary)] hover:bg-zinc-100 dark:hover:bg-zinc-800/80 transition-colors cursor-pointer"
+          data-track="rain"
+        >
+          <span class="flex items-center gap-2">
+            <span>🌧️</span>
+            <span>深夜雨声</span>
+          </span>
+          <span class="text-[10px] mono text-[var(--text-tertiary)]">沉浸</span>
+        </button>
+        <button
+          type="button"
+          class="zen-track-option w-full flex items-center justify-between rounded-lg px-2.5 py-1.5 text-xs text-[var(--text-primary)] hover:bg-zinc-100 dark:hover:bg-zinc-800/80 transition-colors cursor-pointer"
+          data-track="waves"
+        >
+          <span class="flex items-center gap-2">
+            <span>🌊</span>
+            <span>潮汐海浪</span>
+          </span>
+          <span class="text-[10px] mono text-[var(--text-tertiary)]">舒缓</span>
+        </button>
+        <button
+          type="button"
+          class="zen-track-option w-full flex items-center justify-between rounded-lg px-2.5 py-1.5 text-xs text-[var(--text-primary)] hover:bg-zinc-100 dark:hover:bg-zinc-800/80 transition-colors cursor-pointer"
+          data-track="fire"
+        >
+          <span class="flex items-center gap-2">
+            <span>🔥</span>
+            <span>暖炉柴火</span>
+          </span>
+          <span class="text-[10px] mono text-[var(--text-tertiary)]">温暖</span>
+        </button>
+        <button
+          type="button"
+          class="zen-track-option w-full flex items-center justify-between rounded-lg px-2.5 py-1.5 text-xs text-[var(--text-primary)] hover:bg-zinc-100 dark:hover:bg-zinc-800/80 transition-colors cursor-pointer"
+          data-track="forest"
+        >
+          <span class="flex items-center gap-2">
+            <span>🌲</span>
+            <span>林间微风</span>
+          </span>
+          <span class="text-[10px] mono text-[var(--text-tertiary)]">清透</span>
+        </button>
+        <button
+          type="button"
+          class="zen-track-option w-full flex items-center justify-between rounded-lg px-2.5 py-1.5 text-xs text-[var(--text-primary)] hover:bg-zinc-100 dark:hover:bg-zinc-800/80 transition-colors cursor-pointer"
+          data-track="alpha"
+        >
+          <span class="flex items-center gap-2">
+            <span>🧘</span>
+            <span>432Hz 冥想</span>
+          </span>
+          <span class="text-[10px] mono text-[var(--text-tertiary)]">心流</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Equalizer Animated Wave (shown while playing) -->
+    <div id="zen-equalizer" class="hidden items-end gap-0.5 h-3 px-1">
+      <span class="w-[2px] h-full bg-red-500 rounded-full animate-bounce [animation-duration:600ms]"></span>
+      <span class="w-[2px] h-2/3 bg-red-500 rounded-full animate-bounce [animation-duration:450ms]"></span>
+      <span class="w-[2px] h-4/5 bg-red-500 rounded-full animate-bounce [animation-duration:750ms]"></span>
+    </div>
+
+    <!-- Volume Control Slider (Expandable on hover) -->
+    <div class="relative group/vol flex items-center pr-1">
+      <button
+        id="zen-mute-btn"
+        type="button"
+        class="text-[var(--text-tertiary)] hover:text-[var(--text-primary)] p-1 transition-colors cursor-pointer"
+        title="调节音量"
+      >
+        <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+          <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+        </svg>
+      </button>
+
+      <div class="w-0 group-hover/vol:w-16 overflow-hidden transition-all duration-200 flex items-center">
+        <input
+          id="zen-volume-slider"
+          type="range"
+          min="0"
+          max="1"
+          step="0.05"
+          value="0.35"
+          class="w-14 h-1 bg-zinc-200 dark:bg-zinc-700 rounded-lg appearance-none cursor-pointer accent-red-500"
+          aria-label="音量滑块"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Zen Audio Generator using Web Audio API (Zero external assets, 100% reliable & offline)
+  class ZenSoundEngine {
+    private ctx: AudioContext | null = null;
+    private gainNode: GainNode | null = null;
+    private currentSource: AudioNode | null = null;
+    private lfo: OscillatorNode | null = null;
+    private crackleTimer: number | null = null;
+    public isPlaying = false;
+    public currentTrack = 'rain';
+    public volume = 0.35;
+
+    private getContext(): AudioContext {
+      if (!this.ctx) {
+        const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+        this.ctx = new AudioCtx();
+        this.gainNode = this.ctx.createGain();
+        this.gainNode.gain.setValueAtTime(this.volume, this.ctx.currentTime);
+        this.gainNode.connect(this.ctx.destination);
+      }
+      if (this.ctx.state === 'suspended') {
+        this.ctx.resume();
+      }
+      return this.ctx;
+    }
+
+    public setVolume(val: number) {
+      this.volume = val;
+      if (this.gainNode && this.ctx) {
+        this.gainNode.gain.setValueAtTime(val, this.ctx.currentTime);
+      }
+    }
+
+    public stop() {
+      if (this.currentSource) {
+        try {
+          (this.currentSource as any).stop?.();
+          this.currentSource.disconnect();
+        } catch (_) {}
+        this.currentSource = null;
+      }
+      if (this.lfo) {
+        try {
+          this.lfo.stop();
+          this.lfo.disconnect();
+        } catch (_) {}
+        this.lfo = null;
+      }
+      if (this.crackleTimer) {
+        window.clearInterval(this.crackleTimer);
+        this.crackleTimer = null;
+      }
+      this.isPlaying = false;
+    }
+
+    public play(trackKey: string) {
+      this.stop();
+      this.currentTrack = trackKey;
+      const ctx = this.getContext();
+      this.isPlaying = true;
+
+      switch (trackKey) {
+        case 'rain':
+          this.playRain(ctx);
+          break;
+        case 'waves':
+          this.playWaves(ctx);
+          break;
+        case 'fire':
+          this.playFire(ctx);
+          break;
+        case 'forest':
+          this.playForest(ctx);
+          break;
+        case 'alpha':
+          this.playAlpha(ctx);
+          break;
+        default:
+          this.playRain(ctx);
+      }
+    }
+
+    // 1. Deep Night Rain: Brown noise with lowpass filter
+    private playRain(ctx: AudioContext) {
+      const bufferSize = ctx.sampleRate * 2;
+      const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const data = buffer.getChannelData(0);
+      let lastOut = 0.0;
+      for (let i = 0; i < bufferSize; i++) {
+        const white = Math.random() * 2 - 1;
+        data[i] = (lastOut + 0.02 * white) / 1.02;
+        lastOut = data[i];
+        data[i] *= 3.5;
+      }
+
+      const noise = ctx.createBufferSource();
+      noise.buffer = buffer;
+      noise.loop = true;
+
+      const filter = ctx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(750, ctx.currentTime);
+
+      noise.connect(filter);
+      filter.connect(this.gainNode!);
+      noise.start();
+      this.currentSource = noise;
+    }
+
+    // 2. Waves: Pink noise modulated by LFO swell
+    private playWaves(ctx: AudioContext) {
+      const bufferSize = ctx.sampleRate * 2;
+      const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const data = buffer.getChannelData(0);
+      let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
+      for (let i = 0; i < bufferSize; i++) {
+        const white = Math.random() * 2 - 1;
+        b0 = 0.99886 * b0 + white * 0.0555179;
+        b1 = 0.99332 * b1 + white * 0.0750759;
+        b2 = 0.96900 * b2 + white * 0.1538520;
+        b3 = 0.86650 * b3 + white * 0.3104856;
+        b4 = 0.55000 * b4 + white * 0.5329522;
+        b5 = -0.7616 * b5 - white * 0.0168980;
+        data[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362) * 0.11;
+        b6 = white * 0.115926;
+      }
+
+      const noise = ctx.createBufferSource();
+      noise.buffer = buffer;
+      noise.loop = true;
+
+      const swellGain = ctx.createGain();
+      swellGain.gain.setValueAtTime(0.3, ctx.currentTime);
+
+      // Low frequency oscillator for wave swells (1 wave every ~9 seconds)
+      const lfo = ctx.createOscillator();
+      lfo.frequency.setValueAtTime(0.11, ctx.currentTime);
+      const lfoGain = ctx.createGain();
+      lfoGain.gain.setValueAtTime(0.25, ctx.currentTime);
+      lfo.connect(lfoGain);
+      lfoGain.connect(swellGain.gain);
+      lfo.start();
+      this.lfo = lfo;
+
+      const filter = ctx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(500, ctx.currentTime);
+
+      noise.connect(filter);
+      filter.connect(swellGain);
+      swellGain.connect(this.gainNode!);
+      noise.start();
+      this.currentSource = noise;
+    }
+
+    // 3. Campfire: Soft warmth noise + random impulsive crackle pops
+    private playFire(ctx: AudioContext) {
+      this.playRain(ctx); // background warmth rumble
+
+      // Random crackle pops
+      this.crackleTimer = window.setInterval(() => {
+        if (!this.isPlaying || !this.ctx) return;
+        if (Math.random() > 0.65) {
+          const pop = ctx.createBufferSource();
+          const popBuf = ctx.createBuffer(1, ctx.sampleRate * 0.04, ctx.sampleRate);
+          const pData = popBuf.getChannelData(0);
+          for (let i = 0; i < pData.length; i++) {
+            pData[i] = (Math.random() * 2 - 1) * Math.exp(-i / (ctx.sampleRate * 0.008));
+          }
+          pop.buffer = popBuf;
+          const popGain = ctx.createGain();
+          popGain.gain.setValueAtTime(0.4 + Math.random() * 0.3, ctx.currentTime);
+          pop.connect(popGain);
+          popGain.connect(this.gainNode!);
+          pop.start();
+        }
+      }, 120);
+    }
+
+    // 4. Forest Breeze: bandpass wind with gentle frequency fluctuation
+    private playForest(ctx: AudioContext) {
+      const bufferSize = ctx.sampleRate * 2;
+      const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        data[i] = (Math.random() * 2 - 1) * 0.5;
+      }
+
+      const noise = ctx.createBufferSource();
+      noise.buffer = buffer;
+      noise.loop = true;
+
+      const filter = ctx.createBiquadFilter();
+      filter.type = 'bandpass';
+      filter.frequency.setValueAtTime(400, ctx.currentTime);
+      filter.Q.setValueAtTime(3.0, ctx.currentTime);
+
+      noise.connect(filter);
+      filter.connect(this.gainNode!);
+      noise.start();
+      this.currentSource = noise;
+    }
+
+    // 5. 432Hz Binaural Alpha Flow
+    private playAlpha(ctx: AudioContext) {
+      const osc1 = ctx.createOscillator();
+      const osc2 = ctx.createOscillator();
+      osc1.type = 'sine';
+      osc2.type = 'sine';
+      osc1.frequency.setValueAtTime(432, ctx.currentTime);
+      osc2.frequency.setValueAtTime(440, ctx.currentTime); // 8Hz Alpha beat difference
+
+      const toneGain = ctx.createGain();
+      toneGain.gain.setValueAtTime(0.18, ctx.currentTime);
+
+      osc1.connect(toneGain);
+      osc2.connect(toneGain);
+      toneGain.connect(this.gainNode!);
+
+      osc1.start();
+      osc2.start();
+      this.currentSource = osc1;
+    }
+  }
+
+  // Global singleton sound engine preserved across page view transitions
+  const g = window as any;
+  if (!g.__ZEN_ENGINE__) {
+    g.__ZEN_ENGINE__ = new ZenSoundEngine();
+  }
+  const engine: ZenSoundEngine = g.__ZEN_ENGINE__;
+
+  const trackMeta: Record<string, { icon: string; name: string }> = {
+    rain: { icon: '🌧️', name: '深夜雨声' },
+    waves: { icon: '🌊', name: '潮汐海浪' },
+    fire: { icon: '🔥', name: '暖炉柴火' },
+    forest: { icon: '🌲', name: '林间微风' },
+    alpha: { icon: '🧘', name: '432Hz 冥想' },
+  };
+
+  function initZenPlayerUI() {
+    const playBtn = document.getElementById('zen-play-btn');
+    const iconPlay = document.getElementById('zen-icon-play');
+    const iconPause = document.getElementById('zen-icon-pause');
+    const menuBtn = document.getElementById('zen-track-menu-btn');
+    const dropdown = document.getElementById('zen-track-dropdown');
+    const equalizer = document.getElementById('zen-equalizer');
+    const volumeSlider = document.getElementById('zen-volume-slider') as HTMLInputElement | null;
+    const currentIcon = document.getElementById('zen-current-track-icon');
+    const currentName = document.getElementById('zen-current-track-name');
+
+    if (!playBtn) return;
+
+    function updateUIState() {
+      if (engine.isPlaying) {
+        iconPlay?.classList.add('hidden');
+        iconPause?.classList.remove('hidden');
+        equalizer?.classList.remove('hidden');
+        equalizer?.classList.add('flex');
+      } else {
+        iconPlay?.classList.remove('hidden');
+        iconPause?.classList.add('hidden');
+        equalizer?.classList.add('hidden');
+        equalizer?.classList.remove('flex');
+      }
+
+      const meta = trackMeta[engine.currentTrack] || trackMeta.rain;
+      if (currentIcon) currentIcon.textContent = meta.icon;
+      if (currentName) currentName.textContent = meta.name;
+    }
+
+    updateUIState();
+
+    // Play/Pause button
+    playBtn.onclick = (e) => {
+      e.stopPropagation();
+      if (engine.isPlaying) {
+        engine.stop();
+      } else {
+        engine.play(engine.currentTrack);
+      }
+      updateUIState();
+    };
+
+    // Track menu toggle
+    menuBtn!.onclick = (e) => {
+      e.stopPropagation();
+      dropdown?.classList.toggle('hidden');
+    };
+
+    // Track selection
+    document.querySelectorAll('.zen-track-option').forEach((opt) => {
+      opt.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const track = opt.getAttribute('data-track');
+        if (track) {
+          dropdown?.classList.add('hidden');
+          engine.play(track);
+          updateUIState();
+        }
+      });
+    });
+
+    // Close dropdown on outside click
+    document.addEventListener('click', () => {
+      dropdown?.classList.add('hidden');
+    });
+
+    // Volume Slider
+    volumeSlider?.addEventListener('input', () => {
+      const val = parseFloat(volumeSlider.value);
+      engine.setVolume(val);
+    });
+  }
+
+  initZenPlayerUI();
+  document.addEventListener('astro:page-load', initZenPlayerUI);
+</script>
