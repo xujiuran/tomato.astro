@@ -1,0 +1,470 @@
+---
+import { searchIndex } from '../data/searchIndex';
+---
+
+<div
+  id="command-palette-backdrop"
+  class="fixed inset-0 z-[100] hidden items-start justify-center pt-[10vh] sm:pt-[15vh] px-3 sm:px-4 bg-zinc-950/50 backdrop-blur-md transition-opacity duration-200"
+  role="dialog"
+  aria-modal="true"
+  aria-label="全局指令面板"
+>
+  <!-- Palette Window -->
+  <div
+    id="command-palette-modal"
+    class="relative w-full max-w-xl rounded-2xl border border-zinc-200/90 dark:border-zinc-800 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-xl shadow-2xl shadow-zinc-950/20 dark:shadow-black/70 overflow-hidden flex flex-col transform transition-all duration-150 scale-95 opacity-0"
+  >
+    <!-- Top Search Input Bar -->
+    <div class="relative flex items-center px-4 py-3.5 border-b border-zinc-200/80 dark:border-zinc-800">
+      <div class="flex h-5 w-5 shrink-0 items-center justify-center text-red-500">
+        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+      </div>
+      <input
+        id="command-palette-input"
+        type="text"
+        placeholder="搜索文章、项目、随想，或键入快捷命令..."
+        autocomplete="off"
+        spellcheck="false"
+        class="w-full bg-transparent px-3 text-sm text-[var(--text-primary)] placeholder-[var(--text-tertiary)] outline-hidden focus:outline-hidden"
+      />
+      <div class="flex items-center gap-1.5 shrink-0">
+        <button
+          id="command-palette-clear"
+          type="button"
+          class="hidden text-xs text-[var(--text-tertiary)] hover:text-[var(--text-primary)] px-1.5 py-0.5 rounded cursor-pointer"
+          title="清空"
+        >
+          ✕
+        </button>
+        <kbd class="mono rounded-md border border-zinc-200 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 text-[10px] font-semibold text-[var(--text-secondary)] shadow-2xs">ESC</kbd>
+      </div>
+    </div>
+
+    <!-- Results List -->
+    <div
+      id="command-palette-results"
+      class="max-h-[58vh] overflow-y-auto px-2 py-2 space-y-1 scrollbar-thin scrollbar-thumb-zinc-300 dark:scrollbar-thumb-zinc-700 divide-y divide-zinc-100 dark:divide-zinc-800/40"
+    >
+      <!-- Results populated via JS -->
+    </div>
+
+    <!-- Empty State -->
+    <div id="command-palette-empty" class="hidden px-6 py-12 text-center">
+      <div class="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-zinc-100 dark:bg-zinc-800 text-[var(--text-tertiary)] mb-3">
+        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+      </div>
+      <p class="text-sm font-medium text-[var(--text-primary)]">未找到相关匹配项</p>
+      <p class="mt-1 text-xs text-[var(--text-tertiary)]">试着搜索 “主题”、“文章”、“早报” 或 “工具”</p>
+    </div>
+
+    <!-- Bottom Footer Hints -->
+    <div class="flex items-center justify-between px-4 py-2 border-t border-zinc-200/80 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-900/60 text-[11px] text-[var(--text-tertiary)]">
+      <div class="flex items-center gap-3">
+        <span class="inline-flex items-center gap-1">
+          <kbd class="mono rounded border border-zinc-200 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800 px-1 text-[10px]">↑</kbd>
+          <kbd class="mono rounded border border-zinc-200 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800 px-1 text-[10px]">↓</kbd>
+          <span>切换</span>
+        </span>
+        <span class="inline-flex items-center gap-1">
+          <kbd class="mono rounded border border-zinc-200 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800 px-1.5 text-[10px]">↵</kbd>
+          <span>执行 / 打开</span>
+        </span>
+      </div>
+      <div class="flex items-center gap-1.5 mono text-[10px]">
+        <span class="inline-block h-1.5 w-1.5 rounded-full bg-red-500 animate-pulse"></span>
+        <span>TomatoX 随笔</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Embedded Search Data -->
+<script id="command-palette-data" type="application/json" set:html={JSON.stringify(searchIndex)}></script>
+
+<!-- Toast notification for actions like copy-link -->
+<div
+  id="command-palette-toast"
+  class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[110] hidden items-center gap-2 rounded-full border border-zinc-200 dark:border-zinc-700 bg-zinc-900 dark:bg-zinc-100 px-4 py-2 text-xs font-medium text-white dark:text-zinc-900 shadow-xl transition-all duration-200"
+>
+  <svg class="h-4 w-4 text-emerald-400 dark:text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+    <polyline points="20 6 9 17 4 12"></polyline>
+  </svg>
+  <span id="command-palette-toast-msg">已完成操作</span>
+</div>
+
+<script>
+  interface SearchItem {
+    id: string;
+    title: string;
+    description?: string;
+    category: 'nav' | 'post' | 'tool' | 'thought' | 'action';
+    categoryLabel: string;
+    url?: string;
+    actionId?: 'toggle-theme' | 'copy-link' | 'scroll-top' | 'open-rss' | 'open-github';
+    iconType: 'nav' | 'post' | 'tool' | 'thought' | 'action';
+    badge?: string;
+    keywords?: string[];
+  }
+
+  function initCommandPalette() {
+    const backdrop = document.getElementById('command-palette-backdrop');
+    const modal = document.getElementById('command-palette-modal');
+    const input = document.getElementById('command-palette-input') as HTMLInputElement | null;
+    const resultsContainer = document.getElementById('command-palette-results');
+    const emptyState = document.getElementById('command-palette-empty');
+    const clearBtn = document.getElementById('command-palette-clear');
+    const toast = document.getElementById('command-palette-toast');
+    const toastMsg = document.getElementById('command-palette-toast-msg');
+
+    const dataScript = document.getElementById('command-palette-data');
+    if (!backdrop || !modal || !input || !resultsContainer || !dataScript) return;
+
+    // Prevent duplicate binding on hot reload / page load
+    if ((backdrop as any)._hasCommandPaletteInit) return;
+    (backdrop as any)._hasCommandPaletteInit = true;
+
+    let searchItems: SearchItem[] = [];
+    try {
+      searchItems = JSON.parse(dataScript.textContent || '[]');
+    } catch (e) {
+      console.error('Failed to parse search items', e);
+    }
+
+    let activeIndex = 0;
+    let currentRenderedItems: SearchItem[] = [];
+
+    function showToast(message: string) {
+      if (!toast || !toastMsg) return;
+      toastMsg.textContent = message;
+      toast.classList.remove('hidden');
+      toast.classList.add('flex');
+      setTimeout(() => {
+        toast.classList.add('hidden');
+        toast.classList.remove('flex');
+      }, 2000);
+    }
+
+    function openPalette() {
+      backdrop?.classList.remove('hidden');
+      backdrop?.classList.add('flex');
+      // Gentle spring enter animation
+      requestAnimationFrame(() => {
+        modal?.classList.remove('scale-95', 'opacity-0');
+        modal?.classList.add('scale-100', 'opacity-100');
+        input?.focus();
+        input?.select();
+      });
+      renderList(input?.value.trim() || '');
+    }
+
+    function closePalette() {
+      modal?.classList.remove('scale-100', 'opacity-100');
+      modal?.classList.add('scale-95', 'opacity-0');
+      setTimeout(() => {
+        backdrop?.classList.add('hidden');
+        backdrop?.classList.remove('flex');
+      }, 150);
+    }
+
+    function getIconSvg(type: string): string {
+      switch (type) {
+        case 'action':
+          return `<svg class="h-4 w-4 text-red-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>`;
+        case 'post':
+          return `<svg class="h-4 w-4 text-blue-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>`;
+        case 'tool':
+          return `<svg class="h-4 w-4 text-amber-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>`;
+        case 'thought':
+          return `<svg class="h-4 w-4 text-purple-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>`;
+        case 'nav':
+        default:
+          return `<svg class="h-4 w-4 text-emerald-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>`;
+      }
+    }
+
+    function filterItems(query: string): SearchItem[] {
+      if (!query) {
+        // Default curated list: Top actions + nav + recent posts
+        return searchItems;
+      }
+
+      const q = query.toLowerCase().trim();
+      return searchItems.filter((item) => {
+        const titleMatch = item.title.toLowerCase().includes(q);
+        const descMatch = item.description?.toLowerCase().includes(q);
+        const catMatch = item.categoryLabel.toLowerCase().includes(q);
+        const badgeMatch = item.badge?.toLowerCase().includes(q);
+        const kwMatch = item.keywords?.some((k) => k.toLowerCase().includes(q));
+        return titleMatch || descMatch || catMatch || badgeMatch || kwMatch;
+      });
+    }
+
+    function renderList(query: string) {
+      currentRenderedItems = filterItems(query);
+      activeIndex = 0;
+
+      if (currentRenderedItems.length === 0) {
+        resultsContainer.innerHTML = '';
+        emptyState?.classList.remove('hidden');
+        return;
+      }
+
+      emptyState?.classList.add('hidden');
+
+      // Group items by categoryLabel
+      const grouped: { [category: string]: SearchItem[] } = {};
+      currentRenderedItems.forEach((item) => {
+        if (!grouped[item.categoryLabel]) {
+          grouped[item.categoryLabel] = [];
+        }
+        grouped[item.categoryLabel].push(item);
+      });
+
+      let html = '';
+      let globalIndex = 0;
+
+      for (const [category, items] of Object.entries(grouped)) {
+        html += `
+          <div class="pt-2 first:pt-0">
+            <div class="px-2 py-1 text-[11px] font-semibold tracking-wider text-[var(--text-tertiary)] uppercase flex items-center justify-between">
+              <span>${category}</span>
+              <span class="mono text-[10px] font-normal opacity-70">${items.length} 项</span>
+            </div>
+            <div class="mt-0.5 space-y-0.5">
+        `;
+
+        for (const item of items) {
+          const isSelected = globalIndex === activeIndex;
+          const badgeHtml = item.badge
+            ? `<span class="mono shrink-0 rounded px-1.5 py-0.5 text-[10px] font-medium border border-zinc-200 dark:border-zinc-700/80 bg-zinc-100 dark:bg-zinc-800/80 text-[var(--text-secondary)]">${item.badge}</span>`
+            : '';
+
+          html += `
+            <div
+              data-index="${globalIndex}"
+              class="command-palette-item group relative flex cursor-pointer items-center justify-between gap-3 rounded-xl px-2.5 py-2 text-xs transition-colors ${
+                isSelected
+                  ? 'bg-zinc-100/90 dark:bg-zinc-800/90 text-[var(--text-primary)] ring-1 ring-zinc-300 dark:ring-zinc-700'
+                  : 'text-[var(--text-secondary)] hover:bg-zinc-50 dark:hover:bg-zinc-800/50 hover:text-[var(--text-primary)]'
+              }"
+            >
+              <div class="flex items-center gap-3 min-w-0">
+                <div class="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-zinc-200/80 dark:border-zinc-700/80 bg-zinc-50 dark:bg-zinc-800 shadow-2xs">
+                  ${getIconSvg(item.iconType)}
+                </div>
+                <div class="min-w-0">
+                  <div class="flex items-center gap-2">
+                    <span class="font-medium text-[var(--text-primary)] truncate">${item.title}</span>
+                  </div>
+                  ${
+                    item.description
+                      ? `<p class="truncate text-[11px] text-[var(--text-tertiary)] mt-0.5">${item.description}</p>`
+                      : ''
+                  }
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0">
+                ${badgeHtml}
+                <svg class="h-3.5 w-3.5 opacity-0 group-hover:opacity-100 transition-opacity text-[var(--text-tertiary)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </div>
+            </div>
+          `;
+          globalIndex++;
+        }
+
+        html += `
+            </div>
+          </div>
+        `;
+      }
+
+      resultsContainer.innerHTML = html;
+
+      // Attach click and hover listeners to items
+      const itemElements = resultsContainer.querySelectorAll('.command-palette-item');
+      itemElements.forEach((el) => {
+        el.addEventListener('click', () => {
+          const idx = parseInt(el.getAttribute('data-index') || '0', 10);
+          executeItem(currentRenderedItems[idx]);
+        });
+        el.addEventListener('mouseenter', () => {
+          const idx = parseInt(el.getAttribute('data-index') || '0', 10);
+          updateActiveIndex(idx);
+        });
+      });
+    }
+
+    function updateActiveIndex(newIndex: number) {
+      if (currentRenderedItems.length === 0) return;
+      if (newIndex < 0) newIndex = currentRenderedItems.length - 1;
+      if (newIndex >= currentRenderedItems.length) newIndex = 0;
+      activeIndex = newIndex;
+
+      const itemElements = resultsContainer.querySelectorAll('.command-palette-item');
+      itemElements.forEach((el, idx) => {
+        if (idx === activeIndex) {
+          el.classList.add('bg-zinc-100/90', 'dark:bg-zinc-800/90', 'text-[var(--text-primary)]', 'ring-1', 'ring-zinc-300', 'dark:ring-zinc-700');
+          el.classList.remove('hover:bg-zinc-50', 'dark:hover:bg-zinc-800/50');
+          // Smooth scroll item into view if out of scroll port
+          (el as HTMLElement).scrollIntoView({ block: 'nearest' });
+        } else {
+          el.classList.remove('bg-zinc-100/90', 'dark:bg-zinc-800/90', 'text-[var(--text-primary)]', 'ring-1', 'ring-zinc-300', 'dark:ring-zinc-700');
+          el.classList.add('hover:bg-zinc-50', 'dark:hover:bg-zinc-800/50');
+        }
+      });
+    }
+
+    function executeItem(item?: SearchItem) {
+      if (!item) return;
+
+      closePalette();
+
+      if (item.actionId) {
+        switch (item.actionId) {
+          case 'toggle-theme': {
+            const toggleBtn = document.getElementById('theme-toggle-btn');
+            if (toggleBtn) {
+              toggleBtn.click();
+            } else {
+              const isDark = document.documentElement.classList.toggle('dark');
+              localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            }
+            showToast('主题切换已执行');
+            break;
+          }
+          case 'copy-link': {
+            navigator.clipboard.writeText(window.location.href).then(() => {
+              showToast('本页链接已复制到剪贴板！');
+            }).catch(() => {
+              showToast('复制链接失败，请手动复制');
+            });
+            break;
+          }
+          case 'scroll-top': {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            break;
+          }
+        }
+        return;
+      }
+
+      if (item.url) {
+        if (item.url.startsWith('http')) {
+          window.open(item.url, '_blank', 'noopener,noreferrer');
+        } else {
+          // Astro view transition navigation
+          window.location.href = item.url;
+        }
+      }
+    }
+
+    // Input search typing listener
+    input.addEventListener('input', () => {
+      const val = input.value.trim();
+      if (val) {
+        clearBtn?.classList.remove('hidden');
+      } else {
+        clearBtn?.classList.add('hidden');
+      }
+      renderList(val);
+    });
+
+    clearBtn?.addEventListener('click', () => {
+      input.value = '';
+      clearBtn.classList.add('hidden');
+      input.focus();
+      renderList('');
+    });
+
+    // Keyboard navigation inside input
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        updateActiveIndex(activeIndex + 1);
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        updateActiveIndex(activeIndex - 1);
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        if (currentRenderedItems[activeIndex]) {
+          executeItem(currentRenderedItems[activeIndex]);
+        }
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        closePalette();
+      }
+    });
+
+    // Backdrop click outside to close
+    backdrop.addEventListener('click', (e) => {
+      if (e.target === backdrop) {
+        closePalette();
+      }
+    });
+
+    // Global shortcut listener (Cmd+K, Ctrl+K, or '/')
+    function handleGlobalKeyDown(e: KeyboardEvent) {
+      const isInputActive = ['INPUT', 'TEXTAREA'].includes(document.activeElement?.tagName || '') ||
+        (document.activeElement as HTMLElement)?.isContentEditable;
+
+      // Cmd+K or Ctrl+K
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        const isOpen = !backdrop?.classList.contains('hidden');
+        if (isOpen) {
+          closePalette();
+        } else {
+          openPalette();
+        }
+        return;
+      }
+
+      // '/' to search (only if not already typing in another input)
+      if (e.key === '/' && !isInputActive) {
+        const isOpen = !backdrop?.classList.contains('hidden');
+        if (!isOpen) {
+          e.preventDefault();
+          openPalette();
+        }
+        return;
+      }
+
+      // Escape to close
+      if (e.key === 'Escape') {
+        const isOpen = !backdrop?.classList.contains('hidden');
+        if (isOpen) {
+          e.preventDefault();
+          closePalette();
+        }
+      }
+    }
+
+    window.addEventListener('keydown', handleGlobalKeyDown);
+
+    // Header buttons (both desktop and mobile) triggers
+    const triggerButtons = document.querySelectorAll('[data-open-command-palette]');
+    triggerButtons.forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        openPalette();
+      });
+    });
+
+    // Close on Astro View Transition navigation
+    document.addEventListener('astro:before-preparation', () => {
+      closePalette();
+    });
+  }
+
+  // Run on initial load and View Transitions
+  initCommandPalette();
+  document.addEventListener('astro:page-load', initCommandPalette);
+</script>

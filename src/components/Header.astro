@@ -96,18 +96,20 @@ const navItems = [
       <!-- Action icons separator -->
       <div class="mx-1 h-4 w-[1px] bg-[var(--border-primary)] lg:mx-2"></div>
 
-      <!-- Search button with '/' hint -->
+      <!-- Search / Command Palette button -->
       <button
         id="quick-search-btn"
+        data-open-command-palette
         type="button"
-        class="hidden lg:inline-flex items-center gap-1.5 rounded-lg border border-[var(--border-primary)] bg-[var(--bg-secondary)] px-2 py-1 text-xs text-[var(--text-secondary)] transition-colors hover:text-[var(--text-primary)] hover:border-[var(--text-secondary)]"
-        title="按 / 快速检索"
+        class="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border-primary)] bg-[var(--bg-secondary)] px-2 py-1 text-xs text-[var(--text-secondary)] transition-all hover:text-[var(--text-primary)] hover:border-[var(--text-secondary)] active:scale-95 cursor-pointer shadow-2xs"
+        title="全局指令面板 (⌘K 或 /)"
       >
-        <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <svg class="h-3.5 w-3.5 text-red-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="11" cy="11" r="8"></circle>
           <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
         </svg>
-        <kbd class="mono rounded border border-[var(--border-primary)] bg-[var(--bg-primary)] px-1 py-0.5 text-[10px] text-[var(--text-tertiary)]">/</kbd>
+        <span class="hidden xl:inline text-[11px] font-medium">搜索</span>
+        <kbd class="mono rounded border border-[var(--border-primary)] bg-[var(--bg-primary)] px-1 py-0.5 text-[10px] text-[var(--text-tertiary)] font-semibold shadow-2xs">⌘K</kbd>
       </button>
 
       <!-- GitHub Link -->
@@ -129,6 +131,21 @@ const navItems = [
 
     <!-- Mobile Action Controls (< md) -->
     <div class="flex md:hidden items-center gap-1.5 shrink-0">
+      <!-- Mobile Command Palette Trigger Button -->
+      <button
+        id="mobile-search-btn"
+        data-open-command-palette
+        type="button"
+        class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--border-primary)] bg-[var(--bg-secondary)] text-[var(--text-secondary)] transition-all hover:border-[var(--text-secondary)] hover:text-[var(--text-primary)] active:scale-95 cursor-pointer shadow-2xs"
+        aria-label="全局指令搜索"
+        title="搜索 (⌘K)"
+      >
+        <svg class="h-4 w-4 text-red-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+      </button>
+
       <!-- Theme Switcher -->
       <ThemeToggle />
 
@@ -160,6 +177,24 @@ const navItems = [
     id="mobile-menu-panel"
     class="hidden md:hidden border-t border-[var(--border-primary)] bg-[var(--bg-primary)]/98 backdrop-blur-xl px-4 py-3 shadow-xl transition-all"
   >
+    <!-- Mobile Quick Search Entry -->
+    <div class="mb-2.5">
+      <button
+        data-open-command-palette
+        type="button"
+        class="w-full flex items-center justify-between rounded-xl border border-[var(--border-primary)] bg-[var(--bg-secondary)] px-3 py-2 text-xs text-[var(--text-secondary)] active:scale-98 transition-all hover:border-[var(--text-secondary)]"
+      >
+        <div class="flex items-center gap-2">
+          <svg class="h-4 w-4 text-red-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <span class="font-medium text-[var(--text-primary)]">快捷指令与搜索...</span>
+        </div>
+        <kbd class="mono rounded border border-[var(--border-primary)] bg-[var(--bg-primary)] px-1.5 py-0.5 text-[10px] text-[var(--text-tertiary)] font-semibold shadow-2xs">⌘K</kbd>
+      </button>
+    </div>
+
     <div class="grid grid-cols-2 gap-2">
       {navItems.map((item) => {
         const isActive = currentPath === item.href || (item.href !== '/' && currentPath.startsWith(item.href));
