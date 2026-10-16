@@ -4,6 +4,7 @@ import Footer from '../components/Footer.astro';
 import ZenBackground from '../components/ZenBackground.astro';
 import BackToTop from '../components/BackToTop.astro';
 import CommandPalette from '../components/CommandPalette.astro';
+import SharePosterModal from '../components/SharePosterModal.astro';
 import { ClientRouter } from 'astro:transitions';
 import '../styles/global.css';
 
@@ -85,6 +86,9 @@ const {
 
     <!-- Cmd + K Command Palette Modal -->
     <CommandPalette />
+
+    <!-- One-click Share Poster Studio Modal -->
+    <SharePosterModal />
 
     <!-- Global Route Navigation Progress Bar (Instant feedback on click) -->
     <div id="route-loading-bar" class="fixed top-0 left-0 right-0 h-[2.5px] z-[9999] opacity-0 pointer-events-none transition-opacity duration-300">

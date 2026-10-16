@@ -1,0 +1,410 @@
+---
+// SharePosterModal.astro - High-resolution Canvas Share Poster Generator
+---
+
+<div
+  id="share-poster-backdrop"
+  class="fixed inset-0 z-[120] hidden items-center justify-center p-3 sm:p-4 bg-zinc-950/65 backdrop-blur-md transition-opacity duration-200"
+  role="dialog"
+  aria-modal="true"
+  aria-label="分享海报生成器"
+>
+  <div
+    id="share-poster-box"
+    class="relative w-full max-w-lg rounded-2xl border border-zinc-200/90 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-2xl overflow-hidden flex flex-col max-h-[90vh] transition-all duration-200 scale-95 opacity-0"
+  >
+    <!-- Modal Header -->
+    <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-200/80 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/50">
+      <div class="flex items-center gap-2">
+        <div class="flex h-6 w-6 items-center justify-center rounded-lg bg-red-500/10 text-red-500">
+          <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+            <circle cx="8.5" cy="8.5" r="1.5"></circle>
+            <polyline points="21 15 16 10 5 21"></polyline>
+          </svg>
+        </div>
+        <span class="text-xs sm:text-sm font-semibold text-[var(--text-primary)]">一键生成分享海报</span>
+      </div>
+
+      <!-- Controls: Style Switcher & Close -->
+      <div class="flex items-center gap-2">
+        <button
+          id="poster-theme-toggle"
+          type="button"
+          class="inline-flex items-center gap-1 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800 px-2 py-1 text-[11px] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors cursor-pointer"
+          title="切换卡片配色"
+        >
+          <span id="poster-theme-icon">🌙</span>
+          <span id="poster-theme-label">暗黑曜石</span>
+        </button>
+
+        <button
+          id="share-poster-close-btn"
+          type="button"
+          class="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 p-1 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
+          aria-label="关闭"
+        >
+          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Canvas Preview Body -->
+    <div class="p-4 sm:p-5 overflow-y-auto flex items-center justify-center bg-zinc-100/70 dark:bg-zinc-950/70 min-h-[300px]">
+      <canvas
+        id="share-poster-canvas"
+        class="max-w-full h-auto rounded-xl shadow-xl border border-zinc-200/50 dark:border-zinc-800/50"
+      ></canvas>
+    </div>
+
+    <!-- Modal Footer Actions -->
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-3 px-4 py-3 border-t border-zinc-200/80 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-900/60 text-xs">
+      <div class="text-[11px] text-[var(--text-tertiary)] mono">
+        高清 2.5x Retina 渲染 · 支持保存与直接粘贴
+      </div>
+
+      <div class="flex items-center gap-2 w-full sm:w-auto">
+        <button
+          id="poster-copy-img-btn"
+          type="button"
+          class="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3 py-1.5 font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--text-secondary)] transition-all cursor-pointer active:scale-95"
+        >
+          <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+          </svg>
+          <span id="poster-copy-text">复制图片</span>
+        </button>
+
+        <button
+          id="poster-download-btn"
+          type="button"
+          class="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 rounded-xl bg-red-600 hover:bg-red-500 text-white px-3.5 py-1.5 font-medium transition-all cursor-pointer shadow-md shadow-red-600/20 active:scale-95"
+        >
+          <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          <span>保存图片</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  interface PosterData {
+    type: 'thought' | 'news';
+    id?: number | string;
+    date: string;
+    title?: string;
+    content: string;
+    items?: string[];
+  }
+
+  function initSharePosterModal() {
+    const backdrop = document.getElementById('share-poster-backdrop');
+    const modalBox = document.getElementById('share-poster-box');
+    const canvas = document.getElementById('share-poster-canvas') as HTMLCanvasElement | null;
+    const closeBtn = document.getElementById('share-poster-close-btn');
+    const downloadBtn = document.getElementById('poster-download-btn');
+    const copyImgBtn = document.getElementById('poster-copy-img-btn');
+    const copyTextSpan = document.getElementById('poster-copy-text');
+    const themeToggleBtn = document.getElementById('poster-theme-toggle');
+    const themeIcon = document.getElementById('poster-theme-icon');
+    const themeLabel = document.getElementById('poster-theme-label');
+
+    if (!backdrop || !modalBox || !canvas) return;
+
+    if ((backdrop as any)._hasPosterInit) return;
+    (backdrop as any)._hasPosterInit = true;
+
+    let isDarkStyle = document.documentElement.classList.contains('dark');
+    let currentData: PosterData | null = null;
+
+    function updateThemeButton() {
+      if (themeIcon && themeLabel) {
+        if (isDarkStyle) {
+          themeIcon.textContent = '🌙';
+          themeLabel.textContent = '曜石暗黑';
+        } else {
+          themeIcon.textContent = '☀️';
+          themeLabel.textContent = '温润米白';
+        }
+      }
+    }
+
+    function openModal(data: PosterData) {
+      currentData = data;
+      isDarkStyle = document.documentElement.classList.contains('dark');
+      updateThemeButton();
+      renderPosterCanvas();
+
+      backdrop?.classList.remove('hidden');
+      backdrop?.classList.add('flex');
+      requestAnimationFrame(() => {
+        modalBox?.classList.remove('scale-95', 'opacity-0');
+        modalBox?.classList.add('scale-100', 'opacity-100');
+      });
+    }
+
+    function closeModal() {
+      modalBox?.classList.remove('scale-100', 'opacity-100');
+      modalBox?.classList.add('scale-95', 'opacity-0');
+      setTimeout(() => {
+        backdrop?.classList.add('hidden');
+        backdrop?.classList.remove('flex');
+      }, 150);
+    }
+
+    closeBtn?.addEventListener('click', closeModal);
+    backdrop.addEventListener('click', (e) => {
+      if (e.target === backdrop) closeModal();
+    });
+
+    themeToggleBtn?.addEventListener('click', () => {
+      isDarkStyle = !isDarkStyle;
+      updateThemeButton();
+      renderPosterCanvas();
+    });
+
+    function wrapText(
+      ctx: CanvasRenderingContext2D,
+      text: string,
+      x: number,
+      y: number,
+      maxWidth: number,
+      lineHeight: number
+    ): number {
+      const words = text.split('');
+      let line = '';
+      let currentY = y;
+
+      for (let n = 0; n < words.length; n++) {
+        const testLine = line + words[n];
+        const metrics = ctx.measureText(testLine);
+        const testWidth = metrics.width;
+        if (testWidth > maxWidth && n > 0) {
+          ctx.fillText(line, x, currentY);
+          line = words[n];
+          currentY += lineHeight;
+        } else {
+          line = testLine;
+        }
+      }
+      ctx.fillText(line, x, currentY);
+      return currentY + lineHeight;
+    }
+
+    function renderPosterCanvas() {
+      if (!canvas || !currentData) return;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      const dpr = 2.5; // High resolution Retina scale
+      const width = 640;
+      let height = 480;
+
+      if (currentData.type === 'thought') {
+        height = 460 + Math.min(260, Math.floor(currentData.content.length * 1.8));
+      } else if (currentData.type === 'news') {
+        const itemCount = currentData.items?.length || 6;
+        height = 540 + itemCount * 36;
+      }
+
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      canvas.style.width = `${Math.min(480, width)}px`;
+      canvas.style.height = `${(height / width) * Math.min(480, width)}px`;
+
+      ctx.save();
+      ctx.scale(dpr, dpr);
+
+      // Background Colors
+      const bgColor = isDarkStyle ? '#141416' : '#FAF9F6';
+      const cardBorderColor = isDarkStyle ? '#27272A' : '#E4E2DC';
+      const textPrimaryColor = isDarkStyle ? '#F4F4F5' : '#1C1917';
+      const textSecondaryColor = isDarkStyle ? '#A1A1AA' : '#716B64';
+      const accentColor = '#DC2626';
+
+      // 1. Draw Card Background
+      ctx.fillStyle = bgColor;
+      ctx.fillRect(0, 0, width, height);
+
+      // Delicate background radial aura
+      const gradient = ctx.createRadialGradient(width / 2, 0, 10, width / 2, 0, width * 0.9);
+      if (isDarkStyle) {
+        gradient.addColorStop(0, 'rgba(220, 38, 38, 0.12)');
+        gradient.addColorStop(1, 'rgba(20, 20, 22, 0)');
+      } else {
+        gradient.addColorStop(0, 'rgba(220, 38, 38, 0.08)');
+        gradient.addColorStop(1, 'rgba(250, 249, 246, 0)');
+      }
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, width, height);
+
+      // Frame Border
+      ctx.strokeStyle = cardBorderColor;
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(16, 16, width - 32, height - 32);
+
+      // Inner Corner Accents
+      ctx.strokeStyle = accentColor;
+      ctx.lineWidth = 2.5;
+      const cornerSize = 12;
+      // Top-Left
+      ctx.beginPath();
+      ctx.moveTo(16, 16 + cornerSize);
+      ctx.lineTo(16, 16);
+      ctx.lineTo(16 + cornerSize, 16);
+      ctx.stroke();
+      // Top-Right
+      ctx.beginPath();
+      ctx.moveTo(width - 16 - cornerSize, 16);
+      ctx.lineTo(width - 16, 16);
+      ctx.lineTo(width - 16, 16 + cornerSize);
+      ctx.stroke();
+      // Bottom-Left
+      ctx.beginPath();
+      ctx.moveTo(16, height - 16 - cornerSize);
+      ctx.lineTo(16, height - 16);
+      ctx.lineTo(16 + cornerSize, height - 16);
+      ctx.stroke();
+      // Bottom-Right
+      ctx.beginPath();
+      ctx.moveTo(width - 16 - cornerSize, height - 16);
+      ctx.lineTo(width - 16, height - 16);
+      ctx.lineTo(width - 16, height - 16 - cornerSize);
+      ctx.stroke();
+
+      // 2. Header Brand Section
+      // Octagonal Mascot Tomato
+      ctx.fillStyle = '#DC2626';
+      ctx.beginPath();
+      const ox = 42, oy = 42, os = 24;
+      ctx.arc(ox, oy, os / 2, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Brand Title
+      ctx.font = 'bold 16px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+      ctx.fillStyle = textPrimaryColor;
+      ctx.fillText('TomatoX · 随笔与微思考', 64, 42);
+
+      ctx.font = '11px ui-monospace, SFMono-Regular, Menlo, monospace';
+      ctx.fillStyle = textSecondaryColor;
+      ctx.fillText('xujiuran.top · 代码、产品与数字生活', 64, 58);
+
+      // Top Right Badge
+      if (currentData.id) {
+        ctx.fillStyle = isDarkStyle ? '#27272A' : '#ECE9DF';
+        ctx.fillRect(width - 110, 36, 70, 22);
+        ctx.fillStyle = accentColor;
+        ctx.font = 'bold 11px ui-monospace, Menlo, monospace';
+        ctx.fillText(`#${currentData.id}`, width - 96, 51);
+      }
+
+      // Divider Line
+      ctx.strokeStyle = cardBorderColor;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(36, 78);
+      ctx.lineTo(width - 36, 78);
+      ctx.stroke();
+
+      // 3. Main Content Rendering
+      if (currentData.type === 'thought') {
+        // Decorative Quotation Mark
+        ctx.font = 'bold 52px serif';
+        ctx.fillStyle = isDarkStyle ? 'rgba(220, 38, 38, 0.4)' : 'rgba(220, 38, 38, 0.25)';
+        ctx.fillText('“', 38, 130);
+
+        // Thought text
+        ctx.font = '16px "Songti SC", "Source Han Serif SC", Georgia, serif';
+        ctx.fillStyle = textPrimaryColor;
+        const textY = 145;
+        wrapText(ctx, currentData.content, 42, textY, width - 84, 32);
+      } else if (currentData.type === 'news') {
+        // News Title
+        ctx.font = 'bold 18px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+        ctx.fillStyle = accentColor;
+        ctx.fillText('每天 60 秒读懂世界 · 晨间要闻', 42, 110);
+
+        ctx.font = '12px ui-monospace, Menlo, monospace';
+        ctx.fillStyle = textSecondaryColor;
+        ctx.fillText(`${currentData.date} · 晨间播报`, 42, 132);
+
+        // List News Items
+        const items = currentData.items || [];
+        ctx.font = '13px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+        ctx.fillStyle = textPrimaryColor;
+        let lineY = 165;
+
+        for (let i = 0; i < Math.min(8, items.length); i++) {
+          const itemText = `${i + 1}. ${items[i]}`;
+          lineY = wrapText(ctx, itemText, 42, lineY, width - 84, 26);
+          lineY += 6;
+        }
+      }
+
+      // 4. Footer Section
+      const footerY = height - 52;
+      ctx.strokeStyle = cardBorderColor;
+      ctx.beginPath();
+      ctx.moveTo(36, footerY);
+      ctx.lineTo(width - 36, footerY);
+      ctx.stroke();
+
+      ctx.font = '11px ui-monospace, SFMono-Regular, Menlo, monospace';
+      ctx.fillStyle = textSecondaryColor;
+      ctx.fillText(`日期：${currentData.date}`, 42, height - 30);
+
+      ctx.fillStyle = accentColor;
+      ctx.fillText('TomatoX 随笔 (xujiuran.top)', width - 210, height - 30);
+
+      ctx.restore();
+    }
+
+    // Download action
+    downloadBtn?.addEventListener('click', () => {
+      if (!canvas || !currentData) return;
+      const link = document.createElement('a');
+      link.download = `tomatox-${currentData.type}-${currentData.id || 'poster'}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    });
+
+    // Copy Image to Clipboard action
+    copyImgBtn?.addEventListener('click', () => {
+      if (!canvas) return;
+      canvas.toBlob((blob) => {
+        if (!blob) return;
+        try {
+          const item = new ClipboardItem({ 'image/png': blob });
+          navigator.clipboard.write([item]).then(() => {
+            if (copyTextSpan) copyTextSpan.textContent = '已复制图片!';
+            setTimeout(() => {
+              if (copyTextSpan) copyTextSpan.textContent = '复制图片';
+            }, 2000);
+          });
+        } catch (e) {
+          console.error(e);
+          if (copyTextSpan) copyTextSpan.textContent = '请使用保存';
+        }
+      }, 'image/png');
+    });
+
+    // Event bus listener for poster trigger buttons
+    window.addEventListener('tomatox:open-poster', ((e: CustomEvent<PosterData>) => {
+      if (e.detail) {
+        openModal(e.detail);
+      }
+    }) as EventListener);
+  }
+
+  initSharePosterModal();
+  document.addEventListener('astro:page-load', initSharePosterModal);
+</script>
