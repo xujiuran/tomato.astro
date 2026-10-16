@@ -72,8 +72,8 @@ const { html, toc } = renderArticleMarkdown(content);
       <!-- Article Table of Contents with reading progress & spy -->
       <ArticleToc toc={toc} title={title} />
 
-      <!-- Moyu Calendar Companion (Compact Monthly Calendar Only) -->
-      <MoyuCalendarSidebar moyu={hubData.moyu} calendarOnly={true} />
+      <!-- Moyu Slacking Dashboard ("摸鱼工作周历 · 劳逸结合") -->
+      <MoyuCalendarSidebar moyu={hubData.moyu} moyuOnly={true} />
     </aside>
   </div>
 </BaseLayout>
