@@ -202,19 +202,12 @@
 
     window.addEventListener('resize', resize, { passive: true });
 
-    // 监听暗黑模式切换，平滑重染流线
-    const observer = new MutationObserver(() => {
-      restart();
-    });
-    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
-
     // 首次启动
     restart();
 
     // 页面卸载或重新路由时清理
     return () => {
       window.removeEventListener('resize', resize);
-      observer.disconnect();
       cancelAnimationFrame(animationFrameId);
     };
   }

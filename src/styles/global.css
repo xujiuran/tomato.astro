@@ -70,6 +70,30 @@ html.theme-transitioning::view-transition-old(root) {
 
 html.theme-transitioning::view-transition-new(root) {
   z-index: 99999;
+  animation: 0.52s cubic-bezier(0.22, 1, 0.36, 1) forwards !important;
+  animation-name: reveal-theme-wave !important;
+}
+
+@keyframes reveal-theme-wave {
+  from {
+    clip-path: circle(0px at var(--x, 50%) var(--y, 50%));
+  }
+  to {
+    clip-path: circle(var(--r, 150vmax) at var(--x, 50%) var(--y, 50%));
+  }
+}
+
+/* Disable all color transitions during View Transition snapshot capture to prevent double-flash */
+html.theme-transitioning,
+html.theme-transitioning *,
+html.theme-transitioning *::before,
+html.theme-transitioning *::after {
+  transition: none !important;
+}
+
+/* In dark mode, invert the Zen canvas lines gracefully without clearing canvas */
+html.dark #zen-bg-canvas {
+  filter: invert(1) hue-rotate(180deg);
 }
 
 .theme-spring-icon {
@@ -97,5 +121,6 @@ html:not(.dark) .theme-toggle-btn .moon-icon {
   opacity: 1;
   pointer-events: auto;
 }
+
 
 

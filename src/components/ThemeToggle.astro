@@ -106,6 +106,11 @@
           Math.max(y, window.innerHeight - y)
         );
 
+        // Set CSS variables for keyframe wave animation
+        document.documentElement.style.setProperty('--x', `${x}px`);
+        document.documentElement.style.setProperty('--y', `${y}px`);
+        document.documentElement.style.setProperty('--r', `${endRadius}px`);
+
         const supportsViewTransition =
           typeof document !== 'undefined' &&
           'startViewTransition' in document &&
@@ -126,7 +131,7 @@
         isTransitioning = true;
         document.documentElement.classList.add('theme-transitioning');
 
-        const transition = (document as any).startViewTransition(() => {
+        const transition = (document as any).startViewTransition(async () => {
           if (nextDark) {
             document.documentElement.classList.add('dark');
             localStorage.setItem('theme', 'dark');
@@ -138,23 +143,9 @@
         });
 
         try {
-          await transition.ready;
-          const animation = document.documentElement.animate(
-            {
-              clipPath: [
-                `circle(0px at ${x}px ${y}px)`,
-                `circle(${endRadius}px at ${x}px ${y}px)`,
-              ],
-            },
-            {
-              duration: 520,
-              easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
-              pseudoElement: '::view-transition-new(root)',
-            }
-          );
-          await animation.finished;
+          await transition.finished;
         } catch (_err) {
-          // Fallback if pseudoElement animate is rejected
+          // Fallback if transition is interrupted
         } finally {
           document.documentElement.classList.remove('theme-transitioning');
           isTransitioning = false;
