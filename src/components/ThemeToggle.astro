@@ -1,87 +1,164 @@
 ---
 // ThemeToggle.astro
+// High-end View Transition Circular Ripple & 3D Spring Morphing Theme Switcher
 ---
 
 <button
   type="button"
   aria-label="切换浅色/深色主题"
-  class="theme-toggle-btn relative inline-flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--border-primary)] bg-[var(--bg-secondary)] text-[var(--text-secondary)] transition-all hover:border-[var(--text-secondary)] hover:text-[var(--text-primary)] active:scale-95 cursor-pointer shadow-2xs"
+  title="切换深色/浅色模式"
+  class="theme-toggle-btn group relative inline-flex h-8.5 w-8.5 items-center justify-center rounded-xl border border-[var(--border-primary)] bg-[var(--card-bg)]/90 backdrop-blur-md text-[var(--text-secondary)] transition-all duration-300 hover:border-[var(--accent)] hover:text-[var(--accent)] hover:shadow-sm active:scale-90 cursor-pointer overflow-hidden shadow-2xs select-none"
 >
-  <!-- Sun Icon (shows in dark mode) -->
-  <svg
-    class="sun-icon hidden h-4 w-4"
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    stroke-width="2"
-    stroke-linecap="round"
-    stroke-linejoin="round"
-  >
-    <circle cx="12" cy="12" r="5"></circle>
-    <line x1="12" y1="1" x2="12" y2="3"></line>
-    <line x1="12" y1="21" x2="12" y2="23"></line>
-    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-    <line x1="1" y1="12" x2="3" y2="12"></line>
-    <line x1="21" y1="12" x2="23" y2="12"></line>
-    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-  </svg>
+  <!-- Background Glow Aura on hover -->
+  <span class="theme-glow-aura pointer-events-none absolute inset-0 -z-10 rounded-xl opacity-0 blur-md transition-opacity duration-300"></span>
 
-  <!-- Moon Icon (shows in light mode) -->
-  <svg
-    class="moon-icon h-4 w-4"
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    stroke-width="2"
-    stroke-linecap="round"
-    stroke-linejoin="round"
-  >
-    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-  </svg>
+  <!-- Click pulse ripple ring -->
+  <span class="pointer-events-none absolute inset-0 rounded-xl bg-[var(--accent)]/15 opacity-0 scale-75 group-active:scale-100 group-active:opacity-100 transition-all duration-200"></span>
+
+  <!-- Icon Stage Container -->
+  <span class="relative flex h-4.5 w-4.5 items-center justify-center">
+    <!-- Sun Icon (prompts click to switch to light in dark mode) -->
+    <svg
+      class="sun-icon theme-spring-icon absolute inset-0 h-4.5 w-4.5 text-amber-500 dark:text-amber-400 transform-gpu"
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <circle cx="12" cy="12" r="4.5" fill="currentColor" fill-opacity="0.25"></circle>
+      <path d="M12 2v2"></path>
+      <path d="M12 20v2"></path>
+      <path d="m4.93 4.93 1.41 1.41"></path>
+      <path d="m17.66 17.66 1.41 1.41"></path>
+      <path d="M2 12h2"></path>
+      <path d="M20 12h2"></path>
+      <path d="m6.34 17.66-1.41 1.41"></path>
+      <path d="m19.07 4.93-1.41 1.41"></path>
+    </svg>
+
+    <!-- Moon Icon (prompts click to switch to dark in light mode) -->
+    <svg
+      class="moon-icon theme-spring-icon absolute inset-0 h-4.5 w-4.5 text-slate-700 dark:text-slate-300 transform-gpu"
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" fill="currentColor" fill-opacity="0.15"></path>
+      <circle cx="19" cy="5" r="1" fill="currentColor" class="text-amber-400"></circle>
+    </svg>
+  </span>
 </button>
 
 <script>
+  let isTransitioning = false;
+
   function setupThemeToggle() {
     const buttons = document.querySelectorAll('.theme-toggle-btn');
     if (!buttons.length) return;
 
-    function updateAllIcons(isDark: boolean) {
+    function updateA11yAttributes(isDark: boolean) {
       buttons.forEach((btn) => {
-        const sun = btn.querySelector('.sun-icon');
-        const moon = btn.querySelector('.moon-icon');
-        if (isDark) {
-          sun?.classList.remove('hidden');
-          moon?.classList.add('hidden');
-        } else {
-          sun?.classList.add('hidden');
-          moon?.classList.remove('hidden');
+        btn.setAttribute(
+          'aria-label',
+          isDark ? '当前为深色模式，点击切换为浅色模式' : '当前为浅色模式，点击切换为深色模式'
+        );
+        btn.setAttribute('title', isDark ? '点击切换为浅色模式' : '点击切换为深色模式');
+
+        const aura = btn.querySelector('.theme-glow-aura');
+        if (aura) {
+          if (isDark) {
+            aura.className = 'theme-glow-aura pointer-events-none absolute inset-0 -z-10 rounded-xl bg-amber-400/25 blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300';
+          } else {
+            aura.className = 'theme-glow-aura pointer-events-none absolute inset-0 -z-10 rounded-xl bg-indigo-500/20 blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300';
+          }
         }
       });
     }
 
-    const isDark = document.documentElement.classList.contains('dark');
-    updateAllIcons(isDark);
+    const currentDark = document.documentElement.classList.contains('dark');
+    updateA11yAttributes(currentDark);
 
     buttons.forEach((btn) => {
       if ((btn as any)._hasThemeListener) return;
       (btn as any)._hasThemeListener = true;
 
-      btn.addEventListener('click', (e) => {
+      btn.addEventListener('click', async (e: any) => {
         e.stopPropagation();
-        const currentlyDark = document.documentElement.classList.contains('dark');
-        const nextDark = !currentlyDark;
-        if (nextDark) {
-          document.documentElement.classList.add('dark');
-          localStorage.setItem('theme', 'dark');
-        } else {
-          document.documentElement.classList.remove('dark');
-          localStorage.setItem('theme', 'light');
+        if (isTransitioning) return;
+
+        const isCurrentlyDark = document.documentElement.classList.contains('dark');
+        const nextDark = !isCurrentlyDark;
+
+        // Calculate click coordinates for circular ripple wave
+        const rect = btn.getBoundingClientRect();
+        const x = (e.clientX && e.clientX > 0) ? e.clientX : (rect.left + rect.width / 2);
+        const y = (e.clientY && e.clientY > 0) ? e.clientY : (rect.top + rect.height / 2);
+
+        const endRadius = Math.hypot(
+          Math.max(x, window.innerWidth - x),
+          Math.max(y, window.innerHeight - y)
+        );
+
+        const supportsViewTransition =
+          typeof document !== 'undefined' &&
+          'startViewTransition' in document &&
+          !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        if (!supportsViewTransition) {
+          if (nextDark) {
+            document.documentElement.classList.add('dark');
+            localStorage.setItem('theme', 'dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+            localStorage.setItem('theme', 'light');
+          }
+          updateA11yAttributes(nextDark);
+          return;
         }
-        updateAllIcons(nextDark);
+
+        isTransitioning = true;
+        document.documentElement.classList.add('theme-transitioning');
+
+        const transition = (document as any).startViewTransition(() => {
+          if (nextDark) {
+            document.documentElement.classList.add('dark');
+            localStorage.setItem('theme', 'dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+            localStorage.setItem('theme', 'light');
+          }
+          updateA11yAttributes(nextDark);
+        });
+
+        try {
+          await transition.ready;
+          const animation = document.documentElement.animate(
+            {
+              clipPath: [
+                `circle(0px at ${x}px ${y}px)`,
+                `circle(${endRadius}px at ${x}px ${y}px)`,
+              ],
+            },
+            {
+              duration: 520,
+              easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+              pseudoElement: '::view-transition-new(root)',
+            }
+          );
+          await animation.finished;
+        } catch (_err) {
+          // Fallback if pseudoElement animate is rejected
+        } finally {
+          document.documentElement.classList.remove('theme-transitioning');
+          isTransitioning = false;
+        }
       });
     });
   }
