@@ -8,41 +8,14 @@ import TomatoXWordmark from '../components/TomatoXWordmark.astro';
 import MoyuWeeklySection from '../components/MoyuWeeklySection.astro';
 import HomeDailyNewsSection from '../components/HomeDailyNewsSection.astro';
 import { fetch60sHubData, fetchHotNews } from '../lib/newsService';
+import { posts } from '../data/posts';
 
 const [hubData, hotNewsSources] = await Promise.all([
   fetch60sHubData(),
   fetchHotNews(),
 ]);
 
-const recentPosts = [
-  {
-    title: '你本不需要那么多复杂的依赖：现代 Web 工程的极简法则',
-    description: '审视过度工程化与臃肿工具链。现代浏览器与 Node/Astro 本身的能力往往被低估了，本文探讨如何保持依赖最小化，打造飞速且长久健壮的站点。',
-    date: '2026-10-12',
-    slug: 'minimal-web-engineering',
-    readTime: '6 分钟',
-    words: '3,240',
-    tag: 'Web 技术'
-  },
-  {
-    title: '在 AI 时代，我是如何构建个人知识库与自动化工作流的',
-    description: '不讲虚无缥缈的 Prompt 魔法，聊聊我如何用本地 Markdown + Git + 定制 Agent 将信息输入、筛选、沉淀到公开发布的过程像代码流水线一样组织起来。',
-    date: '2026-10-08',
-    slug: 'ai-knowledge-workflow',
-    readTime: '8 分钟',
-    words: '4,100',
-    tag: 'AI Coding'
-  },
-  {
-    title: '从 0 到 1 手搓轻量桌面工具：小而美软件的设计取舍',
-    description: '记录一款不足 5MB 的轻量桌面小工具从构思到落地的全过程：为什么放弃 Electron？如何做到零学习成本？以及一个人做产品时的克制与取舍。',
-    date: '2026-09-29',
-    slug: 'crafting-tiny-tools',
-    readTime: '5 分钟',
-    words: '2,680',
-    tag: '产品设计'
-  }
-];
+const recentPosts = posts.slice(0, 3);
 
 const recentThoughts = [
   {

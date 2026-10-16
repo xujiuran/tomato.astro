@@ -1,0 +1,242 @@
+---
+import type { TocItem } from '../lib/markdown';
+
+interface Props {
+  toc: TocItem[];
+  title?: string;
+}
+
+const { toc, title = '目录' } = Astro.props;
+---
+
+<div class="sticky top-20 space-y-4">
+  <!-- Article Table of Contents Card -->
+  {toc.length > 0 && (
+    <div class="rounded-2xl border border-[var(--border-primary)] bg-[var(--surface-primary)] p-4 shadow-sm backdrop-blur-md">
+      <!-- TOC Header with Progress -->
+      <div class="flex items-center justify-between border-b border-[var(--border-secondary)] pb-3 mb-3">
+        <div class="flex items-center gap-2 text-xs font-semibold text-[var(--text-primary)]">
+          <svg class="h-4 w-4 text-[var(--accent)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="8" y1="6" x2="21" y2="6"></line>
+            <line x1="8" y1="12" x2="21" y2="12"></line>
+            <line x1="8" y1="18" x2="21" y2="18"></line>
+            <line x1="3" y1="6" x2="3.01" y2="6"></line>
+            <line x1="3" y1="12" x2="3.01" y2="12"></line>
+            <line x1="3" y1="18" x2="3.01" y2="18"></line>
+          </svg>
+          <span>文章大纲目录</span>
+        </div>
+        <!-- Reading Progress Badge -->
+        <span
+          id="toc-progress-badge"
+          class="mono rounded-full border border-red-200 dark:border-red-900/60 bg-red-50 dark:bg-red-950/40 px-2 py-0.5 text-[10px] font-semibold text-[var(--accent)] transition-all"
+        >
+          0%
+        </span>
+      </div>
+
+      <!-- TOC Heading Links -->
+      <nav class="max-h-[60vh] overflow-y-auto space-y-1 text-xs scrollbar-thin scrollbar-thumb-zinc-300 dark:scrollbar-thumb-zinc-700">
+        {toc.map((item, idx) => (
+          <a
+            href={`#${item.id}`}
+            data-toc-id={item.id}
+            class:list={[
+              'toc-link block rounded-lg px-2.5 py-1.5 transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-subtle)] truncate relative',
+              item.level === 3 ? 'pl-6 text-[11px] opacity-85' : 'font-medium',
+              idx === 0 ? 'active' : ''
+            ]}
+            title={item.text}
+          >
+            <span class="toc-indicator absolute left-0 top-1/2 -translate-y-1/2 w-1 h-3 rounded-r-full bg-[var(--accent)] opacity-0 transition-opacity"></span>
+            <span class="truncate">{item.text}</span>
+          </a>
+        ))}
+      </nav>
+
+      <!-- TOC Card Bottom Actions -->
+      <div class="mt-4 pt-3 border-t border-[var(--border-secondary)] flex items-center justify-between text-xs text-[var(--text-tertiary)]">
+        <button
+          id="toc-scroll-top-btn"
+          type="button"
+          class="inline-flex items-center gap-1 hover:text-[var(--text-primary)] transition-colors cursor-pointer"
+        >
+          <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="18 15 12 9 6 15"></polyline>
+          </svg>
+          <span>回顶部</span>
+        </button>
+
+        <button
+          id="toc-share-btn"
+          type="button"
+          class="inline-flex items-center gap-1 hover:text-[var(--text-primary)] transition-colors cursor-pointer"
+        >
+          <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="18" cy="5" r="3"></circle>
+            <circle cx="6" cy="12" r="3"></circle>
+            <circle cx="18" cy="19" r="3"></circle>
+            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+          </svg>
+          <span>分享</span>
+        </button>
+      </div>
+    </div>
+  )}
+</div>
+
+<!-- Reading Progress Top Bar (Global Floating) -->
+<div
+  id="article-progress-container"
+  class="fixed top-0 left-0 right-0 h-[3px] z-[90] bg-transparent pointer-events-none"
+>
+  <div
+    id="article-reading-progress"
+    class="h-full w-0 bg-gradient-to-r from-red-500 via-orange-500 to-amber-500 shadow-[0_0_8px_rgba(239,68,68,0.7)] transition-[width] duration-75 ease-out"
+  ></div>
+</div>
+
+<script>
+  function setupArticleReadingSuite() {
+    const article = document.querySelector('article');
+    const progressBar = document.getElementById('article-reading-progress');
+    const progressBadge = document.getElementById('toc-progress-badge');
+    const tocLinks = document.querySelectorAll('.toc-link');
+    const scrollTopBtn = document.getElementById('toc-scroll-top-btn');
+    const shareBtn = document.getElementById('toc-share-btn');
+
+    // 1. Reading Progress Bar & Percentage
+    function updateProgress() {
+      if (!article) return;
+      const rect = article.getBoundingClientRect();
+      const totalHeight = rect.height - window.innerHeight;
+      const currentProgress = -rect.top;
+
+      let percent = 0;
+      if (totalHeight > 0) {
+        percent = Math.min(100, Math.max(0, Math.round((currentProgress / totalHeight) * 100)));
+      } else {
+        percent = rect.bottom <= window.innerHeight ? 100 : 0;
+      }
+
+      if (progressBar) {
+        progressBar.style.width = `${percent}%`;
+      }
+      if (progressBadge) {
+        progressBadge.textContent = `${percent}%`;
+      }
+    }
+
+    window.addEventListener('scroll', updateProgress, { passive: true });
+    updateProgress();
+
+    // 2. TOC Active Scroll Spy
+    if (tocLinks.length > 0) {
+      const headingElements: HTMLElement[] = [];
+      tocLinks.forEach((link) => {
+        const id = link.getAttribute('data-toc-id');
+        if (id) {
+          const el = document.getElementById(id);
+          if (el) headingElements.push(el);
+        }
+      });
+
+      function updateActiveHeading() {
+        const scrollY = window.scrollY;
+        const offset = 120; // sticky header buffer
+
+        let currentId = '';
+        for (let i = 0; i < headingElements.length; i++) {
+          const heading = headingElements[i];
+          if (heading.offsetTop - offset <= scrollY) {
+            currentId = heading.id;
+          } else {
+            break;
+          }
+        }
+
+        if (!currentId && headingElements.length > 0) {
+          currentId = headingElements[0].id;
+        }
+
+        tocLinks.forEach((link) => {
+          const id = link.getAttribute('data-toc-id');
+          const indicator = link.querySelector('.toc-indicator');
+          if (id === currentId) {
+            link.classList.add('text-[var(--accent)]', 'bg-[var(--surface-subtle)]', 'font-semibold');
+            link.classList.remove('text-[var(--text-secondary)]');
+            if (indicator) indicator.classList.remove('opacity-0');
+          } else {
+            link.classList.remove('text-[var(--accent)]', 'bg-[var(--surface-subtle)]', 'font-semibold');
+            link.classList.add('text-[var(--text-secondary)]');
+            if (indicator) indicator.classList.add('opacity-0');
+          }
+        });
+      }
+
+      window.addEventListener('scroll', updateActiveHeading, { passive: true });
+      updateActiveHeading();
+
+      // Smooth click navigation
+      tocLinks.forEach((link) => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const targetId = link.getAttribute('data-toc-id');
+          if (targetId) {
+            const targetEl = document.getElementById(targetId);
+            if (targetEl) {
+              const top = targetEl.getBoundingClientRect().top + window.scrollY - 85;
+              window.scrollTo({ top, behavior: 'smooth' });
+            }
+          }
+        });
+      });
+    }
+
+    // 3. Quick Action Buttons
+    scrollTopBtn?.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    shareBtn?.addEventListener('click', () => {
+      navigator.clipboard.writeText(window.location.href).then(() => {
+        const originalText = shareBtn.querySelector('span')?.textContent || '';
+        if (shareBtn.querySelector('span')) {
+          shareBtn.querySelector('span')!.textContent = '已复制!';
+        }
+        setTimeout(() => {
+          if (shareBtn.querySelector('span')) {
+            shareBtn.querySelector('span')!.textContent = originalText;
+          }
+        }, 1800);
+      });
+    });
+
+    // 4. Mac Codeblock Copy Buttons
+    const copyButtons = document.querySelectorAll('.copy-code-btn');
+    copyButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const rawCode = decodeURIComponent(btn.getAttribute('data-code') || '');
+        const normalIcon = btn.querySelector('.copy-icon-normal');
+        const successIcon = btn.querySelector('.copy-icon-success');
+        const textSpan = btn.querySelector('.copy-text');
+
+        navigator.clipboard.writeText(rawCode).then(() => {
+          normalIcon?.classList.add('hidden');
+          successIcon?.classList.remove('hidden');
+          if (textSpan) textSpan.textContent = '已复制';
+
+          setTimeout(() => {
+            normalIcon?.classList.remove('hidden');
+            successIcon?.classList.add('hidden');
+            if (textSpan) textSpan.textContent = '复制';
+          }, 2000);
+        });
+      });
+    });
+  }
+
+  setupArticleReadingSuite();
+  document.addEventListener('astro:page-load', setupArticleReadingSuite);
+</script>
