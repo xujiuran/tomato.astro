@@ -2,7 +2,6 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import MoyuCalendarSidebar from '../../components/MoyuCalendarSidebar.astro';
 import ArticleToc from '../../components/ArticleToc.astro';
-import GiscusComments from '../../components/GiscusComments.astro';
 import { fetch60sHubData } from '../../lib/newsService';
 import { renderArticleMarkdown } from '../../lib/markdown';
 import { posts } from '../../data/posts';
@@ -61,9 +60,6 @@ const { html, toc } = renderArticleMarkdown(content);
             发布日期：{date} ｜ 欢迎转载，请保留出处并链接到原地址。
           </p>
         </footer>
-
-        <!-- GitHub Discussions Giscus Comments -->
-        <GiscusComments />
       </article>
     </div>
 
