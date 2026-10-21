@@ -200,7 +200,17 @@
       step();
     }
 
+    function onThemeChange() {
+      if (!canvas) return;
+      canvas.style.opacity = '0.2';
+      setTimeout(() => {
+        restart();
+        canvas.style.opacity = '0.8';
+      }, 250);
+    }
+
     window.addEventListener('resize', resize, { passive: true });
+    window.addEventListener('tomatox:theme-change', onThemeChange);
 
     // 首次启动
     restart();
@@ -208,6 +218,7 @@
     // 页面卸载或重新路由时清理
     return () => {
       window.removeEventListener('resize', resize);
+      window.removeEventListener('tomatox:theme-change', onThemeChange);
       cancelAnimationFrame(animationFrameId);
     };
   }

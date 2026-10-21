@@ -65,9 +65,23 @@ const {
       document.addEventListener('astro:after-swap', function () {
         applyTheme(document);
       });
+
+      // 4. Real-time OS system theme listener
+      try {
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function (ev) {
+          if (!localStorage.getItem('theme')) {
+            if (ev.matches) {
+              document.documentElement.classList.add('dark');
+            } else {
+              document.documentElement.classList.remove('dark');
+            }
+            window.dispatchEvent(new CustomEvent('tomatox:theme-change', { detail: { isDark: ev.matches } }));
+          }
+        });
+      } catch (_) {}
     </script>
   </head>
-  <body class="relative min-h-screen flex flex-col bg-[var(--bg-primary)] text-[var(--text-primary)] antialiased transition-colors duration-200">
+  <body class="relative min-h-screen flex flex-col bg-[var(--bg-primary)] text-[var(--text-primary)] antialiased transition-colors duration-300">
     <!-- Generative Zen Canvas Background (Ink Stream / Flow Field) -->
     <ZenBackground />
 

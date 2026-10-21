@@ -58,6 +58,22 @@ body {
 /* ===================================================
    Circular Ripple Wave Theme Transition (View Transition API)
    =================================================== */
+@property --x {
+  syntax: '<length-percentage>';
+  inherits: true;
+  initial-value: 50%;
+}
+@property --y {
+  syntax: '<length-percentage>';
+  inherits: true;
+  initial-value: 50%;
+}
+@property --r {
+  syntax: '<length-percentage>';
+  inherits: true;
+  initial-value: 150vmax;
+}
+
 html.theme-transitioning::view-transition-old(root),
 html.theme-transitioning::view-transition-new(root) {
   animation: none !important;
@@ -65,13 +81,18 @@ html.theme-transitioning::view-transition-new(root) {
 }
 
 html.theme-transitioning::view-transition-old(root) {
-  z-index: 1;
+  z-index: 1 !important;
 }
 
 html.theme-transitioning::view-transition-new(root) {
-  z-index: 99999;
-  animation: 0.52s cubic-bezier(0.22, 1, 0.36, 1) forwards !important;
+  z-index: 99999 !important;
+  animation: 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
   animation-name: reveal-theme-wave !important;
+}
+
+::view-transition-group(theme-toggle-btn) {
+  z-index: 100000 !important;
+  animation: none !important;
 }
 
 @keyframes reveal-theme-wave {
@@ -83,21 +104,14 @@ html.theme-transitioning::view-transition-new(root) {
   }
 }
 
-/* Disable all color transitions during View Transition snapshot capture to prevent double-flash */
-html.theme-transitioning,
-html.theme-transitioning *,
-html.theme-transitioning *::before,
-html.theme-transitioning *::after {
+/* Disable body color transition during View Transition snapshot to eliminate secondary flash */
+html.theme-transitioning body {
   transition: none !important;
 }
 
-/* In dark mode, invert the Zen canvas lines gracefully without clearing canvas */
-html.dark #zen-bg-canvas {
-  filter: invert(1) hue-rotate(180deg);
-}
-
 .theme-spring-icon {
-  transition: transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: center center;
 }
 
 html.dark .theme-toggle-btn .sun-icon {

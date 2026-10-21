@@ -330,8 +330,10 @@ import { searchIndex } from '../data/searchIndex';
       if (item.actionId) {
         switch (item.actionId) {
           case 'toggle-theme': {
-            const toggleBtn = document.getElementById('theme-toggle-btn');
-            if (toggleBtn) {
+            const toggleBtn = (document.getElementById('theme-toggle-btn') || document.querySelector('.theme-toggle-btn')) as HTMLElement | null;
+            if (typeof (window as any).__toggleTheme === 'function') {
+              (window as any).__toggleTheme(toggleBtn || undefined);
+            } else if (toggleBtn) {
               toggleBtn.click();
             } else {
               const isDark = document.documentElement.classList.toggle('dark');

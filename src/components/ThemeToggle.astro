@@ -1,13 +1,23 @@
 ---
 // ThemeToggle.astro
 // High-end View Transition Circular Ripple & 3D Spring Morphing Theme Switcher
+interface Props {
+  id?: string;
+  class?: string;
+}
+
+const { id = 'theme-toggle-btn', class: className = '' } = Astro.props;
 ---
 
 <button
   type="button"
+  id={id}
   aria-label="切换浅色/深色主题"
   title="切换深色/浅色模式"
-  class="theme-toggle-btn group relative inline-flex h-8.5 w-8.5 items-center justify-center rounded-xl border border-[var(--border-primary)] bg-[var(--card-bg)]/90 backdrop-blur-md text-[var(--text-secondary)] transition-all duration-300 hover:border-[var(--accent)] hover:text-[var(--accent)] hover:shadow-sm active:scale-90 cursor-pointer overflow-hidden shadow-2xs select-none"
+  class:list={[
+    "theme-toggle-btn group relative inline-flex h-8.5 w-8.5 items-center justify-center rounded-xl border border-[var(--border-primary)] bg-[var(--card-bg)]/90 backdrop-blur-md text-[var(--text-secondary)] transition-all duration-300 hover:border-[var(--accent)] hover:text-[var(--accent)] hover:shadow-sm active:scale-90 cursor-pointer overflow-hidden shadow-2xs select-none",
+    className
+  ]}
 >
   <!-- Background Glow Aura on hover -->
   <span class="theme-glow-aura pointer-events-none absolute inset-0 -z-10 rounded-xl opacity-0 blur-md transition-opacity duration-300"></span>
@@ -59,97 +69,142 @@
 <script>
   let isTransitioning = false;
 
-  function setupThemeToggle() {
+  function updateA11yAttributes(isDark: boolean) {
     const buttons = document.querySelectorAll('.theme-toggle-btn');
-    if (!buttons.length) return;
+    buttons.forEach((btn) => {
+      btn.setAttribute(
+        'aria-label',
+        isDark ? '当前为深色模式，点击切换为浅色模式' : '当前为浅色模式，点击切换为深色模式'
+      );
+      btn.setAttribute('title', isDark ? '点击切换为浅色模式' : '点击切换为深色模式');
 
-    function updateA11yAttributes(isDark: boolean) {
-      buttons.forEach((btn) => {
-        btn.setAttribute(
-          'aria-label',
-          isDark ? '当前为深色模式，点击切换为浅色模式' : '当前为浅色模式，点击切换为深色模式'
-        );
-        btn.setAttribute('title', isDark ? '点击切换为浅色模式' : '点击切换为深色模式');
-
-        const aura = btn.querySelector('.theme-glow-aura');
-        if (aura) {
-          if (isDark) {
-            aura.className = 'theme-glow-aura pointer-events-none absolute inset-0 -z-10 rounded-xl bg-amber-400/25 blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300';
-          } else {
-            aura.className = 'theme-glow-aura pointer-events-none absolute inset-0 -z-10 rounded-xl bg-indigo-500/20 blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300';
-          }
+      const aura = btn.querySelector('.theme-glow-aura');
+      if (aura) {
+        if (isDark) {
+          aura.className = 'theme-glow-aura pointer-events-none absolute inset-0 -z-10 rounded-xl bg-amber-400/25 blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300';
+        } else {
+          aura.className = 'theme-glow-aura pointer-events-none absolute inset-0 -z-10 rounded-xl bg-indigo-500/20 blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300';
         }
-      });
+      }
+    });
+  }
+
+  function applyThemeState(isDark: boolean) {
+    if (isDark) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+    updateA11yAttributes(isDark);
+    window.dispatchEvent(new CustomEvent('tomatox:theme-change', { detail: { isDark } }));
+  }
+
+  async function executeThemeToggle(sourceEl?: HTMLElement, coords?: { x: number; y: number }) {
+    if (isTransitioning) return;
+
+    const isCurrentlyDark = document.documentElement.classList.contains('dark');
+    const nextDark = !isCurrentlyDark;
+
+    // Determine circular ripple origin point
+    let x = window.innerWidth / 2;
+    let y = 0;
+    if (coords && coords.x > 0 && coords.y > 0) {
+      x = coords.x;
+      y = coords.y;
+    } else if (sourceEl) {
+      const rect = sourceEl.getBoundingClientRect();
+      x = rect.left + rect.width / 2;
+      y = rect.top + rect.height / 2;
     }
 
-    const currentDark = document.documentElement.classList.contains('dark');
-    updateA11yAttributes(currentDark);
+    const endRadius = Math.hypot(
+      Math.max(x, window.innerWidth - x),
+      Math.max(y, window.innerHeight - y)
+    );
 
+    // Set CSS custom properties on documentElement for CSS fallback
+    document.documentElement.style.setProperty('--x', `${x}px`);
+    document.documentElement.style.setProperty('--y', `${y}px`);
+    document.documentElement.style.setProperty('--r', `${endRadius}px`);
+
+    const supportsViewTransition =
+      typeof document !== 'undefined' &&
+      'startViewTransition' in document &&
+      !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (!supportsViewTransition) {
+      applyThemeState(nextDark);
+      return;
+    }
+
+    isTransitioning = true;
+    document.documentElement.classList.add('theme-transitioning');
+    if (sourceEl) {
+      sourceEl.style.viewTransitionName = 'theme-toggle-btn';
+    }
+
+    try {
+      const transition = (document as any).startViewTransition(() => {
+        applyThemeState(nextDark);
+      });
+
+      await transition.ready;
+
+      // Modern Web Animations API on ::view-transition-new(root)
+      const clipPath = [
+        `circle(0px at ${x}px ${y}px)`,
+        `circle(${endRadius}px at ${x}px ${y}px)`,
+      ];
+
+      if (typeof document.documentElement.animate === 'function') {
+        const animation = document.documentElement.animate(
+          {
+            clipPath: clipPath,
+          },
+          {
+            duration: 380,
+            easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
+            pseudoElement: '::view-transition-new(root)',
+          }
+        );
+        await animation.finished;
+      }
+
+      await transition.finished;
+    } catch (_err) {
+      // In case transition was aborted
+      applyThemeState(nextDark);
+    } finally {
+      if (sourceEl) {
+        sourceEl.style.viewTransitionName = '';
+      }
+      document.documentElement.classList.remove('theme-transitioning');
+      isTransitioning = false;
+    }
+  }
+
+  // Expose global toggle for CommandPalette or keyboard shortcuts
+  (window as any).__toggleTheme = (sourceEl?: HTMLElement, coords?: { x: number; y: number }) => {
+    const target = sourceEl || (document.getElementById('theme-toggle-btn') as HTMLElement) || undefined;
+    executeThemeToggle(target, coords);
+  };
+
+  function setupThemeToggle() {
+    const isDark = document.documentElement.classList.contains('dark');
+    updateA11yAttributes(isDark);
+
+    const buttons = document.querySelectorAll('.theme-toggle-btn');
     buttons.forEach((btn) => {
       if ((btn as any)._hasThemeListener) return;
       (btn as any)._hasThemeListener = true;
 
-      btn.addEventListener('click', async (e: any) => {
+      btn.addEventListener('click', (e: any) => {
         e.stopPropagation();
-        if (isTransitioning) return;
-
-        const isCurrentlyDark = document.documentElement.classList.contains('dark');
-        const nextDark = !isCurrentlyDark;
-
-        // Calculate click coordinates for circular ripple wave
-        const rect = btn.getBoundingClientRect();
-        const x = (e.clientX && e.clientX > 0) ? e.clientX : (rect.left + rect.width / 2);
-        const y = (e.clientY && e.clientY > 0) ? e.clientY : (rect.top + rect.height / 2);
-
-        const endRadius = Math.hypot(
-          Math.max(x, window.innerWidth - x),
-          Math.max(y, window.innerHeight - y)
-        );
-
-        // Set CSS variables for keyframe wave animation
-        document.documentElement.style.setProperty('--x', `${x}px`);
-        document.documentElement.style.setProperty('--y', `${y}px`);
-        document.documentElement.style.setProperty('--r', `${endRadius}px`);
-
-        const supportsViewTransition =
-          typeof document !== 'undefined' &&
-          'startViewTransition' in document &&
-          !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-        if (!supportsViewTransition) {
-          if (nextDark) {
-            document.documentElement.classList.add('dark');
-            localStorage.setItem('theme', 'dark');
-          } else {
-            document.documentElement.classList.remove('dark');
-            localStorage.setItem('theme', 'light');
-          }
-          updateA11yAttributes(nextDark);
-          return;
-        }
-
-        isTransitioning = true;
-        document.documentElement.classList.add('theme-transitioning');
-
-        const transition = (document as any).startViewTransition(async () => {
-          if (nextDark) {
-            document.documentElement.classList.add('dark');
-            localStorage.setItem('theme', 'dark');
-          } else {
-            document.documentElement.classList.remove('dark');
-            localStorage.setItem('theme', 'light');
-          }
-          updateA11yAttributes(nextDark);
-        });
-
-        try {
-          await transition.finished;
-        } catch (_err) {
-          // Fallback if transition is interrupted
-        } finally {
-          document.documentElement.classList.remove('theme-transitioning');
-          isTransitioning = false;
-        }
+        const x = (e.clientX && e.clientX > 0) ? e.clientX : undefined;
+        const y = (e.clientY && e.clientY > 0) ? e.clientY : undefined;
+        executeThemeToggle(btn as HTMLElement, x && y ? { x, y } : undefined);
       });
     });
   }
