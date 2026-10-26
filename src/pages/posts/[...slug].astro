@@ -4,6 +4,7 @@ import MoyuCalendarSidebar from '../../components/MoyuCalendarSidebar.astro';
 import ArticleToc from '../../components/ArticleToc.astro';
 import { fetch60sHubData } from '../../lib/newsService';
 import { renderArticleMarkdown } from '../../lib/markdown';
+import { BASE_POST_VIEWS, formatViewCount } from '../../lib/viewsService';
 import { posts } from '../../data/posts';
 
 export function getStaticPaths() {
@@ -20,8 +21,9 @@ export function getStaticPaths() {
 const hubData = await fetch60sHubData();
 const { title, description, tag, date, readTime, words, content, prevPost, nextPost } = Astro.props;
 const { html, toc } = renderArticleMarkdown(content);
-const slug = Astro.params.slug;
+const slug = Astro.params.slug as string;
 const tocHeadings = toc.slice(0, 4).map((t) => t.text);
+const initialViews = BASE_POST_VIEWS[slug] ? formatViewCount(BASE_POST_VIEWS[slug]) : '--';
 
 // Curated or auto-generated clean plain excerpt for share poster
 const safeDescription = (description || content.replace(/<[^>]*>/g, '').replace(/[#*`>\[\]\(\)\-\_]/g, '').trim())
@@ -50,6 +52,15 @@ const safeDescription = (description || content.replace(/<[^>]*>/g, '').replace(
               <span>约需 {readTime}</span>
               <span>·</span>
               <span>{words} 字</span>
+              <span>·</span>
+              <span class="inline-flex items-center gap-1 text-[var(--text-secondary)]" title="文章总阅读量">
+                <svg class="h-3.5 w-3.5 text-[var(--accent)] opacity-85 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+                <span id="post-view-count" class="mono font-semibold text-[var(--text-primary)]">{initialViews}</span>
+                <span>次阅读</span>
+              </span>
             </div>
 
             <!-- Reading Actions: Font Size Adjuster & Share Poster -->
@@ -92,6 +103,7 @@ const safeDescription = (description || content.replace(/<[^>]*>/g, '').replace(
                 data-date={date}
                 data-read-time={readTime}
                 data-words={words}
+                data-views={initialViews}
                 data-description={safeDescription}
                 data-toc={JSON.stringify(tocHeadings)}
                 class="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border-secondary)] bg-[var(--surface-subtle)] hover:bg-[var(--surface-primary)] hover:border-[var(--accent)] px-2.5 py-1 text-xs text-[var(--text-secondary)] hover:text-[var(--accent)] transition-all cursor-pointer shadow-2xs"
@@ -191,10 +203,13 @@ const safeDescription = (description || content.replace(/<[^>]*>/g, '').replace(
 </BaseLayout>
 
 <script>
+  import { incrementAndGetViews, formatViewCount } from '../../lib/viewsService';
+
   function initPostReadingToolkit() {
     const contentEl = document.querySelector('.article-content');
     const fontBtns = document.querySelectorAll('.font-size-btn');
     const sharePosterBtn = document.getElementById('btn-post-share-poster') as HTMLButtonElement | null;
+    const viewCountEl = document.getElementById('post-view-count');
 
     // 1. Font Size preference
     const savedSize = localStorage.getItem('tomatox_post_font_size') || 'base';
@@ -224,7 +239,19 @@ const safeDescription = (description || content.replace(/<[^>]*>/g, '').replace(
       });
     });
 
-    // 2. Open Share Poster (reads directly from active button data attributes to avoid stale state)
+    // 2. Track & Update Live View Count
+    const postSlug = sharePosterBtn?.getAttribute('data-slug');
+    if (postSlug) {
+      incrementAndGetViews(postSlug).then((views) => {
+        if (typeof views === 'number' && views > 0) {
+          const formatted = formatViewCount(views);
+          if (viewCountEl) viewCountEl.textContent = formatted;
+          if (sharePosterBtn) sharePosterBtn.setAttribute('data-views', formatted);
+        }
+      });
+    }
+
+    // 3. Open Share Poster (reads directly from active button data attributes to avoid stale state)
     if (sharePosterBtn) {
       sharePosterBtn.onclick = () => {
         const slug = sharePosterBtn.getAttribute('data-slug') || '';
@@ -233,6 +260,7 @@ const safeDescription = (description || content.replace(/<[^>]*>/g, '').replace(
         const date = sharePosterBtn.getAttribute('data-date') || '';
         const readTime = sharePosterBtn.getAttribute('data-read-time') || '5 分钟';
         const words = sharePosterBtn.getAttribute('data-words') || '2,000';
+        const views = sharePosterBtn.getAttribute('data-views') || '';
         const description = sharePosterBtn.getAttribute('data-description') || '';
         let toc: string[] = [];
         try {
@@ -251,6 +279,7 @@ const safeDescription = (description || content.replace(/<[^>]*>/g, '').replace(
               date,
               readTime,
               words,
+              views,
               description,
               content: description,
               toc,

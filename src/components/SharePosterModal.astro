@@ -110,6 +110,7 @@
     items?: string[];
     readTime?: string;
     words?: string | number;
+    views?: string | number;
     slug?: string;
   }
 
@@ -387,7 +388,8 @@
         ctx.fillStyle = textSecondaryColor;
         const readTimeStr = currentData.readTime || '5 分钟';
         const wordsStr = currentData.words ? `${currentData.words} 字` : '2,000 字';
-        const metaStr = `${currentData.date}  ·  约需 ${readTimeStr}  ·  ${wordsStr}`;
+        const viewsStr = currentData.views ? `  ·  ${currentData.views} 阅读` : '';
+        const metaStr = `${currentData.date}  ·  约需 ${readTimeStr}  ·  ${wordsStr}${viewsStr}`;
         ctx.fillText(metaStr, 42, lineY + 6);
         lineY += 24;
 

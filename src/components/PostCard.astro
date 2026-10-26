@@ -1,5 +1,7 @@
 ---
 // PostCard.astro
+import { BASE_POST_VIEWS, formatViewCount } from '../lib/viewsService';
+
 interface Props {
   title: string;
   description: string;
@@ -19,6 +21,8 @@ const {
   words = '2,400',
   tag = '思考'
 } = Astro.props;
+
+const initialViews = BASE_POST_VIEWS[slug] ? formatViewCount(BASE_POST_VIEWS[slug]) : '--';
 ---
 
 <article class="group relative py-4 sm:py-5 transition-colors">
@@ -30,6 +34,15 @@ const {
       <span>约需 {readTime}</span>
       <span>·</span>
       <span>{words} 字</span>
+      <span>·</span>
+      <span class="inline-flex items-center gap-1 text-[var(--text-tertiary)]" title="文章阅读量">
+        <svg class="h-3 w-3 opacity-70 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+          <circle cx="12" cy="12" r="3"></circle>
+        </svg>
+        <span class="post-card-views mono font-medium" data-view-slug={slug}>{initialViews}</span>
+        <span>阅读</span>
+      </span>
       <span class="rounded bg-[var(--bg-secondary)] px-1.5 py-0.5 text-[10px] text-[var(--text-tertiary)] ml-auto">
         {tag}
       </span>

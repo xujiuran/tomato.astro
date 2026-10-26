@@ -110,6 +110,22 @@ const {
     </div>
 
     <script>
+      import { fetchBatchViews, formatViewCount } from '../lib/viewsService';
+
+      function setupCardViewsTracker() {
+        const cardViewEls = document.querySelectorAll<HTMLElement>('.post-card-views[data-view-slug]');
+        if (!cardViewEls.length) return;
+
+        fetchBatchViews().then((viewsMap) => {
+          cardViewEls.forEach((el) => {
+            const slug = el.getAttribute('data-view-slug');
+            if (slug && typeof viewsMap[slug] === 'number') {
+              el.textContent = formatViewCount(viewsMap[slug]);
+            }
+          });
+        });
+      }
+
       function setupRouteProgressBar() {
         const bar = document.getElementById('route-loading-bar');
         const progress = document.getElementById('route-loading-progress');
@@ -133,7 +149,10 @@ const {
           }, 180);
         });
       }
+
       setupRouteProgressBar();
+      setupCardViewsTracker();
+      document.addEventListener('astro:page-load', setupCardViewsTracker);
     </script>
   </body>
 </html>
