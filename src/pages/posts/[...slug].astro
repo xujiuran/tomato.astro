@@ -4,7 +4,7 @@ import MoyuCalendarSidebar from '../../components/MoyuCalendarSidebar.astro';
 import ArticleToc from '../../components/ArticleToc.astro';
 import { fetch60sHubData } from '../../lib/newsService';
 import { renderArticleMarkdown } from '../../lib/markdown';
-import { BASE_POST_VIEWS, formatViewCount } from '../../lib/viewsService';
+import { formatViewCount } from '../../lib/viewsService';
 import { posts } from '../../data/posts';
 
 export function getStaticPaths() {
@@ -23,7 +23,7 @@ const { title, description, tag, date, readTime, words, content, prevPost, nextP
 const { html, toc } = renderArticleMarkdown(content);
 const slug = Astro.params.slug as string;
 const tocHeadings = toc.slice(0, 4).map((t) => t.text);
-const initialViews = BASE_POST_VIEWS[slug] ? formatViewCount(BASE_POST_VIEWS[slug]) : '--';
+const initialViews = '0';
 
 // Curated or auto-generated clean plain excerpt for share poster
 const safeDescription = (description || content.replace(/<[^>]*>/g, '').replace(/[#*`>\[\]\(\)\-\_]/g, '').trim())

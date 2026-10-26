@@ -1,6 +1,6 @@
 ---
 // PostCard.astro
-import { BASE_POST_VIEWS, formatViewCount } from '../lib/viewsService';
+import { formatViewCount } from '../lib/viewsService';
 
 interface Props {
   title: string;
@@ -22,7 +22,7 @@ const {
   tag = '思考'
 } = Astro.props;
 
-const initialViews = BASE_POST_VIEWS[slug] ? formatViewCount(BASE_POST_VIEWS[slug]) : '--';
+const initialViews = '0';
 ---
 
 <article class="group relative py-4 sm:py-5 transition-colors">

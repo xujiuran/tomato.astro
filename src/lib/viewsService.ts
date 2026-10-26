@@ -1,21 +1,13 @@
-// viewsService.ts - Client & Build helper for TomatoX article view counts
-
-export const BASE_POST_VIEWS: Record<string, number> = {
-  'minimal-web-engineering': 486,
-  'ai-knowledge-workflow': 362,
-  'crafting-tiny-tools': 295,
-  'modern-css-evolution': 328,
-  'deep-work-system': 441,
-};
+// viewsService.ts - Pure 100% real visitor view counts client helper
 
 // Base URL for self-hosted Hono API (tomato.news)
 const API_BASE_URL = 'https://news.xujiuran.top';
 
 /**
- * Format view numbers nicely (e.g. 1,234 or 1.2w)
+ * Format view numbers nicely (e.g. 0, 12, 1,234 or 1.2w)
  */
 export function formatViewCount(views: number): string {
-  if (typeof views !== 'number' || isNaN(views)) return '--';
+  if (typeof views !== 'number' || isNaN(views) || views < 0) return '0';
   if (views >= 10000) {
     return (views / 10000).toFixed(1) + 'w';
   }
@@ -23,7 +15,7 @@ export function formatViewCount(views: number): string {
 }
 
 /**
- * Fetch views for a single article with local fallback
+ * Fetch real views for a single article with local fallback
  */
 export async function fetchViewsForSlug(slug: string): Promise<number> {
   const fallback = getLocalViewsFallback(slug);
@@ -46,17 +38,17 @@ export async function fetchViewsForSlug(slug: string): Promise<number> {
       }
     }
   } catch (_e) {
-    // API not reachable or timeout, silently use fallback
+    // API not reachable or timeout, silently use local fallback
   }
 
   return fallback;
 }
 
 /**
- * Increment and get views for an article (session-deduplicated)
+ * Increment and get real views for an article (session-deduplicated)
  */
 export async function incrementAndGetViews(slug: string): Promise<number> {
-  if (typeof window === 'undefined') return BASE_POST_VIEWS[slug] || 120;
+  if (typeof window === 'undefined') return 0;
 
   const sessionKey = `tomatox_viewed_${slug}`;
   let hasViewedThisSession = false;
@@ -64,7 +56,7 @@ export async function incrementAndGetViews(slug: string): Promise<number> {
     hasViewedThisSession = !!sessionStorage.getItem(sessionKey);
   } catch {}
 
-  // If already viewed in current session, just fetch latest count without incrementing
+  // If already viewed in current browser session, fetch latest count without incrementing
   if (hasViewedThisSession) {
     return fetchViewsForSlug(slug);
   }
@@ -96,7 +88,7 @@ export async function incrementAndGetViews(slug: string): Promise<number> {
     // Network or server error fallback
   }
 
-  // Fallback: local increment
+  // Fallback: local increment from actual history
   const current = getLocalViewsFallback(slug);
   const next = current + 1;
   try {
@@ -106,22 +98,23 @@ export async function incrementAndGetViews(slug: string): Promise<number> {
 }
 
 /**
- * Batch fetch all article views
+ * Batch fetch all real article views
  */
 export async function fetchBatchViews(): Promise<Record<string, number>> {
-  const result: Record<string, number> = { ...BASE_POST_VIEWS };
+  const result: Record<string, number> = {};
 
-  // Overlay local cached views first
   if (typeof window !== 'undefined') {
-    Object.keys(BASE_POST_VIEWS).forEach((slug) => {
-      const stored = localStorage.getItem(`tomatox_views_${slug}`);
-      if (stored) {
-        const parsed = parseInt(stored, 10);
-        if (!isNaN(parsed) && parsed > result[slug]) {
-          result[slug] = parsed;
+    // Read local cache first
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && key.startsWith('tomatox_views_')) {
+        const slug = key.replace('tomatox_views_', '');
+        const val = parseInt(localStorage.getItem(key) || '0', 10);
+        if (!isNaN(val)) {
+          result[slug] = val;
         }
       }
-    });
+    }
 
     // Try remote batch API
     try {
@@ -152,10 +145,10 @@ export async function fetchBatchViews(): Promise<Record<string, number>> {
 function getLocalViewsFallback(slug: string): number {
   if (typeof window !== 'undefined') {
     const stored = localStorage.getItem(`tomatox_views_${slug}`);
-    if (stored) {
+    if (stored !== null) {
       const parsed = parseInt(stored, 10);
       if (!isNaN(parsed)) return parsed;
     }
   }
-  return BASE_POST_VIEWS[slug] || 120;
+  return 0;
 }
