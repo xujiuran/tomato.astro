@@ -70,11 +70,11 @@ export const searchIndex: SearchItem[] = [
   },
   {
     id: 'act-github',
-    title: '访问 GitHub 仓库列表',
+    title: '访问 GitHub 个人主页',
     description: '查看 TomatoX 开源的全部项目与代码库',
     category: 'action',
     categoryLabel: '快捷指令',
-    url: 'https://github.com/xujiuran?tab=repositories',
+    url: 'https://github.com/xujiuran',
     iconType: 'action',
     badge: 'GitHub',
     keywords: ['github', 'repo', 'git', '代码', '仓库', '开源', 'xujiuran'],

@@ -1,7 +1,7 @@
 # 🍅 TomatoX Blog (tomato.astro)
 
 > **极简克制 · 审美驱动 · 极速出水 · 实时水合**  
-> 个人主站与数字花园：[xujiuran.top](https://xujiuran.top) · GitHub: [@xujiuran](https://github.com/xujiuran?tab=repositories)
+> 个人主站与数字花园：[xujiuran.top](https://xujiuran.top) · GitHub: [@xujiuran](https://github.com/xujiuran)
 
 ---
 
@@ -168,7 +168,7 @@ npm run preview
 ## 📮 联络与友链
 
 - **个人主站**：[https://xujiuran.top](https://xujiuran.top)
-- **开源主页**：[https://github.com/xujiuran](https://github.com/xujiuran?tab=repositories)
+- **开源主页**：[https://github.com/xujiuran](https://github.com/xujiuran)
 - **RSS 订阅**：[https://xujiuran.top/rss.xml](https://xujiuran.top/rss.xml)
 
 ---
