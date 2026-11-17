@@ -145,6 +145,28 @@ export const searchIndex: SearchItem[] = [
     iconType: 'nav',
     keywords: ['about', 'author', 'me', '关于', '作者', '简介', '联系'],
   },
+  {
+    id: 'nav-links',
+    title: '友情链接 · 伙伴们 (Blogroll)',
+    description: '志同道合的数字花园与同行者，开放互联的独立博客圈',
+    category: 'nav',
+    categoryLabel: '导航',
+    url: '/links',
+    iconType: 'nav',
+    badge: '友链',
+    keywords: ['links', 'friends', 'blogroll', '友链', '伙伴', '友情链接', '邻居', '朋友'],
+  },
+  {
+    id: 'friend-divergence',
+    title: '友链：Divergence (个人实验室)',
+    description: 'Dr. Leaves 的个人实验室 —— 一些顺手的工具，一些写下来的东西。世界线变动率观测站。',
+    category: 'action',
+    categoryLabel: '友链推荐',
+    url: 'https://www.drleaves.icu/',
+    iconType: 'action',
+    badge: '世界线 α',
+    keywords: ['divergence', 'drleaves', 'icu', '实验室', '世界线', '友链', 'steins gate'],
+  },
 
   // ── 3. 深度长文 (Articles) ──
   {
