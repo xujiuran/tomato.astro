@@ -124,6 +124,42 @@ export function applyTranslationsToDOM(lang?: Lang, root: ParentNode = document)
       el.setAttribute('aria-label', translated);
     }
   });
+
+  // 5. Day of week formatting
+  const dayEls = root.querySelectorAll<HTMLElement>('[data-i18n-dayofweek]');
+  dayEls.forEach((el) => {
+    const rawDay = el.getAttribute('data-day') || '';
+    const date = el.getAttribute('data-date') || '';
+    if (rawDay) {
+      const formattedDay = formatDayOfWeek(rawDay, activeLang);
+      el.textContent = date ? `${date} ${formattedDay}` : formattedDay;
+    }
+  });
+}
+
+/**
+ * Format day-of-week strings into target language
+ */
+export function formatDayOfWeek(dayStr: string, lang: Lang): string {
+  const map: Record<string, Record<Lang, string>> = {
+    '星期一': { 'zh-CN': '星期一', en: 'Monday', ja: '月曜日', ko: '월요일' },
+    '星期二': { 'zh-CN': '星期二', en: 'Tuesday', ja: '火曜日', ko: '화요일' },
+    '星期三': { 'zh-CN': '星期三', en: 'Wednesday', ja: '水曜日', ko: '수요일' },
+    '星期四': { 'zh-CN': '星期四', en: 'Thursday', ja: '木曜日', ko: '목요일' },
+    '星期五': { 'zh-CN': '星期五', en: 'Friday', ja: '金曜日', ko: '금요일' },
+    '星期六': { 'zh-CN': '星期六', en: 'Saturday', ja: '土曜日', ko: '토요일' },
+    '星期日': { 'zh-CN': '星期日', en: 'Sunday', ja: '日曜日', ko: '일요일' },
+    '星期天': { 'zh-CN': '星期天', en: 'Sunday', ja: '日曜日', ko: '일요일' },
+    '周一': { 'zh-CN': '周一', en: 'Mon', ja: '月曜', ko: '월요일' },
+    '周二': { 'zh-CN': '周二', en: 'Tue', ja: '火曜', ko: '화요일' },
+    '周三': { 'zh-CN': '周三', en: 'Wed', ja: '水曜', ko: '수요일' },
+    '周四': { 'zh-CN': '周四', en: 'Thu', ja: '木曜', ko: '목요일' },
+    '周五': { 'zh-CN': '周五', en: 'Fri', ja: '金曜', ko: '금요일' },
+    '周六': { 'zh-CN': '周六', en: 'Sat', ja: '土曜', ko: '토요일' },
+    '周日': { 'zh-CN': '周日', en: 'Sun', ja: '日曜', ko: '일요일' },
+    '每日快讯': { 'zh-CN': '每日快讯', en: 'Daily Brief', ja: 'デイリー速報', ko: '데일리 속보' },
+  };
+  return map[dayStr]?.[lang] || dayStr;
 }
 
 /**

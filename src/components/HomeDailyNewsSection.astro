@@ -52,10 +52,10 @@ const topClsItems = clsSource?.items.slice(0, 2) || [
       />
       <div>
         <h2 class="text-lg sm:text-xl font-bold text-[var(--text-primary)] flex items-center gap-2">
-          <span>每日新闻 · 晨报与风向标</span>
+          <span data-i18n="home.newsTitle">每日新闻 · 晨报与风向标</span>
         </h2>
       </div>
-      <span id="home-digest-date-badge" class="mono text-[11px] font-semibold text-[var(--accent)] bg-[var(--accent)]/10 px-2 py-0.5 rounded hidden sm:inline">
+      <span id="home-digest-date-badge" class="mono text-[11px] font-semibold text-[var(--accent)] bg-[var(--accent)]/10 px-2 py-0.5 rounded hidden sm:inline" data-i18n-dayofweek data-date={digest.date} data-day={digest.dayOfWeek}>
         {digest.date} {digest.dayOfWeek}
       </span>
     </div>
@@ -64,7 +64,7 @@ const topClsItems = clsSource?.items.slice(0, 2) || [
       href="/news"
       class="text-xs sm:text-sm text-[var(--accent)] hover:underline flex items-center gap-1 font-medium group"
     >
-      <span>进入完整雷达 ({digest.news.length}条早报 · 15平台)</span>
+      <span data-i18n="home.newsRadarLink" data-i18n-param-count={digest.news.length}>进入完整雷达 ({digest.news.length}条早报 · 15平台)</span>
       <span class="group-hover:translate-x-0.5 transition-transform">→</span>
     </a>
   </div>
@@ -78,7 +78,7 @@ const topClsItems = clsSource?.items.slice(0, 2) || [
         <div class="flex items-center justify-between pb-2.5 border-b border-[var(--border-secondary)]">
           <div class="flex items-center gap-2">
             <span class="h-2 w-2 rounded-full bg-red-500 animate-pulse"></span>
-            <span class="text-xs font-bold text-[var(--text-primary)] tracking-wide">
+            <span class="text-xs font-bold text-[var(--text-primary)] tracking-wide" data-i18n="home.newsTop5Title">
               60 秒晨读精选
             </span>
             <span class="text-[11px] text-[var(--text-tertiary)] mono">
@@ -111,18 +111,20 @@ const topClsItems = clsSource?.items.slice(0, 2) || [
           <div class="rounded-xl bg-[var(--bg-secondary)]/70 border border-[var(--border-secondary)] px-3 py-2 text-xs text-[var(--text-secondary)] flex items-start gap-2">
             <span class="text-sm shrink-0 leading-none">💡</span>
             <p id="home-digest-tip" class="line-clamp-2 leading-relaxed">
-              <span class="font-medium text-[var(--text-primary)]">微语：</span>{digest.tip.replace(/^【微语】\s*/, '')}
+              <span class="font-medium text-[var(--text-primary)]" data-i18n="home.newsWhisper">微语：</span>{digest.tip.replace(/^【微语】\s*/, '')}
             </p>
           </div>
         )}
         <div class="flex items-center justify-between text-xs pt-0.5">
-          <span class="text-[var(--text-tertiary)] text-[11px]">
+          <span class="text-[var(--text-tertiary)] text-[11px]" data-i18n="home.newsSyncHint">
             每日清晨持续同步全国与全球要闻
           </span>
           <a
             id="home-60s-read-all-link"
             href="/news#60s"
             class="text-[var(--accent)] hover:underline font-medium inline-flex items-center gap-1"
+            data-i18n="home.newsReadAll"
+            data-i18n-param-count={digest.news.length}
           >
             阅读全部 {digest.news.length} 条 →
           </a>
@@ -140,11 +142,11 @@ const topClsItems = clsSource?.items.slice(0, 2) || [
               <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
               <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
             </span>
-            <span class="text-xs font-bold text-[var(--text-primary)] tracking-wide">
+            <span class="text-xs font-bold text-[var(--text-primary)] tracking-wide" data-i18n="home.newsTrendingTitle">
               全网风向标速递
             </span>
           </div>
-          <span class="mono text-[10px] text-[var(--text-tertiary)] bg-[var(--bg-secondary)] px-1.5 py-0.5 rounded">
+          <span class="mono text-[10px] text-[var(--text-tertiary)] bg-[var(--bg-secondary)] px-1.5 py-0.5 rounded" data-i18n="home.newsLive">
             实时抓取
           </span>
         </div>
@@ -156,9 +158,9 @@ const topClsItems = clsSource?.items.slice(0, 2) || [
             <div class="flex items-center justify-between text-[11px] text-[var(--text-tertiary)] font-medium">
               <span class="flex items-center gap-1.5">
                 <span class="h-1.5 w-1.5 rounded-full bg-[#181717] dark:bg-zinc-400"></span>
-                <span class="font-semibold text-[var(--text-secondary)]">GitHub Trending</span>
+                <span class="font-semibold text-[var(--text-secondary)]" data-i18n="home.sourceGithub">GitHub Trending</span>
               </span>
-              <a href="/news#hot" class="hover:text-[var(--accent)]">更多</a>
+              <a href="/news#hot" class="hover:text-[var(--accent)]" data-i18n="home.newsMore">更多</a>
             </div>
             <div id="home-hot-github-items" class="space-y-0.5">
               {topGithubItems.map((item, idx) => (
@@ -180,9 +182,9 @@ const topClsItems = clsSource?.items.slice(0, 2) || [
             <div class="flex items-center justify-between text-[11px] text-[var(--text-tertiary)] font-medium">
               <span class="flex items-center gap-1.5">
                 <span class="h-1.5 w-1.5 rounded-full bg-[#e6162d]"></span>
-                <span class="font-semibold text-[var(--text-secondary)]">微博热搜榜</span>
+                <span class="font-semibold text-[var(--text-secondary)]" data-i18n="home.sourceWeibo">微博热搜榜</span>
               </span>
-              <a href="/news#hot" class="hover:text-[var(--accent)]">更多</a>
+              <a href="/news#hot" class="hover:text-[var(--accent)]" data-i18n="home.newsMore">更多</a>
             </div>
             <div id="home-hot-weibo-items" class="space-y-0.5">
               {topWeiboItems.map((item, idx) => (
@@ -204,9 +206,9 @@ const topClsItems = clsSource?.items.slice(0, 2) || [
             <div class="flex items-center justify-between text-[11px] text-[var(--text-tertiary)] font-medium">
               <span class="flex items-center gap-1.5">
                 <span class="h-1.5 w-1.5 rounded-full bg-[#d9232e]"></span>
-                <span class="font-semibold text-[var(--text-secondary)]">财联社热榜</span>
+                <span class="font-semibold text-[var(--text-secondary)]" data-i18n="home.sourceCls">财联社热榜</span>
               </span>
-              <a href="/news#hot" class="hover:text-[var(--accent)]">更多</a>
+              <a href="/news#hot" class="hover:text-[var(--accent)]" data-i18n="home.newsMore">更多</a>
             </div>
             <div id="home-hot-cls-items" class="space-y-0.5">
               {topClsItems.map((item, idx) => (
@@ -233,7 +235,7 @@ const topClsItems = clsSource?.items.slice(0, 2) || [
         >
           <span class="flex items-center gap-1.5">
             <img src="/images/icons/trending.png" alt="热榜" class="h-3.5 w-3.5 object-contain rounded-xs" />
-            <span>浏览 15 平台全部热榜 (300+ 条实时)</span>
+            <span data-i18n="home.newsBrowseAll">浏览 15 平台全部热榜 (300+ 条实时)</span>
           </span>
           <span class="group-hover:translate-x-0.5 transition-transform">→</span>
         </a>
@@ -243,6 +245,8 @@ const topClsItems = clsSource?.items.slice(0, 2) || [
 </section>
 
 <script>
+  import { t, getCurrentLang, formatDayOfWeek } from '../i18n';
+
   function setupHomeNewsSWR() {
     // 1. Sync 60s News preview
     async function syncHome60s() {
@@ -259,7 +263,11 @@ const topClsItems = clsSource?.items.slice(0, 2) || [
         const dateStr = data.date || '';
         const dayStr = data.day_of_week || '';
         const badge1 = document.getElementById('home-digest-date-badge');
-        if (badge1 && dateStr) badge1.textContent = `${dateStr} ${dayStr}`;
+        if (badge1 && dateStr) {
+          badge1.setAttribute('data-date', dateStr);
+          badge1.setAttribute('data-day', dayStr);
+          badge1.textContent = `${dateStr} ${formatDayOfWeek(dayStr, getCurrentLang())}`;
+        }
 
         const badge2 = document.getElementById('home-digest-date-badge-2');
         if (badge2 && dateStr) badge2.textContent = dateStr;
@@ -284,12 +292,14 @@ const topClsItems = clsSource?.items.slice(0, 2) || [
 
         const tipEl = document.getElementById('home-digest-tip');
         if (tipEl && data.tip) {
-          tipEl.innerHTML = `<span class="font-medium text-[var(--text-primary)]">微语：</span>${data.tip.replace(/^【微语】\s*/, '')}`;
+          const whisper = t('home.newsWhisper', getCurrentLang());
+          tipEl.innerHTML = `<span class="font-medium text-[var(--text-primary)]" data-i18n="home.newsWhisper">${whisper}</span>${data.tip.replace(/^【微语】\s*/, '')}`;
         }
 
         const readAllEl = document.getElementById('home-60s-read-all-link');
         if (readAllEl) {
-          readAllEl.textContent = `阅读全部 ${data.news.length} 条 →`;
+          readAllEl.setAttribute('data-i18n-param-count', String(data.news.length));
+          readAllEl.textContent = t('home.newsReadAll', getCurrentLang(), { count: data.news.length });
         }
       } catch {}
     }

@@ -60,7 +60,7 @@ const moyuQuote = moyu?.moyuQuote || defaultQuote;
           --:--:--
         </div>
         <div class="text-right">
-          <div id="live-clock-weekday" class="text-xs font-bold text-[var(--text-primary)]">
+          <div id="live-clock-weekday" class="text-xs font-bold text-[var(--text-primary)]" data-i18n-dayofweek data-day={moyu?.date?.weekday || '星期三'}>
             {moyu?.date?.weekday || '星期三'}
           </div>
           <div id="live-clock-lunar" class="text-[11px] text-[var(--text-tertiary)]">
@@ -76,7 +76,7 @@ const moyuQuote = moyu?.moyuQuote || defaultQuote;
         </span>
         <span id="live-clock-term" class="inline-flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-medium">
           <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
-          <span>寒露 · 劳逸结合</span>
+          <span data-i18n="moyu.termBalance">寒露 · 劳逸结合</span>
         </span>
       </div>
 
@@ -182,13 +182,13 @@ const moyuQuote = moyu?.moyuQuote || defaultQuote;
       <div class="flex items-center justify-between pb-2 border-b border-[var(--border-secondary)]">
         <div class="flex items-center gap-2">
           <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
-          <h3 class="text-sm font-bold text-[var(--text-primary)]">
+          <h3 class="text-sm font-bold text-[var(--text-primary)]" data-i18n="moyu.title">
             摸鱼工作周历 · 劳逸结合
           </h3>
         </div>
         <span class="flex items-center gap-1 text-[11px] text-[var(--text-tertiary)] mono">
           <img src="/images/icons/moyu.png" alt="摸鱼" class="h-3.5 w-3.5 object-contain rounded-xs inline-block" />
-          <span>适度放松</span>
+          <span data-i18n="moyu.relax">适度放松</span>
         </span>
       </div>
 
@@ -198,7 +198,7 @@ const moyuQuote = moyu?.moyuQuote || defaultQuote;
           <div class="flex items-start gap-1.5">
             <img src="/images/icons/thoughts.png" alt="哲学" class="h-3.5 w-3.5 object-contain rounded-xs mt-0.5 inline-block shrink-0" />
             <div>
-              <span class="font-bold mr-1">「摸鱼哲学」</span>
+              <span class="font-bold mr-1" data-i18n="home.moyuPhilosophy">「摸鱼哲学」</span>
               <span>{moyuQuote}</span>
             </div>
           </div>
@@ -208,8 +208,8 @@ const moyuQuote = moyu?.moyuQuote || defaultQuote;
       <!-- Time Progress Bars -->
       <div class="space-y-3">
         <div class="flex items-center justify-between text-xs">
-          <span class="font-bold text-[var(--text-primary)]">时间流逝进度</span>
-          <span class="text-[11px] text-[var(--text-tertiary)] mono">流年不息</span>
+          <span class="font-bold text-[var(--text-primary)]" data-i18n="home.moyuTimeProgress">时间流逝进度</span>
+          <span class="text-[11px] text-[var(--text-tertiary)] mono" data-i18n="moyu.timeFlow">流年不息</span>
         </div>
 
         <!-- Week -->
@@ -257,30 +257,30 @@ const moyuQuote = moyu?.moyuQuote || defaultQuote;
 
       <!-- Festive Countdowns -->
       <div class="pt-2">
-        <h4 class="text-xs font-bold text-[var(--text-primary)] mb-2">节日倒计时目标</h4>
+        <h4 class="text-xs font-bold text-[var(--text-primary)] mb-2" data-i18n="home.moyuFestiveGoals">节日倒计时目标</h4>
         <div class="grid grid-cols-2 gap-2">
           <div class="rounded-lg bg-[var(--bg-secondary)] p-2.5 text-center transition-all hover:bg-[var(--bg-secondary)]/80">
             <p class="text-[10px] text-[var(--text-tertiary)]" data-i18n="moyu.weekend">距离周末</p>
             <p class="text-lg font-bold mono text-emerald-600 dark:text-emerald-400 mt-0.5">
-              {daysToWeekend} <span class="text-[10px] font-normal">天</span>
+              {daysToWeekend} <span class="text-[10px] font-normal" data-i18n="moyu.daysUnit">天</span>
             </p>
           </div>
           <div class="rounded-lg bg-[var(--bg-secondary)] p-2.5 text-center transition-all hover:bg-[var(--bg-secondary)]/80">
             <p class="text-[10px] text-[var(--text-tertiary)]" data-i18n="moyu.newYear">距离元旦</p>
             <p class="text-lg font-bold mono text-blue-600 dark:text-blue-400 mt-0.5">
-              {daysToNewYear} <span class="text-[10px] font-normal">天</span>
+              {daysToNewYear} <span class="text-[10px] font-normal" data-i18n="moyu.daysUnit">天</span>
             </p>
           </div>
           <div class="rounded-lg bg-[var(--bg-secondary)] p-2.5 text-center transition-all hover:bg-[var(--bg-secondary)]/80">
             <p class="text-[10px] text-[var(--text-tertiary)]" data-i18n="moyu.springFestival">距离春节</p>
             <p class="text-lg font-bold mono text-red-600 dark:text-red-400 mt-0.5">
-              {daysToSpringFestival} <span class="text-[10px] font-normal">天</span>
+              {daysToSpringFestival} <span class="text-[10px] font-normal" data-i18n="moyu.daysUnit">天</span>
             </p>
           </div>
           <div class="rounded-lg bg-[var(--bg-secondary)] p-2.5 text-center transition-all hover:bg-[var(--bg-secondary)]/80">
             <p class="text-[10px] text-[var(--text-tertiary)]" data-i18n="moyu.laborDay">五一劳动节</p>
             <p class="text-lg font-bold mono text-purple-600 dark:text-purple-400 mt-0.5">
-              {daysToLaborDay} <span class="text-[10px] font-normal">天</span>
+              {daysToLaborDay} <span class="text-[10px] font-normal" data-i18n="moyu.daysUnit">天</span>
             </p>
           </div>
         </div>
