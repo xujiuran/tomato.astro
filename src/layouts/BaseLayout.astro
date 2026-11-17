@@ -98,14 +98,14 @@ const {
     <!-- Generative Zen Canvas Background (Ink Stream / Flow Field) -->
     <ZenBackground />
 
-    <Header currentPath={currentPath} containerClass={containerClass} />
+    <Header currentPath={currentPath} containerClass="max-w-6xl" />
 
     <main id="main-content" class:list={["relative z-10 flex-1 mx-auto w-full px-4 sm:px-6 pt-6 sm:pt-10", containerClass]}>
       <slot />
     </main>
 
     <div class="relative z-10">
-      <Footer containerClass={containerClass} />
+      <Footer containerClass="max-w-6xl" />
     </div>
 
     <!-- Floating Back to Top Button -->

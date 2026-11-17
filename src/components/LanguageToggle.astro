@@ -12,7 +12,7 @@ const { id = 'lang-toggle-btn', class: className = '' } = Astro.props;
 const popoverId = `${id}-popover`;
 ---
 
-<div class="relative inline-block text-left select-none">
+<div class="lang-toggle-wrapper relative inline-block text-left select-none">
   <!-- Trigger Button -->
   <button
     type="button"
@@ -27,19 +27,19 @@ const popoverId = `${id}-popover`;
     ]}
   >
     <!-- Globe Icon -->
-    <svg class="h-3.5 w-3.5 opacity-80 group-hover:opacity-100 transition-opacity" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <svg class="h-3.5 w-3.5 opacity-80 group-hover:opacity-100 transition-opacity pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <circle cx="12" cy="12" r="10"></circle>
       <line x1="2" y1="12" x2="22" y2="12"></line>
       <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
     </svg>
 
     <!-- Active Language Badge -->
-    <span class="active-lang-badge mono text-[11px] font-bold text-[var(--text-primary)] group-hover:text-[var(--accent)] transition-colors">
+    <span class="active-lang-badge mono text-[11px] font-bold text-[var(--text-primary)] group-hover:text-[var(--accent)] transition-colors pointer-events-none">
       中
     </span>
 
     <!-- Chevron down -->
-    <svg class="h-3 w-3 opacity-60 group-hover:opacity-100 transition-transform duration-200 chevron-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <svg class="h-3 w-3 opacity-60 group-hover:opacity-100 transition-transform duration-200 chevron-icon pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
       <polyline points="6 9 12 15 18 9"></polyline>
     </svg>
   </button>
@@ -47,7 +47,7 @@ const popoverId = `${id}-popover`;
   <!-- Dropdown Popover Menu -->
   <div
     id={popoverId}
-    class="lang-popover absolute right-0 mt-2 w-36 origin-top-right rounded-2xl border border-[var(--border-primary)] bg-[var(--card-bg)]/95 backdrop-blur-xl p-1.5 shadow-xl ring-1 ring-black/5 dark:ring-white/10 z-[100] transition-all duration-150 transform opacity-0 scale-95 pointer-events-none"
+    class="lang-popover absolute right-0 mt-2 w-36 origin-top-right rounded-2xl border border-[var(--border-primary)] bg-white/95 dark:bg-zinc-900/95 backdrop-blur-xl p-1.5 shadow-xl ring-1 ring-black/5 dark:ring-white/10 z-[100] transition-all duration-150 transform opacity-0 scale-95 pointer-events-none"
     role="menu"
     aria-orientation="vertical"
   >
@@ -63,11 +63,11 @@ const popoverId = `${id}-popover`;
           class="lang-option-btn w-full flex items-center justify-between rounded-xl px-2.5 py-1.5 text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-subtle)] transition-colors cursor-pointer text-left"
           role="menuitem"
         >
-          <span class="flex items-center gap-2">
+          <span class="flex items-center gap-2 pointer-events-none">
             <span class="text-sm leading-none">{lang.flag}</span>
             <span class="font-medium">{lang.name}</span>
           </span>
-          <svg class="check-icon h-3.5 w-3.5 text-[var(--accent)] opacity-0 transition-opacity" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <svg class="check-icon h-3.5 w-3.5 text-[var(--accent)] opacity-0 transition-opacity pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="20 6 9 17 4 12"></polyline>
           </svg>
         </button>
@@ -79,67 +79,68 @@ const popoverId = `${id}-popover`;
 <script>
   import { getCurrentLang, setLanguage, applyTranslationsToDOM, type Lang } from '../i18n';
 
+  const LANG_LABELS: Record<Lang, string> = {
+    'zh-CN': '中',
+    'en': 'EN',
+    'ja': '日',
+    'ko': '한',
+  };
+
+  function updateAllToggleUI(lang: Lang) {
+    document.querySelectorAll<HTMLElement>('.active-lang-badge').forEach((badge) => {
+      badge.textContent = LANG_LABELS[lang] || '中';
+    });
+
+    document.querySelectorAll<HTMLButtonElement>('.lang-option-btn').forEach((btn) => {
+      const code = btn.getAttribute('data-lang-code');
+      const check = btn.querySelector('.check-icon');
+      if (code === lang) {
+        btn.classList.add('bg-[var(--surface-subtle)]', 'text-[var(--text-primary)]', 'font-semibold');
+        btn.classList.remove('text-[var(--text-secondary)]');
+        check?.classList.remove('opacity-0');
+      } else {
+        btn.classList.remove('bg-[var(--surface-subtle)]', 'text-[var(--text-primary)]', 'font-semibold');
+        btn.classList.add('text-[var(--text-secondary)]');
+        check?.classList.add('opacity-0');
+      }
+    });
+  }
+
+  function closeAllMenus() {
+    document.querySelectorAll<HTMLElement>('.lang-popover').forEach((p) => {
+      p.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
+    });
+    document.querySelectorAll<HTMLButtonElement>('.lang-toggle-btn').forEach((b) => {
+      b.setAttribute('aria-expanded', 'false');
+      b.querySelector('.chevron-icon')?.classList.remove('rotate-180');
+    });
+  }
+
   function initLanguageToggles() {
-    const langBtns = document.querySelectorAll<HTMLButtonElement>('.lang-toggle-btn');
-    const popovers = document.querySelectorAll<HTMLElement>('.lang-popover');
-
-    const LANG_LABELS: Record<Lang, string> = {
-      'zh-CN': '中',
-      'en': 'EN',
-      'ja': '日',
-      'ko': '한',
-    };
-
-    function updateAllToggleUI(lang: Lang) {
-      document.querySelectorAll<HTMLElement>('.active-lang-badge').forEach((badge) => {
-        badge.textContent = LANG_LABELS[lang] || '中';
-      });
-
-      document.querySelectorAll<HTMLButtonElement>('.lang-option-btn').forEach((btn) => {
-        const code = btn.getAttribute('data-lang-code');
-        const check = btn.querySelector('.check-icon');
-        if (code === lang) {
-          btn.classList.add('bg-[var(--surface-subtle)]', 'text-[var(--text-primary)]', 'font-semibold');
-          btn.classList.remove('text-[var(--text-secondary)]');
-          check?.classList.remove('opacity-0');
-        } else {
-          btn.classList.remove('bg-[var(--surface-subtle)]', 'text-[var(--text-primary)]', 'font-semibold');
-          btn.classList.add('text-[var(--text-secondary)]');
-          check?.classList.add('opacity-0');
-        }
-      });
-    }
-
-    // Apply current on init
+    const wrappers = document.querySelectorAll<HTMLElement>('.lang-toggle-wrapper');
     const currentLang = getCurrentLang();
     updateAllToggleUI(currentLang);
     applyTranslationsToDOM(currentLang);
 
-    // Setup dropdown toggle & outside click handling
-    langBtns.forEach((btn) => {
-      const container = btn.closest('.relative');
-      const popover = container?.querySelector<HTMLElement>('.lang-popover');
-      const chevron = btn.querySelector('.chevron-icon');
+    wrappers.forEach((wrapper) => {
+      const btn = wrapper.querySelector<HTMLButtonElement>('.lang-toggle-btn');
+      const popover = wrapper.querySelector<HTMLElement>('.lang-popover');
+      const chevron = btn?.querySelector<HTMLElement>('.chevron-icon');
 
-      if (!popover || (btn as any)._hasLangListener) return;
+      if (!btn || !popover) return;
+      if ((btn as any)._hasLangListener) return;
       (btn as any)._hasLangListener = true;
 
       function closeMenu() {
         popover?.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
-        btn.setAttribute('aria-expanded', 'false');
+        btn?.setAttribute('aria-expanded', 'false');
         chevron?.classList.remove('rotate-180');
       }
 
       function openMenu() {
-        // Close any other open popovers
-        popovers.forEach((p) => p.classList.add('opacity-0', 'scale-95', 'pointer-events-none'));
-        langBtns.forEach((b) => {
-          b.setAttribute('aria-expanded', 'false');
-          b.querySelector('.chevron-icon')?.classList.remove('rotate-180');
-        });
-
+        closeAllMenus();
         popover?.classList.remove('opacity-0', 'scale-95', 'pointer-events-none');
-        btn.setAttribute('aria-expanded', 'true');
+        btn?.setAttribute('aria-expanded', 'true');
         chevron?.classList.add('rotate-180');
       }
 
@@ -153,7 +154,10 @@ const popoverId = `${id}-popover`;
         }
       });
 
-      // Handle Option Selection
+      popover.addEventListener('click', (e) => {
+        e.stopPropagation();
+      });
+
       const optionBtns = popover.querySelectorAll<HTMLButtonElement>('.lang-option-btn');
       optionBtns.forEach((optBtn) => {
         optBtn.addEventListener('click', (e) => {
@@ -167,23 +171,19 @@ const popoverId = `${id}-popover`;
         });
       });
     });
+  }
 
-    // Close on click outside or Escape
-    document.addEventListener('click', (e) => {
-      popovers.forEach((p) => p.classList.add('opacity-0', 'scale-95', 'pointer-events-none'));
-      langBtns.forEach((b) => {
-        b.setAttribute('aria-expanded', 'false');
-        b.querySelector('.chevron-icon')?.classList.remove('rotate-180');
-      });
+  // Global document listeners attached only once
+  if (typeof window !== 'undefined' && !(window as any)._hasGlobalLangListeners) {
+    (window as any)._hasGlobalLangListeners = true;
+
+    document.addEventListener('click', () => {
+      closeAllMenus();
     });
 
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
-        popovers.forEach((p) => p.classList.add('opacity-0', 'scale-95', 'pointer-events-none'));
-        langBtns.forEach((b) => {
-          b.setAttribute('aria-expanded', 'false');
-          b.querySelector('.chevron-icon')?.classList.remove('rotate-180');
-        });
+        closeAllMenus();
       }
     });
 

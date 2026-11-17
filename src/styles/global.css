@@ -12,6 +12,8 @@
   --accent: #c2410c;
   --accent-hover: #9a3412;
   --accent-subtle: #ffedd5;
+  --surface-primary: #ffffff;
+  --surface-subtle: #f3f2ee;
   --card-bg: #ffffff;
   --card-border: #e7e5e4;
 }
@@ -28,6 +30,8 @@ html.dark {
   --accent: #f97316;
   --accent-hover: #fb923c;
   --accent-subtle: #431407;
+  --surface-primary: #1c1b19;
+  --surface-subtle: #262422;
   --card-bg: #181716;
   --card-border: #2a2826;
 }
