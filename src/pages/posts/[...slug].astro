@@ -49,9 +49,9 @@ const safeDescription = (description || content.replace(/<[^>]*>/g, '').replace(
               <span>·</span>
               <time class="mono">{date}</time>
               <span>·</span>
-              <span>约需 {readTime}</span>
+              <span data-i18n="posts.estRead" data-i18n-param-readTime={readTime}>约需 {readTime}</span>
               <span>·</span>
-              <span>{words} 字</span>
+              <span data-i18n="posts.wordCount" data-i18n-param-words={words}>{words} 字</span>
               <span>·</span>
               <span class="inline-flex items-center gap-1 text-[var(--text-secondary)]" title="文章总阅读量">
                 <svg class="h-3.5 w-3.5 text-[var(--accent)] opacity-85 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -184,11 +184,11 @@ const safeDescription = (description || content.replace(/<[^>]*>/g, '').replace(
         <footer class="mt-8 rounded-2xl border border-[var(--border-primary)] bg-[var(--surface-primary)] p-5 text-xs text-[var(--text-secondary)] space-y-2">
           <div class="flex items-center justify-between">
             <p>
-              文章标题：<strong class="text-[var(--text-primary)]">{title}</strong>
+              <span data-i18n="posts.copyrightTitle">文章标题：</span><strong class="text-[var(--text-primary)]">{title}</strong>
             </p>
             <span class="mono text-[10px] text-[var(--text-tertiary)]">CC BY-SA 4.0</span>
           </div>
-          <p class="text-[11px] text-[var(--text-tertiary)]">
+          <p class="text-[11px] text-[var(--text-tertiary)]" data-i18n="posts.copyrightNotice" data-i18n-param-date={date}>
             发布日期：{date} ｜ 欢迎转载，请保留出处并链接到原地址。
           </p>
         </footer>

@@ -61,7 +61,7 @@ const featuredProjects = recommendedProjects.slice(0, 4);
           <span data-i18n="home.greeting">你好，我是</span>
           <TomatoXWordmark size="md" />
         </h1>
-        <p class="text-xs sm:text-sm text-[var(--text-secondary)] mt-1">
+        <p class="text-xs sm:text-sm text-[var(--text-secondary)] mt-1" data-i18n="home.developer">
           全栈工程师 · 独立创作者 · <a href="https://xujiuran.top" class="text-[var(--accent)] hover:underline mono font-medium">xujiuran.top</a>
         </p>
       </div>
@@ -75,7 +75,7 @@ const featuredProjects = recommendedProjects.slice(0, 4);
     <!-- Status pill -->
     <div class="inline-flex items-center gap-2 rounded-full border border-[var(--border-primary)] bg-[var(--bg-secondary)] px-3 py-1 text-xs text-[var(--text-secondary)]">
       <span class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
-      <span>当前状态：正在迭代 Astro 极简博客主题与 AI 工具链</span>
+      <span data-i18n="home.currentStatus">当前状态：正在迭代 Astro 极简博客主题与 AI 工具链</span>
     </div>
   </section>
 
@@ -91,7 +91,7 @@ const featuredProjects = recommendedProjects.slice(0, 4);
         <img src="/images/icons/posts.png" alt="最近文章" class="h-6 w-6 sm:h-7 sm:w-7 object-contain inline-block shrink-0 rounded-lg shadow-xs" />
         <span data-i18n="home.recentPosts">最近文章</span>
       </h2>
-      <a href="/posts" class="text-xs sm:text-sm text-[var(--accent)] hover:underline flex items-center gap-1">
+      <a href="/posts" class="text-xs sm:text-sm text-[var(--accent)] hover:underline flex items-center gap-1" data-i18n="home.viewAllPostsCount">
         查看全部 (38) →
       </a>
     </div>
@@ -117,7 +117,7 @@ const featuredProjects = recommendedProjects.slice(0, 4);
         <img src="/images/icons/thoughts.png" alt="碎碎念" class="h-6 w-6 sm:h-7 sm:w-7 object-contain inline-block shrink-0 rounded-lg shadow-xs" />
         <span data-i18n="home.thoughts">碎碎念</span>
       </h2>
-      <a href="/thoughts" class="text-xs sm:text-sm text-[var(--accent)] hover:underline flex items-center gap-1">
+      <a href="/thoughts" class="text-xs sm:text-sm text-[var(--accent)] hover:underline flex items-center gap-1" data-i18n="home.moreThoughtsCount">
         更多随笔 (128) →
       </a>
     </div>
@@ -141,7 +141,7 @@ const featuredProjects = recommendedProjects.slice(0, 4);
         </h2>
         <span class="text-xs text-[var(--text-tertiary)] hidden sm:inline" data-i18n="home.toolsSub">自用常驻与高频利器</span>
       </div>
-      <a href="/projects" class="text-xs sm:text-sm text-[var(--accent)] hover:underline flex items-center gap-1">
+      <a href="/projects" class="text-xs sm:text-sm text-[var(--accent)] hover:underline flex items-center gap-1" data-i18n="home.viewAllToolsCount">
         查看全部 ({recommendedProjects.length}) →
       </a>
     </div>

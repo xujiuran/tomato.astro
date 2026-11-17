@@ -32,10 +32,10 @@ const daily60sData = hubData.digest;
               {daily60sData.date}
             </span>
           </div>
-          <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-[var(--text-primary)]" data-i18n="nav.news">
+          <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-[var(--text-primary)]" data-i18n="news.title">
             每日早报
           </h1>
-          <p class="mt-1 text-xs sm:text-sm text-[var(--text-secondary)]">
+          <p class="mt-1 text-xs sm:text-sm text-[var(--text-secondary)]" data-i18n="news.sub">
             晨起 60 秒通读天下事，实时纵览全网极客与科技风向。
           </p>
         </div>
@@ -50,7 +50,7 @@ const daily60sData = hubData.digest;
           >
             <span class="flex items-center gap-1.5">
               <img src="/images/icons/news.png" alt="60秒早报" class="h-4 w-4 object-contain inline-block shrink-0 rounded-xs" />
-              <span>60秒早报</span>
+              <span data-i18n="news.daily60s">60秒早报</span>
             </span>
             <span class="mono text-[10px] bg-[var(--bg-secondary)] text-[var(--text-tertiary)] px-1.5 py-0.2 rounded">
               {daily60sData.news.length}
@@ -64,7 +64,7 @@ const daily60sData = hubData.digest;
           >
             <span class="flex items-center gap-1.5">
               <img src="/images/icons/trending.png" alt="全网风向标" class="h-4 w-4 object-contain inline-block shrink-0 rounded-xs" />
-              <span>全网风向标</span>
+              <span data-i18n="news.hotNews">全网风向标</span>
             </span>
             <span class="mono text-[10px] bg-[var(--bg-secondary)] text-[var(--text-tertiary)] px-1.5 py-0.2 rounded">
               {hotNewsSources.length}平台

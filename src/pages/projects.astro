@@ -39,7 +39,7 @@ const categories = [
           <img src="/images/icons/tools.png" alt="极客利器" class="h-7 w-7 sm:h-8 sm:w-8 object-contain inline-block shrink-0 rounded-lg shadow-xs" />
           <span data-i18n="home.tools">极客利器 · 推荐项目</span>
         </h1>
-        <p class="mt-1 text-xs sm:text-sm text-[var(--text-secondary)] leading-relaxed max-w-2xl">
+        <p class="mt-1 text-xs sm:text-sm text-[var(--text-secondary)] leading-relaxed max-w-2xl" data-i18n="projects.sub">
           “工欲善其事，必先利其器。” 暂无个人开源作品，这里真诚记录并分享我日常高频使用、体验极佳的优秀开源项目与生产力工具。
         </p>
 
@@ -47,7 +47,7 @@ const categories = [
         <div class="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-3 border-t border-[var(--border-secondary)]">
           <div class="flex items-center gap-1.5 text-xs text-[var(--text-tertiary)]">
             <img src="/images/icons/thoughts.png" alt="提示" class="h-3.5 w-3.5 object-contain rounded-xs shrink-0 inline-block" />
-            <span>点击任意卡片可直达官网或 GitHub 源码仓库</span>
+            <span data-i18n="projects.tip">点击任意卡片可直达官网或 GitHub 源码仓库</span>
           </div>
 
           <div class="relative w-full sm:w-56">
@@ -55,6 +55,7 @@ const categories = [
               id="project-search-input"
               type="text"
               placeholder="搜索工具名称或关键词..."
+              data-i18n-placeholder="projects.searchPlaceholder"
               class="w-full rounded-lg border border-[var(--border-primary)] bg-[var(--bg-secondary)] px-3 py-1.5 pl-8 text-xs text-[var(--text-primary)] placeholder-[var(--text-tertiary)] focus:border-[var(--accent)] focus:outline-hidden transition-colors"
             />
             <svg class="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-[var(--text-tertiary)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

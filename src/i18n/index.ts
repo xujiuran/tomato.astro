@@ -84,7 +84,11 @@ export function applyTranslationsToDOM(lang?: Lang, root: ParentNode = document)
 
     const translated = t(key, activeLang, Object.keys(params).length ? params : undefined);
     if (translated) {
-      el.textContent = translated;
+      if (el.hasAttribute('data-i18n-html')) {
+        el.innerHTML = translated;
+      } else {
+        el.textContent = translated;
+      }
     }
   });
 

@@ -47,7 +47,7 @@ const moyuQuote = moyu?.moyuQuote || defaultQuote;
             <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
             <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
           </span>
-          <span class="text-[var(--text-secondary)] font-semibold">北京时间</span>
+          <span class="text-[var(--text-secondary)] font-semibold" data-i18n="moyu.beijingTime">北京时间</span>
         </div>
         <span class="mono text-[11px] bg-[var(--bg-secondary)] text-[var(--text-tertiary)] px-1.5 py-0.5 rounded">
           UTC+8
@@ -215,7 +215,7 @@ const moyuQuote = moyu?.moyuQuote || defaultQuote;
         <!-- Week -->
         <div>
           <div class="flex justify-between text-[11px] text-[var(--text-secondary)] mb-1">
-            <span>本周工作进度</span>
+            <span data-i18n="moyu.weekProgress">本周工作进度</span>
             <span class="mono font-semibold text-[var(--text-primary)]">{weekPercentage}%</span>
           </div>
           <div class="h-2 w-full rounded-full bg-[var(--bg-secondary)] overflow-hidden">
@@ -229,7 +229,7 @@ const moyuQuote = moyu?.moyuQuote || defaultQuote;
         <!-- Month -->
         <div>
           <div class="flex justify-between text-[11px] text-[var(--text-secondary)] mb-1">
-            <span>本月进度</span>
+            <span data-i18n="moyu.monthProgress">本月进度</span>
             <span class="mono font-semibold text-[var(--text-primary)]">{monthPercentage}%</span>
           </div>
           <div class="h-2 w-full rounded-full bg-[var(--bg-secondary)] overflow-hidden">
@@ -243,7 +243,7 @@ const moyuQuote = moyu?.moyuQuote || defaultQuote;
         <!-- Year -->
         <div>
           <div class="flex justify-between text-[11px] text-[var(--text-secondary)] mb-1">
-            <span>今年流逝</span>
+            <span data-i18n="moyu.yearProgress">今年流逝</span>
             <span class="mono font-semibold text-[var(--text-primary)]">{yearPercentage}%</span>
           </div>
           <div class="h-2 w-full rounded-full bg-[var(--bg-secondary)] overflow-hidden">
@@ -260,25 +260,25 @@ const moyuQuote = moyu?.moyuQuote || defaultQuote;
         <h4 class="text-xs font-bold text-[var(--text-primary)] mb-2">节日倒计时目标</h4>
         <div class="grid grid-cols-2 gap-2">
           <div class="rounded-lg bg-[var(--bg-secondary)] p-2.5 text-center transition-all hover:bg-[var(--bg-secondary)]/80">
-            <p class="text-[10px] text-[var(--text-tertiary)]">距离周末</p>
+            <p class="text-[10px] text-[var(--text-tertiary)]" data-i18n="moyu.weekend">距离周末</p>
             <p class="text-lg font-bold mono text-emerald-600 dark:text-emerald-400 mt-0.5">
               {daysToWeekend} <span class="text-[10px] font-normal">天</span>
             </p>
           </div>
           <div class="rounded-lg bg-[var(--bg-secondary)] p-2.5 text-center transition-all hover:bg-[var(--bg-secondary)]/80">
-            <p class="text-[10px] text-[var(--text-tertiary)]">距离元旦</p>
+            <p class="text-[10px] text-[var(--text-tertiary)]" data-i18n="moyu.newYear">距离元旦</p>
             <p class="text-lg font-bold mono text-blue-600 dark:text-blue-400 mt-0.5">
               {daysToNewYear} <span class="text-[10px] font-normal">天</span>
             </p>
           </div>
           <div class="rounded-lg bg-[var(--bg-secondary)] p-2.5 text-center transition-all hover:bg-[var(--bg-secondary)]/80">
-            <p class="text-[10px] text-[var(--text-tertiary)]">距离春节</p>
+            <p class="text-[10px] text-[var(--text-tertiary)]" data-i18n="moyu.springFestival">距离春节</p>
             <p class="text-lg font-bold mono text-red-600 dark:text-red-400 mt-0.5">
               {daysToSpringFestival} <span class="text-[10px] font-normal">天</span>
             </p>
           </div>
           <div class="rounded-lg bg-[var(--bg-secondary)] p-2.5 text-center transition-all hover:bg-[var(--bg-secondary)]/80">
-            <p class="text-[10px] text-[var(--text-tertiary)]">五一劳动节</p>
+            <p class="text-[10px] text-[var(--text-tertiary)]" data-i18n="moyu.laborDay">五一劳动节</p>
             <p class="text-lg font-bold mono text-purple-600 dark:text-purple-400 mt-0.5">
               {daysToLaborDay} <span class="text-[10px] font-normal">天</span>
             </p>
