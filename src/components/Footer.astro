@@ -15,10 +15,10 @@ const { containerClass = 'max-w-6xl' } = Astro.props;
       <div class="flex flex-col gap-1">
         <div class="flex items-center gap-2 text-sm font-semibold text-[var(--text-primary)]">
           <TomatoXWordmark size="sm" />
-          <span class="text-xs font-normal text-[var(--text-tertiary)]">· xujiuran.top · 生活需要记录，代码需要沉淀</span>
+          <span class="text-xs font-normal text-[var(--text-tertiary)]" data-i18n="footer.tagline">· xujiuran.top · 生活需要记录，代码需要沉淀</span>
         </div>
         <p class="text-[11px] text-[var(--text-secondary)]">
-          除特殊说明外，本站所有内容均采用 
+          <span data-i18n="footer.licensePre">除特殊说明外，本站所有内容均采用 </span>
           <a
             href="https://creativecommons.org/licenses/by-sa/4.0/"
             target="_blank"
@@ -27,20 +27,20 @@ const { containerClass = 'max-w-6xl' } = Astro.props;
           >
             CC BY-SA 4.0
           </a>
-          协议共享。
+          <span data-i18n="footer.licensePost"> 协议共享。</span>
         </p>
       </div>
 
       <div class="flex items-center gap-3 text-[11px]">
         <span>© 2026 TomatoX</span>
         <span>·</span>
-        <a href="/links" class="hover:text-[var(--accent)] transition-colors">友链</a>
+        <a href="/links" class="hover:text-[var(--accent)] transition-colors" data-i18n="footer.links">友链</a>
         <span>·</span>
         <a href="https://github.com/xujiuran" target="_blank" rel="noopener noreferrer" class="hover:text-[var(--accent)] transition-colors">GitHub</a>
         <span>·</span>
         <a href="/rss.xml" class="hover:text-[var(--accent)]">RSS</a>
         <span>·</span>
-        <span>Astro 驱动</span>
+        <span data-i18n="footer.poweredBy">Astro 驱动</span>
       </div>
     </div>
   </div>

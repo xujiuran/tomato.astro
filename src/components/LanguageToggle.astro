@@ -1,0 +1,200 @@
+---
+// LanguageToggle.astro
+// Compact, elegant multi-language selector dropdown (zh-CN, en, ja, ko)
+import { LANGUAGES } from '../i18n/translations';
+
+interface Props {
+  id?: string;
+  class?: string;
+}
+
+const { id = 'lang-toggle-btn', class: className = '' } = Astro.props;
+const popoverId = `${id}-popover`;
+---
+
+<div class="relative inline-block text-left select-none">
+  <!-- Trigger Button -->
+  <button
+    type="button"
+    id={id}
+    aria-label="切换语言 / Switch Language"
+    title="切换语言 (中 / EN / 日 / 한)"
+    aria-haspopup="true"
+    aria-expanded="false"
+    class:list={[
+      "lang-toggle-btn group relative inline-flex h-8.5 items-center gap-1.5 px-2 sm:px-2.5 rounded-xl border border-[var(--border-primary)] bg-[var(--card-bg)]/90 backdrop-blur-md text-[var(--text-secondary)] transition-all duration-200 hover:border-[var(--accent)] hover:text-[var(--accent)] hover:shadow-sm active:scale-95 cursor-pointer shadow-2xs",
+      className
+    ]}
+  >
+    <!-- Globe Icon -->
+    <svg class="h-3.5 w-3.5 opacity-80 group-hover:opacity-100 transition-opacity" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"></circle>
+      <line x1="2" y1="12" x2="22" y2="12"></line>
+      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+    </svg>
+
+    <!-- Active Language Badge -->
+    <span class="active-lang-badge mono text-[11px] font-bold text-[var(--text-primary)] group-hover:text-[var(--accent)] transition-colors">
+      中
+    </span>
+
+    <!-- Chevron down -->
+    <svg class="h-3 w-3 opacity-60 group-hover:opacity-100 transition-transform duration-200 chevron-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="6 9 12 15 18 9"></polyline>
+    </svg>
+  </button>
+
+  <!-- Dropdown Popover Menu -->
+  <div
+    id={popoverId}
+    class="lang-popover absolute right-0 mt-2 w-36 origin-top-right rounded-2xl border border-[var(--border-primary)] bg-[var(--card-bg)]/95 backdrop-blur-xl p-1.5 shadow-xl ring-1 ring-black/5 dark:ring-white/10 z-[100] transition-all duration-150 transform opacity-0 scale-95 pointer-events-none"
+    role="menu"
+    aria-orientation="vertical"
+  >
+    <div class="px-2 py-1 mb-1 text-[10px] font-semibold text-[var(--text-tertiary)] uppercase tracking-wider mono border-b border-[var(--border-secondary)]">
+      Select Language
+    </div>
+
+    <div class="space-y-0.5">
+      {LANGUAGES.map((lang) => (
+        <button
+          type="button"
+          data-lang-code={lang.code}
+          class="lang-option-btn w-full flex items-center justify-between rounded-xl px-2.5 py-1.5 text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-subtle)] transition-colors cursor-pointer text-left"
+          role="menuitem"
+        >
+          <span class="flex items-center gap-2">
+            <span class="text-sm leading-none">{lang.flag}</span>
+            <span class="font-medium">{lang.name}</span>
+          </span>
+          <svg class="check-icon h-3.5 w-3.5 text-[var(--accent)] opacity-0 transition-opacity" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        </button>
+      ))}
+    </div>
+  </div>
+</div>
+
+<script>
+  import { getCurrentLang, setLanguage, applyTranslationsToDOM, type Lang } from '../i18n';
+
+  function initLanguageToggles() {
+    const langBtns = document.querySelectorAll<HTMLButtonElement>('.lang-toggle-btn');
+    const popovers = document.querySelectorAll<HTMLElement>('.lang-popover');
+
+    const LANG_LABELS: Record<Lang, string> = {
+      'zh-CN': '中',
+      'en': 'EN',
+      'ja': '日',
+      'ko': '한',
+    };
+
+    function updateAllToggleUI(lang: Lang) {
+      document.querySelectorAll<HTMLElement>('.active-lang-badge').forEach((badge) => {
+        badge.textContent = LANG_LABELS[lang] || '中';
+      });
+
+      document.querySelectorAll<HTMLButtonElement>('.lang-option-btn').forEach((btn) => {
+        const code = btn.getAttribute('data-lang-code');
+        const check = btn.querySelector('.check-icon');
+        if (code === lang) {
+          btn.classList.add('bg-[var(--surface-subtle)]', 'text-[var(--text-primary)]', 'font-semibold');
+          btn.classList.remove('text-[var(--text-secondary)]');
+          check?.classList.remove('opacity-0');
+        } else {
+          btn.classList.remove('bg-[var(--surface-subtle)]', 'text-[var(--text-primary)]', 'font-semibold');
+          btn.classList.add('text-[var(--text-secondary)]');
+          check?.classList.add('opacity-0');
+        }
+      });
+    }
+
+    // Apply current on init
+    const currentLang = getCurrentLang();
+    updateAllToggleUI(currentLang);
+    applyTranslationsToDOM(currentLang);
+
+    // Setup dropdown toggle & outside click handling
+    langBtns.forEach((btn) => {
+      const container = btn.closest('.relative');
+      const popover = container?.querySelector<HTMLElement>('.lang-popover');
+      const chevron = btn.querySelector('.chevron-icon');
+
+      if (!popover || (btn as any)._hasLangListener) return;
+      (btn as any)._hasLangListener = true;
+
+      function closeMenu() {
+        popover?.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
+        btn.setAttribute('aria-expanded', 'false');
+        chevron?.classList.remove('rotate-180');
+      }
+
+      function openMenu() {
+        // Close any other open popovers
+        popovers.forEach((p) => p.classList.add('opacity-0', 'scale-95', 'pointer-events-none'));
+        langBtns.forEach((b) => {
+          b.setAttribute('aria-expanded', 'false');
+          b.querySelector('.chevron-icon')?.classList.remove('rotate-180');
+        });
+
+        popover?.classList.remove('opacity-0', 'scale-95', 'pointer-events-none');
+        btn.setAttribute('aria-expanded', 'true');
+        chevron?.classList.add('rotate-180');
+      }
+
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isOpen = btn.getAttribute('aria-expanded') === 'true';
+        if (isOpen) {
+          closeMenu();
+        } else {
+          openMenu();
+        }
+      });
+
+      // Handle Option Selection
+      const optionBtns = popover.querySelectorAll<HTMLButtonElement>('.lang-option-btn');
+      optionBtns.forEach((optBtn) => {
+        optBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const targetLang = optBtn.getAttribute('data-lang-code') as Lang | null;
+          if (targetLang) {
+            setLanguage(targetLang);
+            updateAllToggleUI(targetLang);
+          }
+          closeMenu();
+        });
+      });
+    });
+
+    // Close on click outside or Escape
+    document.addEventListener('click', (e) => {
+      popovers.forEach((p) => p.classList.add('opacity-0', 'scale-95', 'pointer-events-none'));
+      langBtns.forEach((b) => {
+        b.setAttribute('aria-expanded', 'false');
+        b.querySelector('.chevron-icon')?.classList.remove('rotate-180');
+      });
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        popovers.forEach((p) => p.classList.add('opacity-0', 'scale-95', 'pointer-events-none'));
+        langBtns.forEach((b) => {
+          b.setAttribute('aria-expanded', 'false');
+          b.querySelector('.chevron-icon')?.classList.remove('rotate-180');
+        });
+      }
+    });
+
+    window.addEventListener('tomatox:lang-change', ((e: CustomEvent<{ lang: Lang }>) => {
+      if (e.detail && e.detail.lang) {
+        updateAllToggleUI(e.detail.lang);
+      }
+    }) as EventListener);
+  }
+
+  initLanguageToggles();
+  document.addEventListener('astro:page-load', initLanguageToggles);
+  document.addEventListener('astro:after-swap', initLanguageToggles);
+</script>

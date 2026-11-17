@@ -1,5 +1,6 @@
 ---
 import ThemeToggle from './ThemeToggle.astro';
+import LanguageToggle from './LanguageToggle.astro';
 import TomatoXWordmark from './TomatoXWordmark.astro';
 
 interface Props {
@@ -13,30 +14,37 @@ const navItems = [
   {
     label: '首页',
     href: '/',
+    key: 'home',
   },
   {
     label: '文章',
     href: '/posts',
+    key: 'posts',
   },
   {
     label: '早报',
     href: '/news',
+    key: 'news',
   },
   {
     label: '碎碎念',
     href: '/thoughts',
+    key: 'thoughts',
   },
   {
     label: '项目',
     href: '/projects',
+    key: 'projects',
   },
   {
     label: '友链',
     href: '/links',
+    key: 'links',
   },
   {
     label: '关于',
     href: '/about',
+    key: 'about',
   },
 ];
 ---
@@ -65,9 +73,9 @@ const navItems = [
       <div class="flex flex-col justify-center min-w-0">
         <div class="flex items-center gap-1 shrink-0 whitespace-nowrap">
           <TomatoXWordmark size="sm" />
-          <span class="text-xs font-semibold text-[var(--text-primary)]">· 随笔</span>
+          <span class="text-xs font-semibold text-[var(--text-primary)]" data-i18n="header.subtitle">· 随笔</span>
         </div>
-        <p class="hidden text-[10px] text-[var(--text-secondary)] sm:block -mt-0.5 mono truncate">
+        <p class="hidden text-[10px] text-[var(--text-secondary)] sm:block -mt-0.5 mono truncate" data-i18n="header.motto">
           xujiuran.top · 代码与日常
         </p>
       </div>
@@ -83,6 +91,7 @@ const navItems = [
               <a
                 href={item.href}
                 data-astro-prefetch="hover"
+                data-i18n={`nav.${item.key}`}
                 class:list={[
                   'rounded-md px-2.5 py-1 transition-all text-xs lg:text-sm active:scale-95 inline-flex items-center gap-1 whitespace-nowrap',
                   isActive
@@ -105,6 +114,7 @@ const navItems = [
         id="quick-search-btn"
         data-open-command-palette
         type="button"
+        data-i18n-title="header.searchTitle"
         class="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border-primary)] bg-[var(--bg-secondary)] px-2 py-1 text-xs text-[var(--text-secondary)] transition-all hover:text-[var(--text-primary)] hover:border-[var(--text-secondary)] active:scale-95 cursor-pointer shadow-2xs"
         title="全局指令面板 (⌘K 或 /)"
       >
@@ -112,7 +122,7 @@ const navItems = [
           <circle cx="11" cy="11" r="8"></circle>
           <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
         </svg>
-        <span class="hidden xl:inline text-[11px] font-medium">搜索</span>
+        <span class="hidden xl:inline text-[11px] font-medium" data-i18n="header.search">搜索</span>
         <kbd class="mono rounded border border-[var(--border-primary)] bg-[var(--bg-primary)] px-1 py-0.5 text-[10px] text-[var(--text-tertiary)] font-semibold shadow-2xs">⌘K</kbd>
       </button>
 
@@ -129,6 +139,9 @@ const navItems = [
         </svg>
       </a>
 
+      <!-- Language Selector -->
+      <LanguageToggle id="lang-toggle-btn" />
+
       <!-- Theme Switcher -->
       <ThemeToggle id="theme-toggle-btn" />
     </nav>
@@ -143,12 +156,17 @@ const navItems = [
         class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--border-primary)] bg-[var(--bg-secondary)] text-[var(--text-secondary)] transition-all hover:border-[var(--text-secondary)] hover:text-[var(--text-primary)] active:scale-95 cursor-pointer shadow-2xs"
         aria-label="全局指令搜索"
         title="搜索 (⌘K)"
+        data-i18n-title="header.searchTitle"
+        data-i18n-aria="header.searchTitle"
       >
         <svg class="h-4 w-4 text-red-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="11" cy="11" r="8"></circle>
           <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
         </svg>
       </button>
+
+      <!-- Language Selector -->
+      <LanguageToggle id="mobile-lang-toggle-btn" />
 
       <!-- Theme Switcher -->
       <ThemeToggle id="mobile-theme-toggle-btn" />
@@ -193,7 +211,7 @@ const navItems = [
             <circle cx="11" cy="11" r="8"></circle>
             <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
           </svg>
-          <span class="font-medium text-[var(--text-primary)]">快捷指令与搜索...</span>
+          <span class="font-medium text-[var(--text-primary)]" data-i18n="search.placeholder">快捷指令与搜索...</span>
         </div>
         <kbd class="mono rounded border border-[var(--border-primary)] bg-[var(--bg-primary)] px-1.5 py-0.5 text-[10px] text-[var(--text-tertiary)] font-semibold shadow-2xs">⌘K</kbd>
       </button>
@@ -244,6 +262,12 @@ const navItems = [
                   <path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/>
                 </>
               )}
+              {item.href === '/links' && (
+                <>
+                  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+                </>
+              )}
               {item.href === '/about' && (
                 <>
                   <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
@@ -251,7 +275,7 @@ const navItems = [
                 </>
               )}
             </svg>
-            <span class="whitespace-nowrap">{item.label}</span>
+            <span class="whitespace-nowrap" data-i18n={`nav.${item.key}`}>{item.label}</span>
           </a>
         );
       })}
@@ -259,7 +283,7 @@ const navItems = [
 
     <!-- Mobile Footer Info & External Links -->
     <div class="mt-2.5 pt-2 border-t border-[var(--border-secondary)] flex items-center justify-between text-xs text-[var(--text-tertiary)]">
-      <span class="mono text-[11px]">xujiuran.top · 代码与日常</span>
+      <span class="mono text-[11px]" data-i18n="header.motto">xujiuran.top · 代码与日常</span>
       <a
         href="https://github.com/xujiuran"
         target="_blank"

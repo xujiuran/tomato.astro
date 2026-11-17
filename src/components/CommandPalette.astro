@@ -26,6 +26,7 @@ import { searchIndex } from '../data/searchIndex';
         id="command-palette-input"
         type="text"
         placeholder="搜索文章、项目、随想，或键入快捷命令..."
+        data-i18n-placeholder="search.placeholder"
         autocomplete="off"
         spellcheck="false"
         class="w-full bg-transparent px-3 text-sm text-[var(--text-primary)] placeholder-[var(--text-tertiary)] outline-hidden focus:outline-hidden"
@@ -39,7 +40,7 @@ import { searchIndex } from '../data/searchIndex';
         >
           ✕
         </button>
-        <kbd class="mono rounded-md border border-zinc-200 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 text-[10px] font-semibold text-[var(--text-secondary)] shadow-2xs">ESC</kbd>
+        <kbd class="mono rounded-md border border-zinc-200 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 text-[10px] font-semibold text-[var(--text-secondary)] shadow-2xs" data-i18n="search.escClose">ESC</kbd>
       </div>
     </div>
 
@@ -59,7 +60,7 @@ import { searchIndex } from '../data/searchIndex';
           <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
         </svg>
       </div>
-      <p class="text-sm font-medium text-[var(--text-primary)]">未找到相关匹配项</p>
+      <p class="text-sm font-medium text-[var(--text-primary)]" data-i18n="search.noResults">未找到相关匹配项</p>
       <p class="mt-1 text-xs text-[var(--text-tertiary)]">试着搜索 “主题”、“文章”、“早报” 或 “工具”</p>
     </div>
 
@@ -69,11 +70,11 @@ import { searchIndex } from '../data/searchIndex';
         <span class="inline-flex items-center gap-1">
           <kbd class="mono rounded border border-zinc-200 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800 px-1 text-[10px]">↑</kbd>
           <kbd class="mono rounded border border-zinc-200 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800 px-1 text-[10px]">↓</kbd>
-          <span>切换</span>
+          <span data-i18n="search.moveHint">切换</span>
         </span>
         <span class="inline-flex items-center gap-1">
           <kbd class="mono rounded border border-zinc-200 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800 px-1.5 text-[10px]">↵</kbd>
-          <span>执行 / 打开</span>
+          <span data-i18n="search.selectHint">执行 / 打开</span>
         </span>
       </div>
       <div class="flex items-center gap-1.5 mono text-[10px]">
@@ -99,6 +100,8 @@ import { searchIndex } from '../data/searchIndex';
 </div>
 
 <script>
+  import { t } from '../i18n';
+
   interface SearchItem {
     id: string;
     title: string;
@@ -111,6 +114,14 @@ import { searchIndex } from '../data/searchIndex';
     badge?: string;
     keywords?: string[];
   }
+
+  const CATEGORY_I18N_KEYS: Record<string, string> = {
+    '快捷指令': 'search.actionCategory',
+    '页面导航': 'search.navCategory',
+    '深度长文': 'nav.posts',
+    '极客利器': 'nav.projects',
+    '即时随想': 'nav.thoughts',
+  };
 
   function initCommandPalette() {
     const backdrop = document.getElementById('command-palette-backdrop');
@@ -230,10 +241,11 @@ import { searchIndex } from '../data/searchIndex';
       let globalIndex = 0;
 
       for (const [category, items] of Object.entries(grouped)) {
+        const displayCategory = CATEGORY_I18N_KEYS[category] ? t(CATEGORY_I18N_KEYS[category]) : category;
         html += `
           <div class="pt-2 first:pt-0">
             <div class="px-2 py-1 text-[11px] font-semibold tracking-wider text-[var(--text-tertiary)] uppercase flex items-center justify-between">
-              <span>${category}</span>
+              <span>${displayCategory}</span>
               <span class="mono text-[10px] font-normal opacity-70">${items.length} 项</span>
             </div>
             <div class="mt-0.5 space-y-0.5">

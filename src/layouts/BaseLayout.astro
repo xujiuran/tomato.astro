@@ -35,7 +35,7 @@ const {
     <link rel="alternate" type="application/rss+xml" title="TomatoX 随笔 RSS" href="/rss.xml" />
     <ClientRouter />
 
-    <!-- Anti-flicker & persistent theme script across View Transitions -->
+    <!-- Anti-flicker & persistent theme and language script across View Transitions -->
     <script is:inline>
       function applyTheme(targetDoc) {
         try {
@@ -51,19 +51,32 @@ const {
         } catch (_) {}
       }
 
+      function applyLang(targetDoc) {
+        try {
+          const doc = targetDoc || document;
+          const stored = localStorage.getItem('tomatox_lang');
+          if (stored && ['zh-CN', 'en', 'ja', 'ko'].includes(stored)) {
+            doc.documentElement.setAttribute('lang', stored);
+          }
+        } catch (_) {}
+      }
+
       // 1. Initial execution on page load/refresh
       applyTheme();
+      applyLang();
 
-      // 2. Before ClientRouter swaps documents, carry over dark class to the incoming document
+      // 2. Before ClientRouter swaps documents, carry over theme and lang to the incoming document
       document.addEventListener('astro:before-swap', function (ev) {
         if (ev && ev.newDocument) {
           applyTheme(ev.newDocument);
+          applyLang(ev.newDocument);
         }
       });
 
       // 3. Immediately after DOM swap fallback
       document.addEventListener('astro:after-swap', function () {
         applyTheme(document);
+        applyLang(document);
       });
 
       // 4. Real-time OS system theme listener
@@ -111,6 +124,7 @@ const {
 
     <script>
       import { fetchBatchViews, formatViewCount } from '../lib/viewsService';
+      import { applyTranslationsToDOM, type Lang } from '../i18n';
 
       function setupCardViewsTracker() {
         const cardViewEls = document.querySelectorAll<HTMLElement>('.post-card-views[data-view-slug]');
@@ -152,7 +166,18 @@ const {
 
       setupRouteProgressBar();
       setupCardViewsTracker();
-      document.addEventListener('astro:page-load', setupCardViewsTracker);
+      applyTranslationsToDOM();
+
+      document.addEventListener('astro:page-load', () => {
+        setupCardViewsTracker();
+        applyTranslationsToDOM();
+      });
+
+      window.addEventListener('tomatox:lang-change', ((e: CustomEvent<{ lang: Lang }>) => {
+        if (e.detail && e.detail.lang) {
+          applyTranslationsToDOM(e.detail.lang);
+        }
+      }) as EventListener);
     </script>
   </body>
 </html>
