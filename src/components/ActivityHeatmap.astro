@@ -82,7 +82,7 @@ const { weeks, totalCount, currentStreak, longestStreak } = generateHeatmapData(
 const months = ['10月', '11月', '12月', '1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月'];
 ---
 
-<div class="rounded-2xl border border-[var(--border-primary)] bg-[var(--surface-primary)] p-4 sm:p-5 shadow-xs transition-colors">
+<div class="cv-auto rounded-2xl border border-[var(--border-primary)] bg-[var(--surface-primary)] p-4 sm:p-5 shadow-xs transition-colors">
   <!-- Heatmap Header -->
   <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[var(--border-secondary)] pb-3.5 mb-4">
     <div class="flex items-center gap-2.5">
@@ -139,21 +139,14 @@ const months = ['10月', '11月', '12月', '1月', '2月', '3月', '4月', '5月
       </div>
 
       <!-- 52 Week Columns -->
-      <div class="flex gap-[3.5px] flex-1">
+      <div id="heatmap-cells-grid" class="flex gap-[3.5px] flex-1">
         {weeks.map((week) => (
           <div class="flex flex-col gap-[3.5px]">
             {week.map((day) => (
-              <div
-                class:list={[
-                  'activity-cell h-[10.5px] w-[10.5px] rounded-[2.5px] transition-transform hover:scale-125 cursor-pointer relative group',
-                  day.level === 0 && 'bg-zinc-200/70 dark:bg-zinc-800/70',
-                  day.level === 1 && 'bg-red-200 dark:bg-red-950/80',
-                  day.level === 2 && 'bg-red-400 dark:bg-red-800/80',
-                  day.level === 3 && 'bg-red-500 dark:bg-red-600',
-                  day.level === 4 && 'bg-red-600 dark:bg-red-500 shadow-[0_0_5px_rgba(239,68,68,0.6)]'
-                ]}
-                data-tooltip={`${day.count > 0 ? `${day.count} 次提交与随笔` : '无活动'} · ${day.date}`}
-              ></div>
+              <i
+                class={`activity-cell hm-c hm-${day.level}`}
+                data-tip={`${day.count > 0 ? `${day.count} 次提交与随笔` : '无活动'} · ${day.date}`}
+              />
             ))}
           </div>
         ))}
@@ -200,28 +193,30 @@ const months = ['10月', '11月', '12月', '1月', '2月', '3月', '4月', '5月
 
 <script>
   function setupHeatmapTooltips() {
+    const grid = document.getElementById('heatmap-cells-grid');
     const tooltip = document.getElementById('heatmap-floating-tooltip');
     const textSpan = document.getElementById('heatmap-floating-tooltip-text');
-    const cells = document.querySelectorAll('.activity-cell');
 
-    if (!tooltip || !textSpan) return;
+    if (!grid || !tooltip || !textSpan || (grid as any)._hasHeatmapDelegation) return;
+    (grid as any)._hasHeatmapDelegation = true;
 
-    cells.forEach((cell) => {
-      cell.addEventListener('mouseenter', (e) => {
-        const text = cell.getAttribute('data-tooltip');
-        if (!text) return;
+    // Event delegation: 1 listener instead of 728 per-cell listeners!
+    grid.addEventListener('mouseover', (e) => {
+      const cell = (e.target as HTMLElement).closest<HTMLElement>('.activity-cell');
+      if (!cell) return;
+      const text = cell.getAttribute('data-tip');
+      if (!text) return;
 
-        textSpan.textContent = text;
-        tooltip.classList.remove('hidden');
+      textSpan.textContent = text;
+      tooltip.classList.remove('hidden');
 
-        const rect = cell.getBoundingClientRect();
-        tooltip.style.left = `${rect.left + rect.width / 2}px`;
-        tooltip.style.top = `${rect.top - 6}px`;
-      });
+      const rect = cell.getBoundingClientRect();
+      tooltip.style.left = `${rect.left + rect.width / 2}px`;
+      tooltip.style.top = `${rect.top - 6}px`;
+    });
 
-      cell.addEventListener('mouseleave', () => {
-        tooltip.classList.add('hidden');
-      });
+    grid.addEventListener('mouseleave', () => {
+      tooltip.classList.add('hidden');
     });
   }
 

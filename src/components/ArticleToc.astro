@@ -114,17 +114,41 @@ const { toc, title = '目录' } = Astro.props;
 </div>
 
 <script>
+  let tocAbortController: AbortController | null = null;
+
+  document.addEventListener('astro:before-swap', () => {
+    tocAbortController?.abort();
+    tocAbortController = null;
+  });
+
   function setupArticleReadingSuite() {
+    tocAbortController?.abort();
     const article = document.querySelector('article');
     const progressBar = document.getElementById('article-reading-progress');
+    if (!article || !progressBar) return;
+
+    tocAbortController = new AbortController();
+    const { signal } = tocAbortController;
+
     const progressBadge = document.getElementById('toc-progress-badge');
     const tocLinks = document.querySelectorAll('.toc-link');
     const scrollTopBtn = document.getElementById('toc-scroll-top-btn');
     const posterBtn = document.getElementById('toc-poster-btn');
     const shareBtn = document.getElementById('toc-share-btn');
 
-    // 1. Reading Progress Bar & Percentage
-    function updateProgress() {
+    const headingElements: HTMLElement[] = [];
+    tocLinks.forEach((link) => {
+      const id = link.getAttribute('data-toc-id');
+      if (id) {
+        const el = document.getElementById(id);
+        if (el) headingElements.push(el);
+      }
+    });
+
+    let lastActiveId = '';
+    let ticking = false;
+
+    function syncOnScrollFrame() {
       if (!article) return;
       const rect = article.getBoundingClientRect();
       const totalHeight = rect.height - window.innerHeight;
@@ -137,32 +161,12 @@ const { toc, title = '目录' } = Astro.props;
         percent = rect.bottom <= window.innerHeight ? 100 : 0;
       }
 
-      if (progressBar) {
-        progressBar.style.width = `${percent}%`;
-      }
-      if (progressBadge) {
-        progressBadge.textContent = `${percent}%`;
-      }
-    }
+      if (progressBar) progressBar.style.width = `${percent}%`;
+      if (progressBadge) progressBadge.textContent = `${percent}%`;
 
-    window.addEventListener('scroll', updateProgress, { passive: true });
-    updateProgress();
-
-    // 2. TOC Active Scroll Spy
-    if (tocLinks.length > 0) {
-      const headingElements: HTMLElement[] = [];
-      tocLinks.forEach((link) => {
-        const id = link.getAttribute('data-toc-id');
-        if (id) {
-          const el = document.getElementById(id);
-          if (el) headingElements.push(el);
-        }
-      });
-
-      function updateActiveHeading() {
+      if (headingElements.length > 0) {
         const scrollY = window.scrollY;
-        const offset = 120; // sticky header buffer
-
+        const offset = 120;
         let currentId = '';
         for (let i = 0; i < headingElements.length; i++) {
           const heading = headingElements[i];
@@ -172,30 +176,40 @@ const { toc, title = '目录' } = Astro.props;
             break;
           }
         }
+        if (!currentId) currentId = headingElements[0].id;
 
-        if (!currentId && headingElements.length > 0) {
-          currentId = headingElements[0].id;
+        if (currentId !== lastActiveId) {
+          lastActiveId = currentId;
+          tocLinks.forEach((link) => {
+            const id = link.getAttribute('data-toc-id');
+            const indicator = link.querySelector('.toc-indicator');
+            if (id === currentId) {
+              link.classList.add('text-[var(--accent)]', 'bg-[var(--surface-subtle)]', 'font-semibold');
+              link.classList.remove('text-[var(--text-secondary)]');
+              indicator?.classList.remove('opacity-0');
+            } else {
+              link.classList.remove('text-[var(--accent)]', 'bg-[var(--surface-subtle)]', 'font-semibold');
+              link.classList.add('text-[var(--text-secondary)]');
+              indicator?.classList.add('opacity-0');
+            }
+          });
         }
-
-        tocLinks.forEach((link) => {
-          const id = link.getAttribute('data-toc-id');
-          const indicator = link.querySelector('.toc-indicator');
-          if (id === currentId) {
-            link.classList.add('text-[var(--accent)]', 'bg-[var(--surface-subtle)]', 'font-semibold');
-            link.classList.remove('text-[var(--text-secondary)]');
-            if (indicator) indicator.classList.remove('opacity-0');
-          } else {
-            link.classList.remove('text-[var(--accent)]', 'bg-[var(--surface-subtle)]', 'font-semibold');
-            link.classList.add('text-[var(--text-secondary)]');
-            if (indicator) indicator.classList.add('opacity-0');
-          }
-        });
       }
 
-      window.addEventListener('scroll', updateActiveHeading, { passive: true });
-      updateActiveHeading();
+      ticking = false;
+    }
 
-      // Smooth click navigation
+    function onScroll() {
+      if (!ticking) {
+        ticking = true;
+        window.requestAnimationFrame(syncOnScrollFrame);
+      }
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true, signal });
+    syncOnScrollFrame();
+
+    if (tocLinks.length > 0) {
       tocLinks.forEach((link) => {
         link.addEventListener('click', (e) => {
           e.preventDefault();
@@ -207,7 +221,7 @@ const { toc, title = '目录' } = Astro.props;
               window.scrollTo({ top, behavior: 'smooth' });
             }
           }
-        });
+        }, { signal });
       });
     }
 

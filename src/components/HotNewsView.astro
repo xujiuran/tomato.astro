@@ -248,7 +248,7 @@ const financeSources = initialSources.filter((s) => s.column === 'finance');
   <div id="sources-container" class="space-y-6">
     {initialSources.map((source) => (
       <div
-        class="source-block rounded-xl border border-[var(--border-primary)] bg-[var(--card-bg)] p-4 sm:p-5 shadow-xs transition-all"
+        class="source-block cv-auto rounded-xl border border-[var(--border-primary)] bg-[var(--card-bg)] p-4 sm:p-5 shadow-xs transition-all"
         data-source-id={source.id}
         data-source-column={source.column}
       >
@@ -283,50 +283,22 @@ const financeSources = initialSources.filter((s) => s.column === 'finance');
         <ul class="divide-y divide-[var(--border-secondary)]">
           {source.items.map((item, index) => {
             const rank = index + 1;
-            const isTop3 = rank <= 3;
+            const rkCls = rank <= 3 ? `hn-rk hn-rk-${rank}` : 'hn-rk';
             return (
-              <li
-                class="hot-item group flex items-start gap-3 py-2.5 hover:bg-[var(--bg-secondary)]/40 rounded-lg px-2 -mx-2 transition-colors"
-                data-rank={rank}
-              >
-                <!-- Rank Badge -->
-                <span
-                  class:list={[
-                    'mono text-xs font-bold shrink-0 mt-0.5 flex h-5 w-5 items-center justify-center rounded',
-                    rank === 1 ? 'bg-red-500 text-white' :
-                    rank === 2 ? 'bg-orange-500 text-white' :
-                    rank === 3 ? 'bg-amber-500 text-white' :
-                    'text-[var(--text-tertiary)] bg-[var(--bg-secondary)] font-medium'
-                  ]}
-                >
-                  {rank}
-                </span>
-
-                <!-- Title & Meta -->
+              <li class="hot-item hn-li" data-rank={rank}>
+                <span class={rkCls}>{rank}</span>
                 <div class="flex-1 min-w-0">
                   <a
                     href={item.url.startsWith('/') ? `${source.home.replace(/\/+$/, '')}${item.url}` : item.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    class="hot-title text-sm text-[var(--text-primary)] hover:text-[var(--accent)] font-normal transition-colors line-clamp-2 leading-snug group-hover:underline"
-                    title={item.extra?.hover || item.title}
+                    class="hot-title hn-a"
                   >
                     {item.title}
                   </a>
-
-                  {item.extra?.hover && (
-                    <p class="text-[12px] text-[var(--text-tertiary)] line-clamp-1 mt-0.5">
-                      {item.extra.hover}
-                    </p>
-                  )}
+                  {item.extra?.hover && <p class="hn-sub">{item.extra.hover}</p>}
                 </div>
-
-                <!-- Heat / Stats Pill -->
-                {item.extra?.info && (
-                  <span class="mono text-[11px] text-[var(--text-tertiary)] group-hover:text-[var(--text-secondary)] shrink-0 mt-0.5 bg-[var(--bg-secondary)] px-1.5 py-0.5 rounded transition-colors">
-                    {item.extra.info}
-                  </span>
-                )}
+                {item.extra?.info && <span class="hn-pill">{item.extra.info}</span>}
               </li>
             );
           })}
@@ -342,10 +314,22 @@ const financeSources = initialSources.filter((s) => s.column === 'finance');
 </div>
 
 <script>
+  import { getCachedHotSync, fetchCachedHot, runWhenIdle } from '../lib/clientNewsCache';
+
+  let hotAbortController: AbortController | null = null;
+  document.addEventListener('astro:before-swap', () => {
+    hotAbortController?.abort();
+    hotAbortController = null;
+  });
+
   function setupHotNewsInteractions() {
     const dropdownWrapper = document.getElementById('platform-dropdown-wrapper');
     if (!dropdownWrapper || (dropdownWrapper as any)._hasHotNewsInteractions) return;
     (dropdownWrapper as any)._hasHotNewsInteractions = true;
+
+    hotAbortController?.abort();
+    hotAbortController = new AbortController();
+    const { signal } = hotAbortController;
 
     const densityBtns = document.querySelectorAll('.density-btn');
     const categoryTabs = document.querySelectorAll('.category-tab');
@@ -497,13 +481,13 @@ const financeSources = initialSources.filter((s) => s.column === 'finance');
       if (!dropdownWrapper?.contains(e.target as Node)) {
         toggleDropdown(false);
       }
-    });
+    }, { signal });
 
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         toggleDropdown(false);
       }
-    });
+    }, { signal });
 
     // Function to set active platform
     function setPlatform(platformId: string, name: string, color?: string) {
@@ -597,108 +581,69 @@ const financeSources = initialSources.filter((s) => s.column === 'finance');
       filterView();
     });
 
-    // Live refresh via tomato.news VPS API (with graceful fallback)
+    const PLATFORM_HOMES: Record<string, string> = {
+      ithome: 'https://www.ithome.com',
+      weibo: 'https://s.weibo.com',
+      zhihu: 'https://www.zhihu.com',
+      bilibili: 'https://www.bilibili.com',
+      baidu: 'https://www.baidu.com',
+      douyin: 'https://www.douyin.com',
+      toutiao: 'https://www.toutiao.com',
+      sspai: 'https://sspai.com',
+      juejin: 'https://juejin.cn',
+      hackernews: 'https://news.ycombinator.com',
+      v2ex: 'https://v2ex.com',
+      github: 'https://github.com',
+      wallstreetcn: 'https://wallstreetcn.com',
+      'cls-hot': 'https://www.cls.cn',
+      '36kr': 'https://36kr.com',
+    };
+
+    function applyHotSourcesData(sourcesData: any[]) {
+      if (!Array.isArray(sourcesData)) return;
+      sourcesData.forEach((s) => {
+        const block = document.querySelector(`[data-source-id="${s.id}"]`);
+        if (block && Array.isArray(s.items) && s.items.length > 0) {
+          const list = block.querySelector('ul');
+          if (list) {
+            const firstNew = (s.items[0]?.title || '').trim();
+            const firstCur = list.querySelector('.hot-title')?.textContent?.trim() || '';
+            if (firstNew && firstNew === firstCur) return;
+
+            const home = PLATFORM_HOMES[s.id] || '';
+            list.innerHTML = s.items.slice(0, 25).map((item: any, idx: number) => {
+              const rank = idx + 1;
+              const rkCls = rank <= 3 ? `hn-rk hn-rk-${rank}` : 'hn-rk';
+
+              let itemUrl = (item.url || '').trim();
+              if (itemUrl.startsWith('/')) {
+                itemUrl = `${home}${itemUrl}`;
+              } else if (itemUrl && !itemUrl.startsWith('http://') && !itemUrl.startsWith('https://')) {
+                itemUrl = `${home}/${itemUrl.replace(/^\/+/, '')}`;
+              } else if (!itemUrl) {
+                itemUrl = home;
+              }
+
+              return `<li class="hot-item hn-li" data-rank="${rank}"><span class="${rkCls}">${rank}</span><div class="flex-1 min-w-0"><a href="${itemUrl}" target="_blank" rel="noopener noreferrer" class="hot-title hn-a">${item.title}</a>${item.extra?.hover ? `<p class="hn-sub">${item.extra.hover}</p>` : ''}</div>${item.extra?.info ? `<span class="hn-pill">${item.extra.info}</span>` : ''}</li>`;
+            }).join('');
+          }
+        }
+      });
+      applyDensity(currentDensity);
+
+      const statusTime = document.getElementById('status-timestamp');
+      if (statusTime) {
+        const now = new Date();
+        statusTime.textContent = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')} 实时同步`;
+      }
+    }
+
     async function refreshHotNews(showSpinner = true) {
       if (showSpinner) spinner?.classList.add('animate-spin');
       try {
-        let sourcesData: any[] | null = null;
-
-        // 1. Direct fetch to self-hosted tomato.news VPS API (CORS enabled)
-        try {
-          const res = await fetch(`https://news.xujiuran.top/api/news/hot?_t=${Date.now()}`, {
-            signal: AbortSignal.timeout(8000),
-            headers: { Accept: 'application/json' },
-          });
-          if (res.ok) {
-            const json = await res.json();
-            if (Array.isArray(json) && json.length > 0) {
-              sourcesData = json;
-            }
-          }
-        } catch (_vpsErr) {
-          // Fallback to static snapshot or local proxy
-        }
-
-        // 2. Fallback attempt: static build snapshot or local proxy
-        if (!sourcesData) {
-          try {
-            const localRes = await fetch(`/api/hotnews.json?refresh=true&_t=${Date.now()}`);
-            if (localRes.ok) {
-              const localJson = await localRes.json();
-              if (Array.isArray(localJson)) {
-                sourcesData = localJson;
-              }
-            }
-          } catch (_localErr) {}
-        }
-
-        const PLATFORM_HOMES: Record<string, string> = {
-          ithome: 'https://www.ithome.com',
-          weibo: 'https://s.weibo.com',
-          zhihu: 'https://www.zhihu.com',
-          bilibili: 'https://www.bilibili.com',
-          baidu: 'https://www.baidu.com',
-          douyin: 'https://www.douyin.com',
-          toutiao: 'https://www.toutiao.com',
-          sspai: 'https://sspai.com',
-          juejin: 'https://juejin.cn',
-          hackernews: 'https://news.ycombinator.com',
-          v2ex: 'https://v2ex.com',
-          github: 'https://github.com',
-          wallstreetcn: 'https://wallstreetcn.com',
-          'cls-hot': 'https://www.cls.cn',
-          '36kr': 'https://36kr.com',
-        };
-
-        if (Array.isArray(sourcesData)) {
-          sourcesData.forEach((s) => {
-            const block = document.querySelector(`[data-source-id="${s.id}"]`);
-            if (block && Array.isArray(s.items) && s.items.length > 0) {
-              const list = block.querySelector('ul');
-              if (list) {
-                const home = PLATFORM_HOMES[s.id] || '';
-                list.innerHTML = s.items.slice(0, 25).map((item: any, idx: number) => {
-                  const rank = idx + 1;
-                  const rankClass = rank === 1 ? 'bg-red-500 text-white' :
-                    rank === 2 ? 'bg-orange-500 text-white' :
-                    rank === 3 ? 'bg-amber-500 text-white' :
-                    'text-[var(--text-tertiary)] bg-[var(--bg-secondary)] font-medium';
-                  
-                  let itemUrl = (item.url || '').trim();
-                  if (itemUrl.startsWith('/')) {
-                    itemUrl = `${home}${itemUrl}`;
-                  } else if (itemUrl && !itemUrl.startsWith('http://') && !itemUrl.startsWith('https://')) {
-                    itemUrl = `${home}/${itemUrl.replace(/^\/+/, '')}`;
-                  } else if (!itemUrl) {
-                    itemUrl = home;
-                  }
-
-                  return `
-                    <li class="hot-item group flex items-start gap-3 py-2.5 hover:bg-[var(--bg-secondary)]/40 rounded-lg px-2 -mx-2 transition-colors" data-rank="${rank}">
-                      <span class="mono text-xs font-bold shrink-0 mt-0.5 flex h-5 w-5 items-center justify-center rounded ${rankClass}">
-                        ${rank}
-                      </span>
-                      <div class="flex-1 min-w-0">
-                        <a href="${itemUrl}" target="_blank" rel="noopener noreferrer" class="hot-title text-sm text-[var(--text-primary)] hover:text-[var(--accent)] font-normal transition-colors line-clamp-2 leading-snug group-hover:underline">
-                          ${item.title}
-                        </a>
-                        ${item.extra?.hover ? `<p class="text-[12px] text-[var(--text-tertiary)] line-clamp-1 mt-0.5">${item.extra.hover}</p>` : ''}
-                      </div>
-                      ${item.extra?.info ? `<span class="mono text-[11px] text-[var(--text-tertiary)] group-hover:text-[var(--text-secondary)] shrink-0 mt-0.5 bg-[var(--bg-secondary)] px-1.5 py-0.5 rounded transition-colors">${item.extra.info}</span>` : ''}
-                    </li>
-                  `;
-                }).join('');
-              }
-            }
-          });
-          applyDensity(currentDensity);
-
-          // Update sync timestamp if element exists
-          const statusTime = document.getElementById('status-timestamp');
-          if (statusTime) {
-            const now = new Date();
-            statusTime.textContent = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')} 实时同步`;
-          }
+        const sourcesData = await fetchCachedHot(showSpinner);
+        if (sourcesData) {
+          applyHotSourcesData(sourcesData);
         }
       } catch (err) {
         console.warn('Hot news refresh failed', err);
@@ -706,12 +651,11 @@ const financeSources = initialSources.filter((s) => s.column === 'finance');
         if (showSpinner) {
           setTimeout(() => {
             spinner?.classList.remove('animate-spin');
-          }, 500);
+          }, 400);
         }
       }
     }
 
-    // Fail-safe link click handler: never let platform-relative urls result in 404 on blog
     const sourcesContainer = document.getElementById('sources-container');
     sourcesContainer?.addEventListener('click', (e) => {
       const link = (e.target as HTMLElement).closest('a');
@@ -725,13 +669,18 @@ const financeSources = initialSources.filter((s) => s.column === 'finance');
 
     refreshBtn?.addEventListener('click', () => refreshHotNews(true));
 
-    // SWR: Silently revalidate hot news from live VPS in background on load
-    setTimeout(() => {
-      refreshHotNews(false);
-    }, 400);
-
-    // Initialize with saved density
+    // Initialize with saved density immediately
     applyDensity(currentDensity);
+
+    // SWR: Apply cached hot news immediately or fetch in idle time
+    const cachedHot = getCachedHotSync();
+    if (cachedHot) {
+      applyHotSourcesData(cachedHot);
+    } else {
+      runWhenIdle(() => {
+        refreshHotNews(false);
+      }, 1500);
+    }
   }
 
   setupHotNewsInteractions();

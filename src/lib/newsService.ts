@@ -202,28 +202,27 @@ export const VIKI_60S_HOSTS = [
 ];
 
 /**
- * Generic helper to fetch from 60s API instances with failover
+ * Generic helper to fetch from 60s API instances with parallel racing failover
  */
-export async function fetchVikiEndpoint<T>(endpoint: string, timeoutMs = 2000): Promise<T | null> {
-  for (const host of VIKI_60S_HOSTS) {
-    try {
-      const res = await fetch(`${host}${endpoint}`, {
-        signal: AbortSignal.timeout(timeoutMs),
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko)',
-        },
-      });
-      if (res.ok) {
+export async function fetchVikiEndpoint<T>(endpoint: string, timeoutMs = 1500): Promise<T | null> {
+  try {
+    return await Promise.any(
+      VIKI_60S_HOSTS.map(async (host) => {
+        const res = await fetch(`${host}${endpoint}`, {
+          signal: AbortSignal.timeout(timeoutMs),
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko)',
+          },
+        });
+        if (!res.ok) throw new Error('status ' + res.status);
         const json = await res.json();
-        if (json && json.data) {
-          return json.data as T;
-        }
-      }
-    } catch {
-      // try next mirror
-    }
+        if (json && json.data) return json.data as T;
+        throw new Error('empty');
+      })
+    );
+  } catch {
+    return null;
   }
-  return null;
 }
 
 let daily60sCache: { data: Daily60sData; timestamp: number } | null = null;
@@ -717,7 +716,7 @@ export async function fetchGitHubTrendingDirect(): Promise<HotNewsItem[]> {
         'Accept-Language': 'en-US,en;q=0.9',
         'Accept': 'text/html',
       },
-      signal: AbortSignal.timeout(4000),
+      signal: AbortSignal.timeout(2500),
     });
 
     if (!res.ok) return [];
@@ -771,7 +770,7 @@ export async function fetchHotNews(
   sourceIds: string[] = Object.keys(SOURCE_CONFIGS),
   forceFresh = false
 ): Promise<HotNewsSource[]> {
-  if (!forceFresh && hotCache && Date.now() - hotCache.timestamp < CACHE_TTL_MS && !isMockHotData(hotCache.data)) {
+  if (!forceFresh && hotCache && Date.now() - hotCache.timestamp < CACHE_TTL_MS) {
     return hotCache.data;
   }
 
@@ -790,32 +789,40 @@ export async function fetchHotNews(
         'https://news.xujiuran.top'
       ).replace(/\/+$/, '');
 
-      // Run newsnow fetch and github live scraper in PARALLEL to eliminate serial latency
+      // Run self-hosted Hono /api/news/hot fetch and github live scraper in PARALLEL
       const [newsnowResult, githubResult] = await Promise.allSettled([
         (async () => {
-          const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), 8000); // 8s timeout to allow full platform aggregator
+          // 1. Primary self-hosted Hono endpoint (/api/news/hot)
+          try {
+            const res = await fetch(`${newsnowBase}/api/news/hot`, {
+              signal: AbortSignal.timeout(2500),
+              headers: {
+                Accept: 'application/json',
+                'User-Agent': 'Mozilla/5.0 (compatible; TomatoBlog/1.0)',
+              },
+            });
+            if (res.ok) {
+              const data = await res.json();
+              if (Array.isArray(data) && data.length > 0) return data;
+            }
+          } catch {}
+
+          // 2. Fallback legacy endpoint (/api/s/entire)
           try {
             const res = await fetch(`${newsnowBase}/api/s/entire`, {
               method: 'POST',
-              signal: controller.signal,
+              signal: AbortSignal.timeout(2500),
               headers: {
                 'Content-Type': 'application/json',
-                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
                 'Referer': `${newsnowBase}/`,
                 'Origin': newsnowBase,
               },
               body: JSON.stringify({ sources: sourceIds }),
             });
-            clearTimeout(timeoutId);
             if (res.ok) {
               return await res.json();
             }
-          } catch (_err) {
-            // Fallback gracefully without console pollution
-          } finally {
-            clearTimeout(timeoutId);
-          }
+          } catch {}
           return null;
         })(),
         fetchGitHubTrendingDirect()
@@ -906,10 +913,9 @@ export async function fetchHotNews(
         }
       }
 
-      // Only cache when live data was successfully fetched, never poison cache with fallback data
-      if (hasLiveItems && !isMockHotData(finalSources)) {
-        hotCache = { data: finalSources, timestamp: Date.now() };
-      }
+      // Cache live data for full TTL (10m), or short-cache fallback (2m) to prevent repeated blocking timeouts
+      const effectiveTimestamp = hasLiveItems ? Date.now() : Date.now() - (CACHE_TTL_MS - 2 * 60 * 1000);
+      hotCache = { data: finalSources, timestamp: effectiveTimestamp };
 
       return finalSources;
     } finally {

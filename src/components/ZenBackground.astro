@@ -6,6 +6,7 @@
 
 <canvas
   id="zen-bg-canvas"
+  transition:persist="zen-bg"
   class="pointer-events-none fixed inset-0 z-0 h-full w-full opacity-80 transition-opacity duration-700"
   aria-hidden="true"
 ></canvas>
@@ -144,55 +145,53 @@
       spawnStreams();
     }
 
-    // 绘制循环
+    // 绘制循环（批量步进，快速成画后即刻进入 0% CPU 休眠）
     let activeLines = 0;
 
     function step() {
       if (!ctx) return;
-      activeLines = 0;
       const noiseScale = 0.0018;
+      const colors = getPalette();
 
-      for (const line of lines) {
-        if (line.age >= line.maxAge) continue;
-        activeLines++;
+      for (let batch = 0; batch < 5; batch++) {
+        activeLines = 0;
+        for (const line of lines) {
+          if (line.age >= line.maxAge) continue;
+          activeLines++;
 
-        line.prevX = line.x;
-        line.prevY = line.y;
+          line.prevX = line.x;
+          line.prevY = line.y;
 
-        // 依据流场噪声计算当前流向角
-        const n = noise2D(line.x * noiseScale, line.y * noiseScale);
-        const angle = n * Math.PI * 3.5 + (line.flowOffset * 0.01);
+          const n = noise2D(line.x * noiseScale, line.y * noiseScale);
+          const angle = n * Math.PI * 3.5 + (line.flowOffset * 0.01);
 
-        line.x += Math.cos(angle) * line.speed;
-        line.y += Math.sin(angle) * line.speed;
-        line.age++;
+          line.x += Math.cos(angle) * line.speed;
+          line.y += Math.sin(angle) * line.speed;
+          line.age++;
 
-        // 绘制本步平滑曲线片段
-        ctx.beginPath();
-        ctx.moveTo(line.prevX, line.prevY);
-        ctx.lineTo(line.x, line.y);
-        ctx.strokeStyle = line.color;
-        ctx.lineWidth = line.width;
-        ctx.lineCap = 'round';
-        ctx.stroke();
-
-        // 当流线末端衰减终止时，绘制微尘/水滴墨点
-        if (line.age === Math.floor(line.maxAge * 0.95) && Math.random() < 0.4) {
-          const colors = getPalette();
           ctx.beginPath();
-          ctx.arc(line.x, line.y, line.width * 1.3, 0, Math.PI * 2);
-          ctx.fillStyle = colors.dot;
-          ctx.fill();
+          ctx.moveTo(line.prevX, line.prevY);
+          ctx.lineTo(line.x, line.y);
+          ctx.strokeStyle = line.color;
+          ctx.lineWidth = line.width;
+          ctx.lineCap = 'round';
+          ctx.stroke();
+
+          if (line.age === Math.floor(line.maxAge * 0.95) && Math.random() < 0.4) {
+            ctx.beginPath();
+            ctx.arc(line.x, line.y, line.width * 1.3, 0, Math.PI * 2);
+            ctx.fillStyle = colors.dot;
+            ctx.fill();
+          }
         }
+        if (activeLines === 0) break;
       }
 
-      // 如果所有流线都已完成生命周期，自动休眠停止调用，0% CPU 占用！
       if (activeLines > 0) {
         animationFrameId = requestAnimationFrame(step);
       }
     }
 
-    // 重绘并重新生发
     function restart() {
       cancelAnimationFrame(animationFrameId);
       ctx?.clearRect(0, 0, width, height);
@@ -206,27 +205,36 @@
       setTimeout(() => {
         restart();
         canvas.style.opacity = '0.8';
-      }, 250);
+      }, 200);
     }
 
-    window.addEventListener('resize', resize, { passive: true });
+    let resizeTimer: ReturnType<typeof setTimeout> | null = null;
+    function debouncedResize() {
+      if (resizeTimer) clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        if (window.innerWidth !== width || window.innerHeight !== height) {
+          resize();
+          step();
+        }
+      }, 200);
+    }
+
+    window.addEventListener('resize', debouncedResize, { passive: true });
     window.addEventListener('tomatox:theme-change', onThemeChange);
 
-    // 首次启动
-    restart();
-
-    // 页面卸载或重新路由时清理
-    return () => {
-      window.removeEventListener('resize', resize);
-      window.removeEventListener('tomatox:theme-change', onThemeChange);
-      cancelAnimationFrame(animationFrameId);
-    };
+    // 延迟至空闲帧启动，绝不抢占首屏渲染
+    const ric = (window as any).requestIdleCallback;
+    if (typeof ric === 'function') {
+      ric(() => restart(), { timeout: 600 });
+    } else {
+      setTimeout(restart, 80);
+    }
   }
 
-  // 绑定初始化
-  let cleanup = initZenCanvas();
-  document.addEventListener('astro:after-swap', () => {
-    cleanup?.();
-    cleanup = initZenCanvas();
-  });
+  // 画布使用 transition:persist 跨页面常驻，仅初始化一次，页面切换 0 重绘开销！
+  const existingCanvas = document.getElementById('zen-bg-canvas') as any;
+  if (existingCanvas && !existingCanvas._zenInitialized) {
+    existingCanvas._zenInitialized = true;
+    initZenCanvas();
+  }
 </script>

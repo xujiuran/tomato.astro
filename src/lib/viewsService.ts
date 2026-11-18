@@ -81,6 +81,7 @@ export async function incrementAndGetViews(slug: string): Promise<number> {
       if (json && json.data && typeof json.data.views === 'number') {
         const nextViews = json.data.views;
         localStorage.setItem(`tomatox_views_${slug}`, String(nextViews));
+        if (batchViewsMemCache) batchViewsMemCache.data[slug] = nextViews;
         return nextViews;
       }
     }
@@ -97,49 +98,77 @@ export async function incrementAndGetViews(slug: string): Promise<number> {
   return next;
 }
 
+let batchViewsMemCache: { data: Record<string, number>; ts: number } | null = null;
+let batchViewsInflight: Promise<Record<string, number>> | null = null;
+const VIEWS_TTL_MS = 60 * 1000;
+
 /**
- * Batch fetch all real article views
+ * Synchronously read cached article views from memory or localStorage (0ms)
+ */
+export function getCachedViewsMapSync(): Record<string, number> {
+  if (batchViewsMemCache) return batchViewsMemCache.data;
+  const result: Record<string, number> = {};
+  if (typeof window !== 'undefined') {
+    try {
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('tomatox_views_')) {
+          const slug = key.replace('tomatox_views_', '');
+          const val = parseInt(localStorage.getItem(key) || '0', 10);
+          if (!isNaN(val)) {
+            result[slug] = val;
+          }
+        }
+      }
+    } catch {}
+  }
+  return result;
+}
+
+/**
+ * Batch fetch all real article views (deduplicated & TTL cached)
  */
 export async function fetchBatchViews(): Promise<Record<string, number>> {
-  const result: Record<string, number> = {};
+  if (batchViewsMemCache && Date.now() - batchViewsMemCache.ts < VIEWS_TTL_MS) {
+    return batchViewsMemCache.data;
+  }
+  if (batchViewsInflight) return batchViewsInflight;
 
-  if (typeof window !== 'undefined') {
-    // Read local cache first
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (key && key.startsWith('tomatox_views_')) {
-        const slug = key.replace('tomatox_views_', '');
-        const val = parseInt(localStorage.getItem(key) || '0', 10);
-        if (!isNaN(val)) {
-          result[slug] = val;
+  batchViewsInflight = (async () => {
+    const result = { ...getCachedViewsMapSync() };
+
+    if (typeof window !== 'undefined') {
+      try {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 3000);
+        const res = await fetch(`${API_BASE_URL}/api/views`, {
+          signal: controller.signal,
+        });
+        clearTimeout(timeout);
+
+        if (res.ok) {
+          const json = await res.json();
+          if (json && json.data && typeof json.data === 'object') {
+            Object.entries(json.data).forEach(([slug, count]) => {
+              if (typeof count === 'number') {
+                result[slug] = count;
+                try {
+                  localStorage.setItem(`tomatox_views_${slug}`, String(count));
+                } catch {}
+              }
+            });
+            batchViewsMemCache = { data: result, ts: Date.now() };
+          }
         }
+      } catch (_e) {} finally {
+        batchViewsInflight = null;
       }
     }
 
-    // Try remote batch API
-    try {
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 3000);
-      const res = await fetch(`${API_BASE_URL}/api/views`, {
-        signal: controller.signal,
-      });
-      clearTimeout(timeout);
+    return result;
+  })();
 
-      if (res.ok) {
-        const json = await res.json();
-        if (json && json.data && typeof json.data === 'object') {
-          Object.entries(json.data).forEach(([slug, count]) => {
-            if (typeof count === 'number') {
-              result[slug] = count;
-              localStorage.setItem(`tomatox_views_${slug}`, String(count));
-            }
-          });
-        }
-      }
-    } catch (_e) {}
-  }
-
-  return result;
+  return batchViewsInflight;
 }
 
 function getLocalViewsFallback(slug: string): number {

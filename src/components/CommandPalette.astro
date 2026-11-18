@@ -1,7 +1,8 @@
 ---
-import { searchIndex } from '../data/searchIndex';
+// CommandPalette.astro - Global ⌘K Command Palette (Lazy-indexed & Persisted)
 ---
 
+<div id="command-palette-root" transition:persist="command-palette">
 <div
   id="command-palette-backdrop"
   class="fixed inset-0 z-[100] hidden items-start justify-center pt-[10vh] sm:pt-[15vh] px-3 sm:px-4 bg-zinc-950/50 backdrop-blur-md transition-opacity duration-200"
@@ -85,9 +86,6 @@ import { searchIndex } from '../data/searchIndex';
   </div>
 </div>
 
-<!-- Embedded Search Data -->
-<script id="command-palette-data" type="application/json" set:html={JSON.stringify(searchIndex)}></script>
-
 <!-- Toast notification for actions like copy-link -->
 <div
   id="command-palette-toast"
@@ -98,8 +96,10 @@ import { searchIndex } from '../data/searchIndex';
   </svg>
   <span id="command-palette-toast-msg">已完成操作</span>
 </div>
+</div>
 
 <script>
+  import { navigate } from 'astro:transitions/client';
   import { t } from '../i18n';
 
   interface SearchItem {
@@ -109,7 +109,7 @@ import { searchIndex } from '../data/searchIndex';
     category: 'nav' | 'post' | 'tool' | 'thought' | 'action';
     categoryLabel: string;
     url?: string;
-    actionId?: 'toggle-theme' | 'copy-link' | 'scroll-top' | 'open-rss' | 'open-github';
+    actionId?: 'toggle-theme' | 'copy-link' | 'scroll-top' | 'open-rss' | 'open-github' | 'toggle-zen';
     iconType: 'nav' | 'post' | 'tool' | 'thought' | 'action';
     badge?: string;
     keywords?: string[];
@@ -123,6 +123,25 @@ import { searchIndex } from '../data/searchIndex';
     '即时随想': 'nav.thoughts',
   };
 
+  let cachedSearchItems: SearchItem[] | null = null;
+  let searchItemsPromise: Promise<SearchItem[]> | null = null;
+
+  function loadSearchIndex(): Promise<SearchItem[]> {
+    if (cachedSearchItems) return Promise.resolve(cachedSearchItems);
+    if (searchItemsPromise) return searchItemsPromise;
+    searchItemsPromise = fetch('/api/search.json')
+      .then((res) => (res.ok ? res.json() : []))
+      .then((items: SearchItem[]) => {
+        cachedSearchItems = Array.isArray(items) ? items : [];
+        return cachedSearchItems;
+      })
+      .catch(() => {
+        searchItemsPromise = null;
+        return [];
+      });
+    return searchItemsPromise;
+  }
+
   function initCommandPalette() {
     const backdrop = document.getElementById('command-palette-backdrop');
     const modal = document.getElementById('command-palette-modal');
@@ -133,20 +152,23 @@ import { searchIndex } from '../data/searchIndex';
     const toast = document.getElementById('command-palette-toast');
     const toastMsg = document.getElementById('command-palette-toast-msg');
 
-    const dataScript = document.getElementById('command-palette-data');
-    if (!backdrop || !modal || !input || !resultsContainer || !dataScript) return;
+    if (!backdrop || !modal || !input || !resultsContainer) return;
 
-    // Prevent duplicate binding on hot reload / page load
+    // Bind any newly rendered trigger buttons outside header if needed
+    document.querySelectorAll('[data-open-command-palette]').forEach((btn) => {
+      if ((btn as any)._hasPaletteTrigger) return;
+      (btn as any)._hasPaletteTrigger = true;
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        (window as any).__openCommandPalette?.();
+      });
+    });
+
+    // Prevent duplicate binding across View Transitions
     if ((backdrop as any)._hasCommandPaletteInit) return;
     (backdrop as any)._hasCommandPaletteInit = true;
 
-    let searchItems: SearchItem[] = [];
-    try {
-      searchItems = JSON.parse(dataScript.textContent || '[]');
-    } catch (e) {
-      console.error('Failed to parse search items', e);
-    }
-
+    let searchItems: SearchItem[] = cachedSearchItems || [];
     let activeIndex = 0;
     let currentRenderedItems: SearchItem[] = [];
 
@@ -164,15 +186,25 @@ import { searchIndex } from '../data/searchIndex';
     function openPalette() {
       backdrop?.classList.remove('hidden');
       backdrop?.classList.add('flex');
-      // Gentle spring enter animation
       requestAnimationFrame(() => {
         modal?.classList.remove('scale-95', 'opacity-0');
         modal?.classList.add('scale-100', 'opacity-100');
         input?.focus();
         input?.select();
       });
-      renderList(input?.value.trim() || '');
+
+      if (cachedSearchItems) {
+        searchItems = cachedSearchItems;
+        renderList(input?.value.trim() || '');
+      } else {
+        loadSearchIndex().then((items) => {
+          searchItems = items;
+          renderList(input?.value.trim() || '');
+        });
+      }
     }
+
+    (window as any).__openCommandPalette = openPalette;
 
     function closePalette() {
       modal?.classList.remove('scale-100', 'opacity-100');
@@ -379,11 +411,10 @@ import { searchIndex } from '../data/searchIndex';
       }
 
       if (item.url) {
-        if (item.url.startsWith('http')) {
+        if (item.url.startsWith('http') || item.url.endsWith('.xml')) {
           window.open(item.url, '_blank', 'noopener,noreferrer');
         } else {
-          // Astro view transition navigation
-          window.location.href = item.url;
+          navigate(item.url);
         }
       }
     }
@@ -470,15 +501,6 @@ import { searchIndex } from '../data/searchIndex';
     }
 
     window.addEventListener('keydown', handleGlobalKeyDown);
-
-    // Header buttons (both desktop and mobile) triggers
-    const triggerButtons = document.querySelectorAll('[data-open-command-palette]');
-    triggerButtons.forEach((btn) => {
-      btn.addEventListener('click', (e) => {
-        e.preventDefault();
-        openPalette();
-      });
-    });
 
     // Close on Astro View Transition navigation
     document.addEventListener('astro:before-preparation', () => {

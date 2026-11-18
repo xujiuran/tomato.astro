@@ -352,6 +352,8 @@ const daysToLaborDay = moyu?.countdown?.laborDay ?? 198;
                 alt={game.title}
                 class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                 loading="lazy"
+                decoding="async"
+                referrerpolicy="no-referrer"
               />
               <span class="absolute top-2.5 left-2.5 rounded-md bg-emerald-600/90 backdrop-blur-xs px-2 py-0.5 text-[11px] font-bold text-white shadow-xs">
                 限时免费
@@ -455,6 +457,8 @@ const daysToLaborDay = moyu?.countdown?.laborDay ?? 198;
                 alt={movie.title}
                 class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                 loading="lazy"
+                decoding="async"
+                referrerpolicy="no-referrer"
               />
               <span class="absolute top-1.5 left-1.5 flex h-5 w-5 items-center justify-center rounded bg-black/70 text-[10px] font-bold text-white mono">
                 {movie.rank}
@@ -560,8 +564,11 @@ const daysToLaborDay = moyu?.countdown?.laborDay ?? 198;
         <div class="flex items-center justify-center p-3 rounded-lg bg-[var(--bg-secondary)]">
           <img
             id="qr-preview-img"
-            src="https://60s.mizhoubaobei.top/v2/qrcode?text=https://xujiuran.top"
+            data-src="https://60s.mizhoubaobei.top/v2/qrcode?text=https://xujiuran.top"
+            src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
             alt="QR Code"
+            loading="lazy"
+            decoding="async"
             class="h-28 w-28 rounded border border-[var(--border-secondary)] bg-white p-1"
           />
         </div>
@@ -571,6 +578,8 @@ const daysToLaborDay = moyu?.countdown?.laborDay ?? 198;
 </div>
 
 <script>
+  import { getCached60sSync, fetchCached60s, runWhenIdle } from '../lib/clientNewsCache';
+
   function setupVikiChannelTabs() {
     const pillsContainer = document.getElementById('viki-channel-pills');
     if (!pillsContainer || (pillsContainer as any)._hasVikiPillsListener) return;
@@ -599,6 +608,16 @@ const daysToLaborDay = moyu?.countdown?.laborDay ?? 198;
             panel.classList.add('hidden');
           }
         });
+
+        // Lazy-load external QR code only when tools tab is opened
+        if (targetId === 'panel-tools') {
+          const qrPreview = document.getElementById('qr-preview-img') as HTMLImageElement | null;
+          const deferredSrc = qrPreview?.getAttribute('data-src');
+          if (qrPreview && deferredSrc) {
+            qrPreview.src = deferredSrc;
+            qrPreview.removeAttribute('data-src');
+          }
+        }
       });
     });
 
@@ -722,50 +741,41 @@ const daysToLaborDay = moyu?.countdown?.laborDay ?? 198;
       }
     });
 
-    // SWR: Automatically pull today's latest 60s news from self-hosted VPS in background
-    async function syncLatest60s() {
-      try {
-        const res = await fetch(`https://news.xujiuran.top/api/news/60s?_t=${Date.now()}`, {
-          signal: AbortSignal.timeout(6000),
-          headers: { Accept: 'application/json' },
-        });
-        if (!res.ok) return;
-        const json = await res.json();
-        const data = json?.data;
-        if (!data || !Array.isArray(data.news) || data.news.length === 0) return;
+    // SWR: Apply cached or idle-fetched 60s news without blocking navigation
+    function apply60sData(data: any) {
+      if (!data || !Array.isArray(data.news) || data.news.length === 0) return;
 
-        // 1. Update date & weekday
-        const dateStr = data.date || '';
-        const dayStr = data.day_of_week || '';
-        const fullDateDisplay = dayStr ? `${dateStr} · ${dayStr}` : dateStr;
+      const dateStr = data.date || '';
+      const dayStr = data.day_of_week || '';
+      const fullDateDisplay = dayStr ? `${dateStr} · ${dayStr}` : dateStr;
 
-        const dateBadge = document.getElementById('digest-date-badge');
-        if (dateBadge && fullDateDisplay) dateBadge.textContent = fullDateDisplay;
+      const dateBadge = document.getElementById('digest-date-badge');
+      if (dateBadge && fullDateDisplay) dateBadge.textContent = fullDateDisplay;
 
-        const topCardDate = document.getElementById('top-card-date');
-        if (topCardDate && fullDateDisplay) topCardDate.textContent = fullDateDisplay;
+      const topCardDate = document.getElementById('top-card-date');
+      if (topCardDate && fullDateDisplay) topCardDate.textContent = fullDateDisplay;
 
-        const topCardCount = document.getElementById('top-card-count');
-        if (topCardCount) topCardCount.textContent = `共 ${data.news.length} 条要闻精选`;
+      const topCardCount = document.getElementById('top-card-count');
+      if (topCardCount) topCardCount.textContent = `共 ${data.news.length} 条要闻精选`;
 
-        const totalCount = document.getElementById('news-total-count');
-        if (totalCount) totalCount.textContent = `共 ${data.news.length} 条`;
+      const totalCount = document.getElementById('news-total-count');
+      if (totalCount) totalCount.textContent = `共 ${data.news.length} 条`;
 
-        // 2. Update Tip
-        const tipText = document.getElementById('tip-text');
-        if (tipText && data.tip) {
-          tipText.textContent = data.tip.replace(/^【微语】\s*/, '');
-        }
+      const tipText = document.getElementById('tip-text');
+      if (tipText && data.tip) {
+        tipText.textContent = data.tip.replace(/^【微语】\s*/, '');
+      }
 
-        // 3. Update Image Link
-        const imgLink = document.getElementById('digest-image-link') as HTMLAnchorElement | null;
-        if (imgLink && data.image) {
-          imgLink.href = data.image;
-        }
+      const imgLink = document.getElementById('digest-image-link') as HTMLAnchorElement | null;
+      if (imgLink && data.image) {
+        imgLink.href = data.image;
+      }
 
-        // 4. Update News List DOM
-        const newsList = document.getElementById('news-list');
-        if (newsList) {
+      const newsList = document.getElementById('news-list');
+      if (newsList) {
+        const firstClean = (data.news[0] || '').replace(/^\d+[\.、\s]*/, '').trim();
+        const currentFirst = newsList.querySelector('.news-text')?.textContent?.trim() || '';
+        if (firstClean && firstClean !== currentFirst) {
           newsList.innerHTML = data.news.map((item: string, index: number) => {
             const num = String(index + 1).padStart(2, '0');
             const cleanText = item.replace(/^\d+[\.、\s]*/, '');
@@ -786,13 +796,19 @@ const daysToLaborDay = moyu?.countdown?.laborDay ?? 198;
             `;
           }).join('');
         }
-      } catch (_err) {
-        // Silently preserve static build snapshot on error
       }
     }
 
-    // Trigger background SWR sync
-    syncLatest60s();
+    const cached = getCached60sSync();
+    if (cached) {
+      apply60sData(cached);
+    } else {
+      runWhenIdle(() => {
+        fetchCached60s(false).then((data) => {
+          if (data) apply60sData(data);
+        });
+      });
+    }
   }
 
   setupVikiChannelTabs();

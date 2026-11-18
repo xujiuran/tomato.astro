@@ -246,104 +246,111 @@ const topClsItems = clsSource?.items.slice(0, 2) || [
 
 <script>
   import { t, getCurrentLang, formatDayOfWeek } from '../i18n';
+  import { getCached60sSync, fetchCached60s, getCachedHotSync, fetchCachedHot, runWhenIdle } from '../lib/clientNewsCache';
+
+  function apply60sToHomeDOM(data: any) {
+    if (!data || !Array.isArray(data.news) || data.news.length === 0) return;
+
+    const dateStr = data.date || '';
+    const dayStr = data.day_of_week || '';
+    const badge1 = document.getElementById('home-digest-date-badge');
+    if (badge1 && dateStr) {
+      badge1.setAttribute('data-date', dateStr);
+      badge1.setAttribute('data-day', dayStr);
+      badge1.textContent = `${dateStr} ${formatDayOfWeek(dayStr, getCurrentLang())}`;
+    }
+
+    const badge2 = document.getElementById('home-digest-date-badge-2');
+    if (badge2 && dateStr) badge2.textContent = dateStr;
+
+    const listEl = document.getElementById('home-preview-news-list');
+    if (listEl) {
+      const top5 = data.news.slice(0, 5);
+      const firstClean = (top5[0] || '').replace(/^\d+[\.、\s]*/, '').trim();
+      const currentFirst = listEl.querySelector('p')?.textContent?.trim() || '';
+      if (firstClean && firstClean !== currentFirst) {
+        listEl.innerHTML = top5.map((item: string, idx: number) => {
+          const clean = item.replace(/^\d+[\.、\s]*/, '');
+          return `
+            <li class="flex items-start gap-2.5 group">
+              <span class="mono text-[11px] font-bold shrink-0 mt-0.5 flex h-4.5 w-4.5 items-center justify-center rounded bg-[var(--bg-secondary)] text-[var(--text-secondary)] group-hover:bg-[var(--accent)] group-hover:text-white transition-colors">
+                ${idx + 1}
+              </span>
+              <p class="text-[var(--text-primary)] group-hover:text-[var(--accent)] transition-colors line-clamp-2">
+                ${clean}
+              </p>
+            </li>
+          `;
+        }).join('');
+      }
+    }
+
+    const tipEl = document.getElementById('home-digest-tip');
+    if (tipEl && data.tip) {
+      const whisper = t('home.newsWhisper', getCurrentLang());
+      tipEl.innerHTML = `<span class="font-medium text-[var(--text-primary)]" data-i18n="home.newsWhisper">${whisper}</span>${data.tip.replace(/^【微语】\s*/, '')}`;
+    }
+
+    const readAllEl = document.getElementById('home-60s-read-all-link');
+    if (readAllEl) {
+      readAllEl.setAttribute('data-i18n-param-count', String(data.news.length));
+      readAllEl.textContent = t('home.newsReadAll', getCurrentLang(), { count: data.news.length });
+    }
+  }
+
+  function applyHotToHomeDOM(sources: any[]) {
+    if (!Array.isArray(sources)) return;
+
+    function renderItems(containerId: string, sourceId: string) {
+      const s = sources.find((x: any) => x.id === sourceId);
+      if (!s || !Array.isArray(s.items) || s.items.length === 0) return;
+      const container = document.getElementById(containerId);
+      if (!container) return;
+      const top2 = s.items.slice(0, 2);
+      container.innerHTML = top2.map((item: any, idx: number) => {
+        return `
+          <a
+            href="${item.url}"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="block truncate text-[var(--text-primary)] hover:text-[var(--accent)] transition-colors py-0.5 leading-snug"
+          >
+            <span class="mono text-[11px] text-[var(--text-tertiary)] mr-1">#${idx + 1}</span>
+            ${item.title}
+          </a>
+        `;
+      }).join('');
+    }
+
+    renderItems('home-hot-github-items', 'github');
+    renderItems('home-hot-weibo-items', 'weibo');
+    renderItems('home-hot-cls-items', 'cls-hot');
+  }
 
   function setupHomeNewsSWR() {
-    // 1. Sync 60s News preview
-    async function syncHome60s() {
-      try {
-        const res = await fetch(`https://news.xujiuran.top/api/news/60s?_t=${Date.now()}`, {
-          signal: AbortSignal.timeout(5000),
-          headers: { Accept: 'application/json' },
+    if (!document.getElementById('home-preview-news-list')) return;
+
+    const cached60s = getCached60sSync();
+    if (cached60s) {
+      apply60sToHomeDOM(cached60s);
+    } else {
+      runWhenIdle(() => {
+        fetchCached60s(false).then((data) => {
+          if (data) apply60sToHomeDOM(data);
         });
-        if (!res.ok) return;
-        const json = await res.json();
-        const data = json?.data;
-        if (!data || !Array.isArray(data.news) || data.news.length === 0) return;
-
-        const dateStr = data.date || '';
-        const dayStr = data.day_of_week || '';
-        const badge1 = document.getElementById('home-digest-date-badge');
-        if (badge1 && dateStr) {
-          badge1.setAttribute('data-date', dateStr);
-          badge1.setAttribute('data-day', dayStr);
-          badge1.textContent = `${dateStr} ${formatDayOfWeek(dayStr, getCurrentLang())}`;
-        }
-
-        const badge2 = document.getElementById('home-digest-date-badge-2');
-        if (badge2 && dateStr) badge2.textContent = dateStr;
-
-        const listEl = document.getElementById('home-preview-news-list');
-        if (listEl) {
-          const top5 = data.news.slice(0, 5);
-          listEl.innerHTML = top5.map((item: string, idx: number) => {
-            const clean = item.replace(/^\d+[\.、\s]*/, '');
-            return `
-              <li class="flex items-start gap-2.5 group">
-                <span class="mono text-[11px] font-bold shrink-0 mt-0.5 flex h-4.5 w-4.5 items-center justify-center rounded bg-[var(--bg-secondary)] text-[var(--text-secondary)] group-hover:bg-[var(--accent)] group-hover:text-white transition-colors">
-                  ${idx + 1}
-                </span>
-                <p class="text-[var(--text-primary)] group-hover:text-[var(--accent)] transition-colors line-clamp-2">
-                  ${clean}
-                </p>
-              </li>
-            `;
-          }).join('');
-        }
-
-        const tipEl = document.getElementById('home-digest-tip');
-        if (tipEl && data.tip) {
-          const whisper = t('home.newsWhisper', getCurrentLang());
-          tipEl.innerHTML = `<span class="font-medium text-[var(--text-primary)]" data-i18n="home.newsWhisper">${whisper}</span>${data.tip.replace(/^【微语】\s*/, '')}`;
-        }
-
-        const readAllEl = document.getElementById('home-60s-read-all-link');
-        if (readAllEl) {
-          readAllEl.setAttribute('data-i18n-param-count', String(data.news.length));
-          readAllEl.textContent = t('home.newsReadAll', getCurrentLang(), { count: data.news.length });
-        }
-      } catch {}
+      });
     }
 
-    // 2. Sync Hot News Preview (GitHub, Weibo, CLS)
-    async function syncHomeHot() {
-      try {
-        const res = await fetch(`https://news.xujiuran.top/api/news/hot?_t=${Date.now()}`, {
-          signal: AbortSignal.timeout(6000),
-          headers: { Accept: 'application/json' },
+    const cachedHot = getCachedHotSync();
+    if (cachedHot) {
+      applyHotToHomeDOM(cachedHot);
+    } else {
+      runWhenIdle(() => {
+        fetchCachedHot(false).then((sources) => {
+          if (sources) applyHotToHomeDOM(sources);
         });
-        if (!res.ok) return;
-        const sources = await res.json();
-        if (!Array.isArray(sources)) return;
-
-        function renderItems(containerId: string, sourceId: string) {
-          const s = sources.find((x: any) => x.id === sourceId);
-          if (!s || !Array.isArray(s.items) || s.items.length === 0) return;
-          const container = document.getElementById(containerId);
-          if (!container) return;
-          const top2 = s.items.slice(0, 2);
-          container.innerHTML = top2.map((item: any, idx: number) => {
-            return `
-              <a
-                href="${item.url}"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="block truncate text-[var(--text-primary)] hover:text-[var(--accent)] transition-colors py-0.5 leading-snug"
-              >
-                <span class="mono text-[11px] text-[var(--text-tertiary)] mr-1">#${idx + 1}</span>
-                ${item.title}
-              </a>
-            `;
-          }).join('');
-        }
-
-        renderItems('home-hot-github-items', 'github');
-        renderItems('home-hot-weibo-items', 'weibo');
-        renderItems('home-hot-cls-items', 'cls-hot');
-      } catch {}
+      });
     }
-
-    syncHome60s();
-    syncHomeHot();
   }
 
   setupHomeNewsSWR();

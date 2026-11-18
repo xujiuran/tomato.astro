@@ -63,9 +63,20 @@ export function t(key: string, lang?: Lang, params?: Record<string, string | num
 /**
  * Apply translations to DOM elements with data-i18n attributes
  */
-export function applyTranslationsToDOM(lang?: Lang, root: ParentNode = document): void {
+export function applyTranslationsToDOM(lang?: Lang, root: ParentNode = document, force = false): void {
   const activeLang = lang || getCurrentLang();
-  document.documentElement.setAttribute('lang', activeLang);
+  const targetDoc = (root as Document).documentElement ? (root as Document) : null;
+  const docEl = targetDoc ? targetDoc.documentElement : document.documentElement;
+
+  if (targetDoc) {
+    docEl.setAttribute('lang', activeLang);
+    const appliedLang = docEl.dataset.i18nApplied || 'zh-CN';
+    if (!force && appliedLang === activeLang) {
+      docEl.dataset.i18nApplied = activeLang;
+      return;
+    }
+    docEl.dataset.i18nApplied = activeLang;
+  }
 
   // 1. Text content
   const textEls = root.querySelectorAll<HTMLElement>('[data-i18n]');
@@ -74,20 +85,22 @@ export function applyTranslationsToDOM(lang?: Lang, root: ParentNode = document)
     if (!key) return;
 
     // Optional params can be passed via data-i18n-param-xyz
-    const params: Record<string, string | number> = {};
-    Array.from(el.attributes).forEach((attr) => {
+    let params: Record<string, string | number> | undefined;
+    const attrs = el.attributes;
+    for (let i = 0; i < attrs.length; i++) {
+      const attr = attrs[i];
       if (attr.name.startsWith('data-i18n-param-')) {
-        const paramKey = attr.name.replace('data-i18n-param-', '');
-        params[paramKey] = attr.value;
+        if (!params) params = {};
+        params[attr.name.slice(16)] = attr.value;
       }
-    });
+    }
 
-    const translated = t(key, activeLang, Object.keys(params).length ? params : undefined);
+    const translated = t(key, activeLang, params);
     if (translated) {
       if (el.hasAttribute('data-i18n-html')) {
-        el.innerHTML = translated;
+        if (el.innerHTML !== translated) el.innerHTML = translated;
       } else {
-        el.textContent = translated;
+        if (el.textContent !== translated) el.textContent = translated;
       }
     }
   });
@@ -170,7 +183,7 @@ export function setLanguage(newLang: Lang): void {
   localStorage.setItem('tomatox_lang', newLang);
   document.documentElement.setAttribute('lang', newLang);
 
-  applyTranslationsToDOM(newLang);
+  applyTranslationsToDOM(newLang, document, true);
 
   window.dispatchEvent(
     new CustomEvent('tomatox:lang-change', {

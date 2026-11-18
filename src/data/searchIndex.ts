@@ -5,7 +5,7 @@ export interface SearchItem {
   category: 'nav' | 'post' | 'tool' | 'thought' | 'action';
   categoryLabel: string;
   url?: string;
-  actionId?: 'toggle-theme' | 'copy-link' | 'scroll-top' | 'open-rss' | 'open-github';
+  actionId?: 'toggle-theme' | 'copy-link' | 'scroll-top' | 'open-rss' | 'open-github' | 'toggle-zen';
   iconType: 'nav' | 'post' | 'tool' | 'thought' | 'action';
   badge?: string;
   keywords?: string[];

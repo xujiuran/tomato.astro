@@ -2,7 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import MoyuCalendarSidebar from '../../components/MoyuCalendarSidebar.astro';
 import ArticleToc from '../../components/ArticleToc.astro';
-import { fetch60sHubData } from '../../lib/newsService';
+import { getMoyuData } from '../../lib/newsService';
 import { renderArticleMarkdown } from '../../lib/markdown';
 import { formatViewCount } from '../../lib/viewsService';
 import { posts } from '../../data/posts';
@@ -18,7 +18,7 @@ export function getStaticPaths() {
   }));
 }
 
-const hubData = await fetch60sHubData();
+const moyu = await getMoyuData();
 const { title, description, tag, date, readTime, words, content, prevPost, nextPost } = Astro.props;
 const { html, toc } = renderArticleMarkdown(content);
 const slug = Astro.params.slug as string;
@@ -201,7 +201,7 @@ const safeDescription = (description || content.replace(/<[^>]*>/g, '').replace(
       <ArticleToc toc={toc} title={title} />
 
       <!-- Moyu Slacking Dashboard ("摸鱼工作周历 · 劳逸结合") -->
-      <MoyuCalendarSidebar moyu={hubData.moyu} moyuOnly={true} />
+      <MoyuCalendarSidebar moyu={moyu} moyuOnly={true} />
     </aside>
   </div>
 </BaseLayout>

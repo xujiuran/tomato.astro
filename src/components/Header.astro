@@ -49,10 +49,10 @@ const navItems = [
 ];
 ---
 
-<header class="sticky top-0 z-50 w-full border-b border-[var(--border-primary)] bg-[var(--bg-primary)]/80 backdrop-blur-md transition-colors">
+<header transition:persist="site-header" class="sticky top-0 z-50 w-full border-b border-[var(--border-primary)] bg-[var(--bg-primary)]/80 backdrop-blur-md transition-colors">
   <div class:list={["mx-auto flex items-center justify-between px-3.5 py-2.5 sm:px-6 sm:py-3", containerClass]}>
     <!-- Brand / Title -->
-    <a href="/" class="group flex items-center gap-2 sm:gap-2.5 focus:outline-hidden shrink-0">
+    <a href="/" data-brand-home data-astro-prefetch="viewport" class="group flex items-center gap-2 sm:gap-2.5 focus:outline-hidden shrink-0">
       <div class="flex h-7 w-7 sm:h-8 sm:w-8 shrink-0 items-center justify-center rounded-lg bg-[var(--surface-subtle)] border border-[var(--border-primary)] shadow-xs transition-transform group-hover:scale-105 overflow-hidden p-0.5">
         <svg class="h-full w-full" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
           <defs>
@@ -90,10 +90,11 @@ const navItems = [
             <li>
               <a
                 href={item.href}
-                data-astro-prefetch="hover"
+                data-nav-href={item.href}
+                data-astro-prefetch="viewport"
                 data-i18n={`nav.${item.key}`}
                 class:list={[
-                  'rounded-md px-2.5 py-1 transition-all text-xs lg:text-sm active:scale-95 inline-flex items-center gap-1 whitespace-nowrap',
+                  'desktop-nav-link rounded-md px-2.5 py-1 transition-all text-xs lg:text-sm active:scale-95 inline-flex items-center gap-1 whitespace-nowrap',
                   isActive
                     ? 'bg-[var(--bg-secondary)] font-semibold text-[var(--accent)]'
                     : 'text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] hover:text-[var(--text-primary)]'
@@ -223,7 +224,8 @@ const navItems = [
         return (
           <a
             href={item.href}
-            data-astro-prefetch="hover"
+            data-nav-href={item.href}
+            data-astro-prefetch="viewport"
             class:list={[
               'mobile-nav-link flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-xs font-medium transition-all active:scale-95',
               isActive
@@ -300,11 +302,46 @@ const navItems = [
 </header>
 
 <script>
+  function syncHeaderActiveNav(pathname: string) {
+    const cleanPath = pathname.replace(/\/+$/, '') || '/';
+
+    document.querySelectorAll<HTMLAnchorElement>('.desktop-nav-link[data-nav-href]').forEach((link) => {
+      const href = link.getAttribute('data-nav-href') || '/';
+      const isActive = href === '/' ? cleanPath === '/' : cleanPath === href || cleanPath.startsWith(href + '/');
+      if (isActive) {
+        link.classList.add('bg-[var(--bg-secondary)]', 'font-semibold', 'text-[var(--accent)]');
+        link.classList.remove('text-[var(--text-secondary)]', 'hover:bg-[var(--bg-secondary)]', 'hover:text-[var(--text-primary)]');
+      } else {
+        link.classList.remove('bg-[var(--bg-secondary)]', 'font-semibold', 'text-[var(--accent)]');
+        link.classList.add('text-[var(--text-secondary)]', 'hover:bg-[var(--bg-secondary)]', 'hover:text-[var(--text-primary)]');
+      }
+    });
+
+    document.querySelectorAll<HTMLAnchorElement>('.mobile-nav-link[data-nav-href]').forEach((link) => {
+      const href = link.getAttribute('data-nav-href') || '/';
+      const isActive = href === '/' ? cleanPath === '/' : cleanPath === href || cleanPath.startsWith(href + '/');
+      const icon = link.querySelector('svg');
+      if (isActive) {
+        link.classList.add('bg-[var(--accent)]/10', 'text-[var(--accent)]', 'font-semibold', 'border-[var(--accent)]/25', 'shadow-2xs');
+        link.classList.remove('text-[var(--text-secondary)]', 'bg-[var(--bg-secondary)]', 'hover:bg-[var(--bg-secondary)]/80', 'hover:text-[var(--text-primary)]', 'border-[var(--border-secondary)]');
+        icon?.classList.add('text-[var(--accent)]');
+        icon?.classList.remove('text-[var(--text-tertiary)]');
+      } else {
+        link.classList.remove('bg-[var(--accent)]/10', 'text-[var(--accent)]', 'font-semibold', 'border-[var(--accent)]/25', 'shadow-2xs');
+        link.classList.add('text-[var(--text-secondary)]', 'bg-[var(--bg-secondary)]', 'hover:bg-[var(--bg-secondary)]/80', 'hover:text-[var(--text-primary)]', 'border-[var(--border-secondary)]');
+        icon?.classList.remove('text-[var(--accent)]');
+        icon?.classList.add('text-[var(--text-tertiary)]');
+      }
+    });
+  }
+
   function setupMobileMenu() {
     const btn = document.getElementById('mobile-menu-btn');
     const panel = document.getElementById('mobile-menu-panel');
     const iconBars = document.getElementById('mobile-icon-bars');
     const iconClose = document.getElementById('mobile-icon-close');
+
+    syncHeaderActiveNav(window.location.pathname);
 
     if (!btn || !panel) return;
     if ((btn as any)._hasMobileMenuListener) return;
@@ -332,28 +369,35 @@ const navItems = [
       toggleMenu();
     });
 
-    // Close on navigation link click
-    panel.querySelectorAll('.mobile-nav-link').forEach((link) => {
-      link.addEventListener('click', () => {
+    // Instant 0ms optimistic highlight on nav clicks
+    document.querySelectorAll<HTMLAnchorElement>('[data-nav-href], [data-brand-home]').forEach((link) => {
+      link.addEventListener('click', (e) => {
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+        const href = link.getAttribute('data-nav-href') || '/';
+        syncHeaderActiveNav(href);
         toggleMenu(false);
       });
     });
 
-    // Close on click outside
     document.addEventListener('click', (e) => {
       if (!btn.contains(e.target as Node) && !panel.contains(e.target as Node)) {
         toggleMenu(false);
       }
     });
 
-    // Close on ESC
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         toggleMenu(false);
       }
     });
+
+    document.addEventListener('astro:after-swap', () => {
+      syncHeaderActiveNav(window.location.pathname);
+    });
+    window.addEventListener('popstate', () => {
+      syncHeaderActiveNav(window.location.pathname);
+    });
   }
 
   setupMobileMenu();
-  document.addEventListener('astro:page-load', setupMobileMenu);
 </script>

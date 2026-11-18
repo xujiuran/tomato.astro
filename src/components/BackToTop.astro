@@ -3,6 +3,7 @@
 
 <button
   id="back-to-top"
+  transition:persist="back-to-top"
   type="button"
   aria-label="回到顶部"
   title="回到顶部"
@@ -88,6 +89,12 @@
       }
     }
 
+    if ((btn as any)._hasBackToTop) {
+      onScroll();
+      return;
+    }
+    (btn as any)._hasBackToTop = true;
+
     btn.addEventListener('click', () => {
       window.scrollTo({
         top: 0,
@@ -96,7 +103,6 @@
     });
 
     window.addEventListener('scroll', onScroll, { passive: true });
-    // Run once initially
     onScroll();
   }
 
