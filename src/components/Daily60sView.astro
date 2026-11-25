@@ -45,7 +45,7 @@ const daysToLaborDay = moyu?.countdown?.laborDay ?? 198;
 
     <!-- Card 2: AI Tech News -->
     <div class="rounded-xl border border-[var(--border-primary)] bg-[var(--card-bg)] p-3 shadow-xs">
-      <div class="flex items-center gap-1.5 text-xs text-blue-500 font-semibold mb-1">
+      <div class="flex items-center gap-1.5 text-xs text-[var(--algo-magenta)] font-semibold mb-1 mono">
         <img src="/images/icons/ai.png" alt="AI 前沿" class="h-4 w-4 object-contain inline-block shrink-0 rounded-xs" />
         <span>AI 前沿</span>
       </div>
@@ -59,7 +59,7 @@ const daysToLaborDay = moyu?.countdown?.laborDay ?? 198;
 
     <!-- Card 3: Epic Free Game -->
     <div class="rounded-xl border border-[var(--border-primary)] bg-[var(--card-bg)] p-3 shadow-xs">
-      <div class="flex items-center gap-1.5 text-xs text-amber-500 font-semibold mb-1">
+      <div class="flex items-center gap-1.5 text-xs text-[var(--algo-amber)] font-semibold mb-1 mono">
         <img src="/images/icons/epic.png" alt="Epic 喜加一" class="h-4 w-4 object-contain inline-block shrink-0 rounded-xs" />
         <span>Epic 喜加一</span>
       </div>
@@ -75,15 +75,15 @@ const daysToLaborDay = moyu?.countdown?.laborDay ?? 198;
     <a
       href="#moyu-sidebar"
       id="top-card-moyu"
-      class="group rounded-xl border border-[var(--border-primary)] bg-[var(--card-bg)] p-3 shadow-xs hover:border-emerald-500/50 hover:shadow-sm transition-all cursor-pointer block"
+      class="group rounded-xl border border-[var(--border-primary)] bg-[var(--card-bg)] p-3 shadow-xs hover:border-[var(--algo-green)] transition-all cursor-pointer block"
       title="点击查看摸鱼日历与时钟"
     >
-      <div class="flex items-center justify-between text-xs text-emerald-500 font-semibold mb-1">
+      <div class="flex items-center justify-between text-xs text-[var(--algo-green)] font-semibold mb-1 mono">
         <div class="flex items-center gap-1.5">
           <img src="/images/icons/moyu.png" alt="摸鱼日历" class="h-4 w-4 object-contain inline-block shrink-0 rounded-xs" />
           <span>摸鱼日历</span>
         </div>
-        <span class="text-[10px] text-[var(--text-tertiary)] group-hover:text-emerald-500 transition-colors">
+        <span class="text-[11px] text-[var(--text-tertiary)] group-hover:text-[var(--algo-green)] transition-colors">
           直达 ↘
         </span>
       </div>
@@ -101,7 +101,7 @@ const daysToLaborDay = moyu?.countdown?.laborDay ?? 198;
     <div id="viki-channel-pills" class="flex flex-wrap items-center gap-1.5 text-xs font-medium">
       <button
         type="button"
-        class="viki-pill active rounded-lg px-3 py-1.5 transition-all bg-[var(--accent)] text-white font-semibold flex items-center gap-1.5"
+        class="viki-pill active px-3 py-1.5 transition-all bg-[var(--accent)] text-[var(--algo-on-green)] font-semibold flex items-center gap-1.5 cursor-pointer"
         data-target="panel-60s"
       >
         <img src="/images/icons/news.png" alt="60s晨报" class="h-4 w-4 object-contain inline-block shrink-0 rounded-xs" />
@@ -153,14 +153,14 @@ const daysToLaborDay = moyu?.countdown?.laborDay ?? 198;
   <!-- Channel 1: 60s World News (Default) -->
   <div id="panel-60s" class="viki-channel-panel space-y-6">
     <!-- Header Card -->
-    <div class="relative overflow-hidden rounded-xl border border-[var(--border-primary)] bg-[var(--card-bg)] p-5 sm:p-6 shadow-xs">
-      <div class="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-red-500 via-orange-500 to-amber-500"></div>
+    <div class="relative overflow-hidden border border-[var(--border-primary)] bg-[var(--card-bg)] p-5 sm:p-6">
+      <div class="absolute top-0 left-0 right-0 h-[2px] bg-[var(--algo-green)]"></div>
 
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div class="space-y-1">
           <div class="flex items-center gap-2">
-            <span class="inline-flex items-center gap-1.5 rounded-full bg-red-500/10 px-2.5 py-0.5 text-xs font-medium text-red-600 dark:text-red-400">
-              <span class="h-1.5 w-1.5 rounded-full bg-red-500 animate-pulse"></span>
+            <span class="inline-flex items-center gap-1.5 border border-[var(--algo-green)]/35 bg-[var(--algo-green)]/10 px-2.5 py-0.5 text-xs font-medium text-[var(--algo-green)] mono">
+              <span class="h-1.5 w-1.5 bg-[var(--algo-green)]"></span>
               每天 60 秒读懂世界
             </span>
             <span id="digest-date-badge" class="mono text-xs text-[var(--text-secondary)]">
@@ -193,7 +193,7 @@ const daysToLaborDay = moyu?.countdown?.laborDay ?? 198;
           <button
             id="btn-generate-60s-poster"
             type="button"
-            class="inline-flex items-center gap-1.5 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-1.5 text-xs font-medium text-red-600 dark:text-red-400 transition-all hover:bg-red-500/20 active:scale-95 cursor-pointer shadow-2xs"
+            class="inline-flex items-center gap-1.5 border border-[var(--algo-magenta)]/40 bg-[var(--algo-magenta)]/10 px-3 py-1.5 text-xs font-medium text-[var(--algo-magenta)] transition-all hover:bg-[var(--algo-magenta)] hover:text-[var(--algo-on-magenta)] active:scale-95 cursor-pointer"
             title="一键生成晨报分享卡片海报"
           >
             <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -225,9 +225,9 @@ const daysToLaborDay = moyu?.countdown?.laborDay ?? 198;
 
       <!-- Tip of the Day -->
       {digest.tip && (
-        <div class="mt-4 rounded-lg bg-[var(--bg-secondary)] p-3.5 border-l-3 border-orange-500/70 text-xs sm:text-sm">
+        <div class="mt-4 bg-[var(--bg-secondary)] p-3.5 border border-[var(--algo-amber)]/40 text-xs sm:text-sm">
           <div class="flex items-start gap-2.5">
-            <span class="text-orange-500 font-bold shrink-0 serif-title">「微语」</span>
+            <span class="text-[var(--algo-amber)] font-bold shrink-0 mono">「微语」</span>
             <p id="tip-text" class="text-[var(--text-primary)] italic font-normal leading-relaxed">
               {digest.tip}
             </p>
@@ -355,7 +355,7 @@ const daysToLaborDay = moyu?.countdown?.laborDay ?? 198;
                 decoding="async"
                 referrerpolicy="no-referrer"
               />
-              <span class="absolute top-2.5 left-2.5 rounded-md bg-emerald-600/90 backdrop-blur-xs px-2 py-0.5 text-[11px] font-bold text-white shadow-xs">
+              <span class="absolute top-2.5 left-2.5 bg-[var(--algo-green)] px-2 py-0.5 text-[11px] font-bold text-[var(--algo-on-green)] mono">
                 限时免费
               </span>
               {game.original_price_desc && (
@@ -367,7 +367,7 @@ const daysToLaborDay = moyu?.countdown?.laborDay ?? 198;
 
             <div class="p-4 flex-1 flex flex-col justify-between">
               <div>
-                <h4 class="text-sm sm:text-base font-bold text-[var(--text-primary)] group-hover:text-amber-500 transition-colors">
+                <h4 class="text-sm sm:text-base font-bold text-[var(--text-primary)] group-hover:text-[var(--algo-amber)] transition-colors">
                   {game.title}
                 </h4>
                 <p class="mt-1 text-xs text-[var(--text-secondary)] line-clamp-3 leading-relaxed">
@@ -383,7 +383,7 @@ const daysToLaborDay = moyu?.countdown?.laborDay ?? 198;
                   href={`https://store.epicgames.com/`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  class="inline-flex items-center gap-1 rounded-lg bg-amber-500/10 px-2.5 py-1 text-xs font-semibold text-amber-600 dark:text-amber-400 hover:bg-amber-500 hover:text-white transition-colors"
+                  class="inline-flex items-center gap-1 bg-[var(--algo-amber)]/12 border border-[var(--algo-amber)]/35 px-2.5 py-1 text-xs font-semibold text-[var(--algo-amber)] hover:bg-[var(--algo-amber)] hover:text-[var(--algo-on-green)] transition-colors mono"
                 >
                   <span>立即领取</span>
                   <span>↗</span>
@@ -468,7 +468,7 @@ const daysToLaborDay = moyu?.countdown?.laborDay ?? 198;
               </span>
             </div>
             <div class="p-2 flex-1 flex flex-col justify-between">
-              <p class="text-xs font-semibold text-[var(--text-primary)] line-clamp-1 group-hover:text-emerald-600 transition-colors" title={movie.title}>
+              <p class="text-xs font-semibold text-[var(--text-primary)] line-clamp-1 group-hover:text-[var(--algo-green)] transition-colors" title={movie.title}>
                 {movie.title}
               </p>
               <p class="text-[10px] text-[var(--text-tertiary)] line-clamp-1 mt-0.5">
@@ -503,7 +503,7 @@ const daysToLaborDay = moyu?.countdown?.laborDay ?? 198;
           <button
             id="btn-whois-query"
             type="button"
-            class="rounded-lg bg-[var(--accent)] text-white px-3 py-1.5 text-xs font-semibold hover:opacity-90 active:scale-95 transition-all"
+            class="bg-[var(--accent)] text-[var(--algo-on-green)] px-3 py-1.5 text-xs font-semibold hover:opacity-90 active:scale-95 transition-all cursor-pointer"
           >
             查询
           </button>
@@ -524,7 +524,7 @@ const daysToLaborDay = moyu?.countdown?.laborDay ?? 198;
           </div>
           <div class="flex justify-between">
             <span class="text-[var(--text-tertiary)]">到期时间:</span>
-            <span class="text-emerald-600 dark:text-emerald-400 font-semibold">{whois?.expires || '2027/09/30'}</span>
+            <span class="text-[var(--algo-green)] font-semibold">{whois?.expires || '2027/09/30'}</span>
           </div>
           <div class="flex justify-between">
             <span class="text-[var(--text-tertiary)]">DNS 服务器:</span>
@@ -554,7 +554,7 @@ const daysToLaborDay = moyu?.countdown?.laborDay ?? 198;
             <button
               id="btn-qr-gen"
               type="button"
-              class="rounded-lg bg-[var(--accent)] text-white px-3 py-1.5 text-xs font-semibold hover:opacity-90 active:scale-95 transition-all"
+              class="bg-[var(--accent)] text-[var(--algo-on-green)] px-3 py-1.5 text-xs font-semibold hover:opacity-90 active:scale-95 transition-all cursor-pointer"
             >
               生成
             </button>
@@ -594,10 +594,10 @@ const daysToLaborDay = moyu?.countdown?.laborDay ?? 198;
 
         // Switch pills
         pills.forEach((p) => {
-          p.classList.remove('active', 'bg-[var(--accent)]', 'text-white', 'font-semibold');
+          p.classList.remove('active', 'bg-[var(--accent)]', 'text-[var(--algo-on-green)]', 'font-semibold');
           p.classList.add('text-[var(--text-secondary)]');
         });
-        pill.classList.add('active', 'bg-[var(--accent)]', 'text-white', 'font-semibold');
+        pill.classList.add('active', 'bg-[var(--accent)]', 'text-[var(--algo-on-green)]', 'font-semibold');
         pill.classList.remove('text-[var(--text-secondary)]');
 
         // Switch panels

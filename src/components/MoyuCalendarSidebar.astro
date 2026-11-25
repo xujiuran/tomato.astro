@@ -38,16 +38,13 @@ const moyuQuote = moyu?.moyuQuote || defaultQuote;
 
 <div id="moyu-sidebar-wrapper" class="space-y-4">
   {showClock && (
-    <div class="relative overflow-hidden rounded-xl border border-[var(--border-primary)] bg-[var(--card-bg)] p-4 sm:p-5 shadow-xs transition-all">
-      <div class="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500"></div>
+    <div class="relative overflow-hidden border border-[var(--border-primary)] bg-[var(--card-bg)] p-4 sm:p-5 transition-all">
+      <div class="absolute top-0 left-0 right-0 h-[2px] bg-[var(--algo-green)]"></div>
 
       <div class="flex items-center justify-between text-xs text-[var(--text-tertiary)] mb-2.5">
         <div class="flex items-center gap-1.5 font-medium">
-          <span class="relative flex h-2 w-2">
-            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-            <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-          </span>
-          <span class="text-[var(--text-secondary)] font-semibold" data-i18n="moyu.beijingTime">北京时间</span>
+          <span class="h-2 w-2 bg-[var(--algo-green)]"></span>
+          <span class="text-[var(--text-secondary)] font-semibold mono" data-i18n="moyu.beijingTime">北京时间</span>
         </div>
         <span class="mono text-[11px] bg-[var(--bg-secondary)] text-[var(--text-tertiary)] px-1.5 py-0.5 rounded">
           UTC+8
@@ -74,8 +71,8 @@ const moyuQuote = moyu?.moyuQuote || defaultQuote;
         <span id="live-clock-date" class="mono font-medium">
           {moyu?.date?.gregorian || '2026年10月14日'}
         </span>
-        <span id="live-clock-term" class="inline-flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-medium">
-          <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+        <span id="live-clock-term" class="inline-flex items-center gap-1.5 text-[var(--algo-green)] font-medium">
+          <span class="h-1.5 w-1.5 bg-[var(--algo-green)]"></span>
           <span data-i18n="moyu.termBalance">寒露 · 劳逸结合</span>
         </span>
       </div>
@@ -109,9 +106,9 @@ const moyuQuote = moyu?.moyuQuote || defaultQuote;
       <div class="flex items-center justify-between mb-3">
         <div class="flex items-center gap-1.5">
           <img src="/images/icons/calendar.png" alt="日历" class="h-4 w-4 object-contain inline-block shrink-0 rounded-xs" />
-          <h3 id="sidebar-cal-title" class="text-sm font-bold text-[var(--text-primary)] tracking-tight">
+          <h2 id="sidebar-cal-title" class="text-sm font-bold text-[var(--text-primary)] tracking-tight mono">
             2026年 10月
-          </h3>
+          </h2>
         </div>
         <div class="flex items-center gap-1">
           <button
@@ -148,8 +145,8 @@ const moyuQuote = moyu?.moyuQuote || defaultQuote;
         <span>三</span>
         <span>四</span>
         <span>五</span>
-        <span class="text-rose-500">六</span>
-        <span class="text-rose-500">日</span>
+        <span class="text-[var(--algo-magenta)]">六</span>
+        <span class="text-[var(--algo-magenta)]">日</span>
       </div>
 
       <!-- Calendar 7-column Days Grid -->
@@ -181,10 +178,10 @@ const moyuQuote = moyu?.moyuQuote || defaultQuote;
     <div id="moyu-card-content" class="rounded-xl border border-[var(--border-primary)] bg-[var(--card-bg)] p-4 sm:p-5 shadow-xs space-y-4 transition-all">
       <div class="flex items-center justify-between pb-2 border-b border-[var(--border-secondary)]">
         <div class="flex items-center gap-2">
-          <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
-          <h3 class="text-sm font-bold text-[var(--text-primary)]" data-i18n="moyu.title">
+          <span class="h-2 w-2 bg-[var(--algo-green)]"></span>
+          <h2 class="text-sm font-bold text-[var(--text-primary)] mono" data-i18n="moyu.title">
             摸鱼工作周历 · 劳逸结合
-          </h3>
+          </h2>
         </div>
         <span class="flex items-center gap-1 text-[11px] text-[var(--text-tertiary)] mono">
           <img src="/images/icons/moyu.png" alt="摸鱼" class="h-3.5 w-3.5 object-contain rounded-xs inline-block" />
@@ -194,12 +191,12 @@ const moyuQuote = moyu?.moyuQuote || defaultQuote;
 
       <!-- Slacking Quote -->
       {moyuQuote && (
-        <div class="rounded-lg bg-emerald-500/10 border border-emerald-500/20 p-3 text-xs text-emerald-800 dark:text-emerald-300 leading-relaxed font-medium">
+        <div class="bg-[var(--bg-secondary)] border border-[var(--algo-green)]/35 p-3 text-xs text-[var(--text-primary)] leading-relaxed font-medium">
           <div class="flex items-start gap-1.5">
-            <img src="/images/icons/thoughts.png" alt="哲学" class="h-3.5 w-3.5 object-contain rounded-xs mt-0.5 inline-block shrink-0" />
+            <span class="mono text-[var(--algo-green)] font-bold shrink-0">&gt;_</span>
             <div>
-              <span class="font-bold mr-1" data-i18n="home.moyuPhilosophy">「摸鱼哲学」</span>
-              <span>{moyuQuote}</span>
+              <span class="font-bold text-[var(--algo-green)] mr-1" data-i18n="home.moyuPhilosophy">「摸鱼哲学」</span>
+              <span class="text-[var(--text-secondary)]">{moyuQuote}</span>
             </div>
           </div>
         </div>
@@ -216,11 +213,11 @@ const moyuQuote = moyu?.moyuQuote || defaultQuote;
         <div>
           <div class="flex justify-between text-[11px] text-[var(--text-secondary)] mb-1">
             <span data-i18n="moyu.weekProgress">本周工作进度</span>
-            <span class="mono font-semibold text-[var(--text-primary)]">{weekPercentage}%</span>
+            <span class="mono font-semibold text-[var(--algo-green)]">{weekPercentage}%</span>
           </div>
-          <div class="h-2 w-full rounded-full bg-[var(--bg-secondary)] overflow-hidden">
+          <div class="h-2 w-full bg-[var(--bg-secondary)] border border-[var(--border-secondary)] overflow-hidden">
             <div
-              class="h-full bg-emerald-500 rounded-full transition-all duration-500"
+              class="h-full bg-[var(--algo-green)] transition-all duration-500"
               style={`width: ${weekPercentage}%`}
             ></div>
           </div>
@@ -230,11 +227,11 @@ const moyuQuote = moyu?.moyuQuote || defaultQuote;
         <div>
           <div class="flex justify-between text-[11px] text-[var(--text-secondary)] mb-1">
             <span data-i18n="moyu.monthProgress">本月进度</span>
-            <span class="mono font-semibold text-[var(--text-primary)]">{monthPercentage}%</span>
+            <span class="mono font-semibold text-[var(--algo-magenta)]">{monthPercentage}%</span>
           </div>
-          <div class="h-2 w-full rounded-full bg-[var(--bg-secondary)] overflow-hidden">
+          <div class="h-2 w-full bg-[var(--bg-secondary)] border border-[var(--border-secondary)] overflow-hidden">
             <div
-              class="h-full bg-blue-500 rounded-full transition-all duration-500"
+              class="h-full bg-[var(--algo-magenta)] transition-all duration-500"
               style={`width: ${monthPercentage}%`}
             ></div>
           </div>
@@ -244,11 +241,11 @@ const moyuQuote = moyu?.moyuQuote || defaultQuote;
         <div>
           <div class="flex justify-between text-[11px] text-[var(--text-secondary)] mb-1">
             <span data-i18n="moyu.yearProgress">今年流逝</span>
-            <span class="mono font-semibold text-[var(--text-primary)]">{yearPercentage}%</span>
+            <span class="mono font-semibold text-[var(--algo-amber)]">{yearPercentage}%</span>
           </div>
-          <div class="h-2 w-full rounded-full bg-[var(--bg-secondary)] overflow-hidden">
+          <div class="h-2 w-full bg-[var(--bg-secondary)] border border-[var(--border-secondary)] overflow-hidden">
             <div
-              class="h-full bg-orange-500 rounded-full transition-all duration-500"
+              class="h-full bg-[var(--algo-amber)] transition-all duration-500"
               style={`width: ${yearPercentage}%`}
             ></div>
           </div>
@@ -257,30 +254,30 @@ const moyuQuote = moyu?.moyuQuote || defaultQuote;
 
       <!-- Festive Countdowns -->
       <div class="pt-2">
-        <h4 class="text-xs font-bold text-[var(--text-primary)] mb-2" data-i18n="home.moyuFestiveGoals">节日倒计时目标</h4>
+        <h3 class="text-xs font-bold text-[var(--text-primary)] mb-2 mono" data-i18n="home.moyuFestiveGoals">节日倒计时目标</h3>
         <div class="grid grid-cols-2 gap-2">
-          <div class="rounded-lg bg-[var(--bg-secondary)] p-2.5 text-center transition-all hover:bg-[var(--bg-secondary)]/80">
-            <p class="text-[10px] text-[var(--text-tertiary)]" data-i18n="moyu.weekend">距离周末</p>
-            <p class="text-lg font-bold mono text-emerald-600 dark:text-emerald-400 mt-0.5">
-              {daysToWeekend} <span class="text-[10px] font-normal" data-i18n="moyu.daysUnit">天</span>
+          <div class="bg-[var(--bg-secondary)] border border-[var(--border-secondary)] p-2.5 text-center transition-colors hover:border-[var(--algo-green)]">
+            <p class="text-[11px] text-[var(--text-tertiary)]" data-i18n="moyu.weekend">距离周末</p>
+            <p class="text-lg font-bold mono text-[var(--algo-green)] mt-0.5">
+              {daysToWeekend} <span class="text-[11px] font-normal text-[var(--text-tertiary)]" data-i18n="moyu.daysUnit">天</span>
             </p>
           </div>
-          <div class="rounded-lg bg-[var(--bg-secondary)] p-2.5 text-center transition-all hover:bg-[var(--bg-secondary)]/80">
-            <p class="text-[10px] text-[var(--text-tertiary)]" data-i18n="moyu.newYear">距离元旦</p>
-            <p class="text-lg font-bold mono text-blue-600 dark:text-blue-400 mt-0.5">
-              {daysToNewYear} <span class="text-[10px] font-normal" data-i18n="moyu.daysUnit">天</span>
+          <div class="bg-[var(--bg-secondary)] border border-[var(--border-secondary)] p-2.5 text-center transition-colors hover:border-[var(--algo-amber)]">
+            <p class="text-[11px] text-[var(--text-tertiary)]" data-i18n="moyu.newYear">距离元旦</p>
+            <p class="text-lg font-bold mono text-[var(--algo-amber)] mt-0.5">
+              {daysToNewYear} <span class="text-[11px] font-normal text-[var(--text-tertiary)]" data-i18n="moyu.daysUnit">天</span>
             </p>
           </div>
-          <div class="rounded-lg bg-[var(--bg-secondary)] p-2.5 text-center transition-all hover:bg-[var(--bg-secondary)]/80">
-            <p class="text-[10px] text-[var(--text-tertiary)]" data-i18n="moyu.springFestival">距离春节</p>
-            <p class="text-lg font-bold mono text-red-600 dark:text-red-400 mt-0.5">
-              {daysToSpringFestival} <span class="text-[10px] font-normal" data-i18n="moyu.daysUnit">天</span>
+          <div class="bg-[var(--bg-secondary)] border border-[var(--border-secondary)] p-2.5 text-center transition-colors hover:border-[var(--algo-magenta)]">
+            <p class="text-[11px] text-[var(--text-tertiary)]" data-i18n="moyu.springFestival">距离春节</p>
+            <p class="text-lg font-bold mono text-[var(--algo-magenta)] mt-0.5">
+              {daysToSpringFestival} <span class="text-[11px] font-normal text-[var(--text-tertiary)]" data-i18n="moyu.daysUnit">天</span>
             </p>
           </div>
-          <div class="rounded-lg bg-[var(--bg-secondary)] p-2.5 text-center transition-all hover:bg-[var(--bg-secondary)]/80">
-            <p class="text-[10px] text-[var(--text-tertiary)]" data-i18n="moyu.laborDay">五一劳动节</p>
-            <p class="text-lg font-bold mono text-purple-600 dark:text-purple-400 mt-0.5">
-              {daysToLaborDay} <span class="text-[10px] font-normal" data-i18n="moyu.daysUnit">天</span>
+          <div class="bg-[var(--bg-secondary)] border border-[var(--border-secondary)] p-2.5 text-center transition-colors hover:border-[var(--algo-crimson)]">
+            <p class="text-[11px] text-[var(--text-tertiary)]" data-i18n="moyu.laborDay">五一劳动节</p>
+            <p class="text-lg font-bold mono text-[var(--algo-crimson)] mt-0.5">
+              {daysToLaborDay} <span class="text-[11px] font-normal text-[var(--text-tertiary)]" data-i18n="moyu.daysUnit">天</span>
             </p>
           </div>
         </div>
@@ -527,19 +524,19 @@ const moyuQuote = moyu?.moyuQuote || defaultQuote;
 
         const { text: subText, isFest } = getDayLunarAndFest(thisDate);
         const cellCls = isToday
-          ? 'bg-[var(--accent)] text-white font-bold ring-2 ring-[var(--accent)]/30 shadow-xs'
+          ? 'bg-[var(--algo-green)] text-[var(--algo-on-green)] font-bold ring-1 ring-[var(--algo-green)]'
           : isWeekend
-          ? 'text-rose-500 hover:bg-[var(--bg-secondary)]'
+          ? 'text-[var(--algo-magenta)] hover:bg-[var(--bg-secondary)]'
           : 'text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]';
         const subCls = isToday
-          ? 'text-white/90'
+          ? 'text-[var(--algo-on-green)] opacity-85'
           : isFest
-          ? 'text-[var(--accent)] font-semibold'
+          ? 'text-[var(--algo-green)] font-semibold'
           : isWeekend
-          ? 'text-rose-400/80'
+          ? 'text-[var(--algo-magenta)] opacity-85'
           : 'text-[var(--text-tertiary)]';
 
-        html += `<button type="button" data-cal-info="${year}/${month + 1}/${d} · ${subText} · ${WEEKDAYS[dayOfWeek]}" data-is-today="${isToday ? '1' : '0'}" class="cal-day-cell group relative flex flex-col items-center justify-center py-1 rounded-lg transition-all cursor-pointer ${cellCls}"><span class="mono text-xs leading-none ${isToday ? 'text-white' : ''}">${d}</span><span class="text-[9px] scale-90 leading-tight truncate mt-0.5 ${subCls}">${subText}</span></button>`;
+        html += `<button type="button" data-cal-info="${year}/${month + 1}/${d} · ${subText} · ${WEEKDAYS[dayOfWeek]}" data-is-today="${isToday ? '1' : '0'}" class="cal-day-cell group relative flex flex-col items-center justify-center py-1 rounded-[2px] transition-all cursor-pointer ${cellCls}"><span class="mono text-xs leading-none ${isToday ? 'text-[var(--algo-on-green)]' : ''}">${d}</span><span class="text-[9px] scale-90 leading-tight truncate mt-0.5 ${subCls}">${subText}</span></button>`;
       }
 
       const totalCells = firstDay + daysInCurrentMonth;

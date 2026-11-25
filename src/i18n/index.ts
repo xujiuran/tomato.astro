@@ -11,11 +11,11 @@ const DEFAULT_LANG: Lang = 'zh-CN';
 export function getCurrentLang(): Lang {
   if (typeof window === 'undefined') return DEFAULT_LANG;
   const stored = localStorage.getItem('tomatox_lang') as Lang | null;
-  if (stored && ['zh-CN', 'en', 'ja', 'ko'].includes(stored)) {
+  if (stored && ['zh-CN', 'en'].includes(stored)) {
     return stored;
   }
   const htmlLang = document.documentElement.getAttribute('lang') as Lang | null;
-  if (htmlLang && ['zh-CN', 'en', 'ja', 'ko'].includes(htmlLang)) {
+  if (htmlLang && ['zh-CN', 'en'].includes(htmlLang)) {
     return htmlLang;
   }
   return DEFAULT_LANG;
@@ -155,22 +155,22 @@ export function applyTranslationsToDOM(lang?: Lang, root: ParentNode = document,
  */
 export function formatDayOfWeek(dayStr: string, lang: Lang): string {
   const map: Record<string, Record<Lang, string>> = {
-    '星期一': { 'zh-CN': '星期一', en: 'Monday', ja: '月曜日', ko: '월요일' },
-    '星期二': { 'zh-CN': '星期二', en: 'Tuesday', ja: '火曜日', ko: '화요일' },
-    '星期三': { 'zh-CN': '星期三', en: 'Wednesday', ja: '水曜日', ko: '수요일' },
-    '星期四': { 'zh-CN': '星期四', en: 'Thursday', ja: '木曜日', ko: '목요일' },
-    '星期五': { 'zh-CN': '星期五', en: 'Friday', ja: '金曜日', ko: '금요일' },
-    '星期六': { 'zh-CN': '星期六', en: 'Saturday', ja: '土曜日', ko: '토요일' },
-    '星期日': { 'zh-CN': '星期日', en: 'Sunday', ja: '日曜日', ko: '일요일' },
-    '星期天': { 'zh-CN': '星期天', en: 'Sunday', ja: '日曜日', ko: '일요일' },
-    '周一': { 'zh-CN': '周一', en: 'Mon', ja: '月曜', ko: '월요일' },
-    '周二': { 'zh-CN': '周二', en: 'Tue', ja: '火曜', ko: '화요일' },
-    '周三': { 'zh-CN': '周三', en: 'Wed', ja: '水曜', ko: '수요일' },
-    '周四': { 'zh-CN': '周四', en: 'Thu', ja: '木曜', ko: '목요일' },
-    '周五': { 'zh-CN': '周五', en: 'Fri', ja: '金曜', ko: '금요일' },
-    '周六': { 'zh-CN': '周六', en: 'Sat', ja: '土曜', ko: '토요일' },
-    '周日': { 'zh-CN': '周日', en: 'Sun', ja: '日曜', ko: '일요일' },
-    '每日快讯': { 'zh-CN': '每日快讯', en: 'Daily Brief', ja: 'デイリー速報', ko: '데일리 속보' },
+    '星期一': { 'zh-CN': '星期一', en: 'Monday' },
+    '星期二': { 'zh-CN': '星期二', en: 'Tuesday' },
+    '星期三': { 'zh-CN': '星期三', en: 'Wednesday' },
+    '星期四': { 'zh-CN': '星期四', en: 'Thursday' },
+    '星期五': { 'zh-CN': '星期五', en: 'Friday' },
+    '星期六': { 'zh-CN': '星期六', en: 'Saturday' },
+    '星期日': { 'zh-CN': '星期日', en: 'Sunday' },
+    '星期天': { 'zh-CN': '星期天', en: 'Sunday' },
+    '周一': { 'zh-CN': '周一', en: 'Mon' },
+    '周二': { 'zh-CN': '周二', en: 'Tue' },
+    '周三': { 'zh-CN': '周三', en: 'Wed' },
+    '周四': { 'zh-CN': '周四', en: 'Thu' },
+    '周五': { 'zh-CN': '周五', en: 'Fri' },
+    '周六': { 'zh-CN': '周六', en: 'Sat' },
+    '周日': { 'zh-CN': '周日', en: 'Sun' },
+    '每日快讯': { 'zh-CN': '每日快讯', en: 'Daily Brief' },
   };
   return map[dayStr]?.[lang] || dayStr;
 }
@@ -179,7 +179,7 @@ export function formatDayOfWeek(dayStr: string, lang: Lang): string {
  * Change global language and trigger listeners
  */
 export function setLanguage(newLang: Lang): void {
-  if (!['zh-CN', 'en', 'ja', 'ko'].includes(newLang)) return;
+  if (!['zh-CN', 'en'].includes(newLang)) return;
   localStorage.setItem('tomatox_lang', newLang);
   document.documentElement.setAttribute('lang', newLang);
 

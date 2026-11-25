@@ -1,43 +1,83 @@
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-weight: 100 800;
+  font-display: swap;
+  src: url("/fonts/jetbrains-mono-latin-ext.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-weight: 100 800;
+  font-display: swap;
+  src: url("/fonts/jetbrains-mono-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
 
 :root {
-  --bg-primary: #faf9f6;
-  --bg-secondary: #f3f2ee;
-  --bg-tertiary: #e8e7e1;
-  --border-primary: #e6e4dc;
-  --border-secondary: #eceae3;
-  --text-primary: #1c1917;
-  --text-secondary: #78716c;
-  --text-tertiary: #a8a29e;
-  --accent: #c2410c;
-  --accent-hover: #9a3412;
-  --accent-subtle: #ffedd5;
+  --bg-primary: #f4f5f0;
+  --bg-secondary: #e8ebe2;
+  --bg-tertiary: #dce0d4;
+  --border-primary: #b8c2b4;
+  --border-secondary: #cfd7cb;
+  --text-primary: #0b100c;
+  --text-secondary: #2e3d33;
+  --text-tertiary: #47574c;
+  --accent: #055c20;
+  --accent-hover: #034217;
+  --accent-subtle: rgba(5, 92, 32, 0.1);
   --surface-primary: #ffffff;
-  --surface-subtle: #f3f2ee;
+  --surface-subtle: #e8ebe2;
   --card-bg: #ffffff;
-  --card-border: #e7e5e4;
+  --card-border: #b8c2b4;
+  --algo-green: #055c20;
+  --algo-on-green: #ffffff;
+  --algo-magenta: #9b0b52;
+  --algo-on-magenta: #ffffff;
+  --algo-crimson: #b91c1c;
+  --algo-amber: #8a3c05;
+  --algo-buffer: #fafbf7;
+  --algo-grid-dot: rgba(5, 92, 32, 0.12);
 }
 
 html.dark {
-  --bg-primary: #141312;
-  --bg-secondary: #1c1b19;
-  --bg-tertiary: #262422;
-  --border-primary: #2d2b28;
-  --border-secondary: #22211f;
-  --text-primary: #f5f5f4;
-  --text-secondary: #a8a29e;
-  --text-tertiary: #78716c;
-  --accent: #f97316;
-  --accent-hover: #fb923c;
-  --accent-subtle: #431407;
-  --surface-primary: #1c1b19;
-  --surface-subtle: #262422;
-  --card-bg: #181716;
-  --card-border: #2a2826;
+  --bg-primary: #020302;
+  --bg-secondary: #0a0d0b;
+  --bg-tertiary: #131815;
+  --border-primary: #1e2822;
+  --border-secondary: #151c18;
+  --text-primary: #eef6ef;
+  --text-secondary: #98b0a1;
+  --text-tertiary: #6a8274;
+  --accent: #39ff14;
+  --accent-hover: #6eff52;
+  --accent-subtle: rgba(57, 255, 20, 0.12);
+  --surface-primary: #0b0e0c;
+  --surface-subtle: #141916;
+  --card-bg: #070908;
+  --card-border: #1e2822;
+  --algo-green: #39ff14;
+  --algo-on-green: #020302;
+  --algo-magenta: #ff3cf7;
+  --algo-on-magenta: #020302;
+  --algo-crimson: #ff2e54;
+  --algo-amber: #ffb800;
+  --algo-buffer: #0b0d0c;
+  --algo-grid-dot: rgba(57, 255, 20, 0.11);
 }
 
+/* ===================================================
+   Site-Wide Algorave Source Floor Surface Cohesion
+   =================================================== */
 body {
   background-color: var(--bg-primary);
+  background-image: radial-gradient(var(--algo-grid-dot) 1px, transparent 1px);
+  background-size: 24px 24px;
   color: var(--text-primary);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
   line-height: 1.65;
@@ -45,9 +85,58 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+#zen-bg-canvas {
+  opacity: 0 !important;
+}
+
 ::selection {
-  background-color: var(--accent);
-  color: #ffffff;
+  background-color: var(--algo-green);
+  color: var(--algo-on-green);
+}
+
+*:focus-visible {
+  outline: 2px solid var(--algo-green);
+  outline-offset: 2px;
+}
+
+header {
+  background-color: color-mix(in oklab, var(--bg-primary) 90%, transparent);
+  border-bottom-color: var(--border-primary);
+}
+
+.desktop-nav-link,
+#quick-search-btn,
+.lang-toggle-btn,
+.theme-toggle-btn,
+header a[aria-label="GitHub"],
+.project-card,
+.friend-card,
+.lang-popover,
+main .rounded-xl,
+main .rounded-2xl,
+main .rounded-lg {
+  border-radius: 2px !important;
+}
+
+html.dark .lang-popover {
+  background-color: rgba(11, 14, 12, 0.96) !important;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-primary);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--algo-green);
 }
 
 /* Typography polish */
@@ -56,7 +145,29 @@ body {
 }
 
 .mono {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+@keyframes algo-cursor-blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0.12; }
+}
+
+.algo-cursor {
+  display: inline-block;
+  width: 0.58em;
+  height: 1.05em;
+  vertical-align: -0.14em;
+  background-color: var(--algo-green, #39ff14);
+  animation: algo-cursor-blink 1.05s steps(1, end) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .algo-cursor {
+    animation: none;
+    opacity: 1;
+  }
 }
 
 /* ===================================================
@@ -80,23 +191,18 @@ html:not(.theme-transitioning)::view-transition-group(*) {
   display: block;
   height: 10.5px;
   width: 10.5px;
-  border-radius: 2.5px;
+  border-radius: 1px;
   cursor: pointer;
   transition: transform 0.15s ease;
 }
 .hm-c:hover {
   transform: scale(1.25);
 }
-.hm-0 { background-color: rgba(228, 228, 231, 0.7); }
-.hm-1 { background-color: #fecaca; }
-.hm-2 { background-color: #f87171; }
-.hm-3 { background-color: #ef4444; }
-.hm-4 { background-color: #dc2626; box-shadow: 0 0 5px rgba(239, 68, 68, 0.6); }
-html.dark .hm-0 { background-color: rgba(39, 39, 42, 0.7); }
-html.dark .hm-1 { background-color: rgba(69, 10, 10, 0.8); }
-html.dark .hm-2 { background-color: rgba(153, 27, 27, 0.8); }
-html.dark .hm-3 { background-color: #dc2626; }
-html.dark .hm-4 { background-color: #ef4444; box-shadow: 0 0 5px rgba(239, 68, 68, 0.6); }
+.hm-0 { background-color: var(--bg-tertiary); }
+.hm-1 { background-color: color-mix(in oklab, var(--algo-green) 26%, var(--bg-secondary)); }
+.hm-2 { background-color: color-mix(in oklab, var(--algo-green) 52%, var(--bg-secondary)); }
+.hm-3 { background-color: color-mix(in oklab, var(--algo-green) 78%, var(--bg-secondary)); }
+.hm-4 { background-color: var(--algo-green); }
 
 /* Compact HotNews item styles (reduces /news HTML size by ~100KB) */
 .hn-li {
@@ -106,14 +212,14 @@ html.dark .hm-4 { background-color: #ef4444; box-shadow: 0 0 5px rgba(239, 68, 6
   padding: 0.625rem 0.5rem;
   margin-left: -0.5rem;
   margin-right: -0.5rem;
-  border-radius: 0.5rem;
+  border-radius: 2px;
   transition: background-color 0.15s ease;
 }
 .hn-li:hover {
-  background-color: color-mix(in oklab, var(--bg-secondary) 45%, transparent);
+  background-color: color-mix(in oklab, var(--bg-secondary) 70%, transparent);
 }
 .hn-rk {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   font-size: 0.75rem;
   font-weight: 600;
   flex-shrink: 0;
@@ -123,13 +229,13 @@ html.dark .hm-4 { background-color: #ef4444; box-shadow: 0 0 5px rgba(239, 68, 6
   width: 1.25rem;
   align-items: center;
   justify-content: center;
-  border-radius: 0.25rem;
+  border-radius: 2px;
   color: var(--text-tertiary);
   background-color: var(--bg-secondary);
 }
-.hn-rk-1 { background-color: #ef4444; color: #fff; font-weight: 700; }
-.hn-rk-2 { background-color: #f97316; color: #fff; font-weight: 700; }
-.hn-rk-3 { background-color: #f59e0b; color: #fff; font-weight: 700; }
+.hn-rk-1 { background-color: var(--algo-green); color: var(--algo-on-green); font-weight: 700; }
+.hn-rk-2 { background-color: var(--algo-magenta); color: var(--algo-on-magenta); font-weight: 700; }
+.hn-rk-3 { background-color: var(--algo-amber); color: var(--algo-on-green); font-weight: 700; }
 .hn-a {
   font-size: 0.875rem;
   color: var(--text-primary);
@@ -298,11 +404,11 @@ html:not(.dark) .theme-toggle-btn .moon-icon {
 }
 
 .article-content blockquote {
-  border-left: 3px solid var(--accent);
-  padding: 0.75rem 1.25rem;
+  border: 1px solid var(--border-primary);
+  padding: 0.85rem 1.25rem;
   margin: 1.5rem 0;
   background-color: var(--bg-secondary);
-  border-radius: 0 0.75rem 0.75rem 0;
+  border-radius: 2px;
   color: var(--text-secondary);
   font-style: italic;
 }

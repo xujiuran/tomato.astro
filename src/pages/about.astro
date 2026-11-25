@@ -6,13 +6,18 @@ import ActivityHeatmap from '../components/ActivityHeatmap.astro';
 <BaseLayout title="关于我 · TomatoX 随笔" currentPath="/about" containerClass="max-w-4xl">
   <div class="space-y-8 pb-12">
     <article class="space-y-6 text-sm sm:text-base leading-relaxed text-[var(--text-secondary)]">
-      <div class="border-b border-[var(--border-secondary)] pb-4">
-        <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-[var(--text-primary)]" data-i18n="about.title">
-          关于 TomatoX
-        </h1>
-        <p class="mt-1 text-xs sm:text-sm text-[var(--text-secondary)]" data-i18n="about.sub">
-          写代码、做工具、认真生活的数字手艺人 · 域名：xujiuran.top
-        </p>
+      <div class="border-b border-[var(--border-primary)] pb-5 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2">
+        <div>
+          <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-[var(--text-primary)] mono" data-i18n="about.title">
+            关于 TomatoX
+          </h1>
+          <p class="mt-1.5 text-xs sm:text-sm text-[var(--text-secondary)]" data-i18n="about.sub">
+            写代码、做工具、认真生活的数字手艺人 · 域名：xujiuran.top
+          </p>
+        </div>
+        <span class="mono text-xs border border-[var(--algo-green)]/40 bg-[var(--algo-green)]/10 px-2.5 py-1 text-[var(--algo-green)] font-semibold self-start sm:self-auto">
+          SYSTEM // INFO
+        </span>
       </div>
 
       <section class="space-y-3">

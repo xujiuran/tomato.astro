@@ -69,9 +69,12 @@ const weekDays = weekdayNames.map((name, i) => {
 
 <section id="moyu-weekly-section" class="cv-auto space-y-4">
   <!-- Header with title & badges -->
-  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-[var(--border-secondary)] pb-3">
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-[var(--border-primary)] pb-3">
     <div class="flex items-center gap-2.5">
-      <img src="/images/icons/moyu.png" alt="摸鱼周历" class="h-6 w-6 sm:h-7 sm:w-7 object-contain inline-block shrink-0 rounded-lg shadow-xs" />
+      <svg class="h-5 w-5 text-[var(--algo-green,var(--accent))] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square">
+        <rect x="3" y="4" width="18" height="17"></rect>
+        <path d="M8 2v4M16 2v4M3 10h18"></path>
+      </svg>
       <h2 class="text-lg sm:text-xl font-bold text-[var(--text-primary)] tracking-tight" data-i18n="home.moyuTitle">
         摸鱼周历 · 劳逸结合
       </h2>
@@ -80,9 +83,9 @@ const weekDays = weekdayNames.map((name, i) => {
       </span>
     </div>
 
-    <div class="flex items-center gap-2 text-xs">
-      <span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 text-emerald-600 dark:text-emerald-400 font-medium">
-        <span class="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+    <div class="flex items-center gap-3 text-xs mono">
+      <span class="inline-flex items-center gap-1.5 border border-[var(--algo-green,var(--accent))]/40 bg-[var(--algo-green,var(--accent))]/10 px-2.5 py-0.5 text-[var(--algo-green,var(--accent))] font-semibold">
+        <span class="h-1.5 w-1.5 bg-[var(--algo-green,var(--accent))]"></span>
         <span data-i18n="home.moyuDaysToWeekend" data-i18n-param-count={daysToWeekend}>距周末 {daysToWeekend} 天</span>
       </span>
       <a
@@ -95,22 +98,22 @@ const weekDays = weekdayNames.map((name, i) => {
     </div>
   </div>
 
-  <!-- Main Container Card -->
-  <div class="rounded-2xl border border-[var(--border-primary)] bg-[var(--card-bg)] p-4 sm:p-6 shadow-xs space-y-6 transition-all">
+  <!-- Main Container Panel -->
+  <div class="border border-[var(--border-primary)] bg-[var(--card-bg)] p-4 sm:p-6 space-y-6 transition-all">
     
-    <!-- 7-Day Week Strip (Monday to Sunday) -->
+    <!-- 7-Day Week Sequencer Strip (Monday to Sunday) -->
     <div>
       <div class="flex items-center justify-between mb-3 text-xs text-[var(--text-secondary)]">
         <div class="flex items-center gap-2">
-          <span class="font-bold text-[var(--text-primary)]" data-i18n="home.moyuScheduleTitle">本周工时日程</span>
+          <span class="font-bold text-[var(--text-primary)] mono" data-i18n="home.moyuScheduleTitle">本周工时日程</span>
           <span class="text-[11px] text-[var(--text-tertiary)]" data-i18n="home.moyuScheduleSub">周一至周日全景视图</span>
         </div>
-        <div class="flex items-center gap-2 text-[11px] text-[var(--text-tertiary)]">
-          <span class="flex items-center gap-1">
-            <span class="h-2 w-2 rounded-full bg-emerald-500"></span> <span data-i18n="home.moyuToday">今日</span>
+        <div class="flex items-center gap-3 text-[11px] text-[var(--text-tertiary)] mono">
+          <span class="flex items-center gap-1.5">
+            <span class="h-2 w-2 bg-[var(--algo-green,#10b981)]"></span> <span data-i18n="home.moyuToday">今日</span>
           </span>
-          <span class="flex items-center gap-1">
-            <span class="h-2 w-2 rounded-full bg-rose-500"></span> <span data-i18n="home.moyuWeekendTag">双休</span>
+          <span class="flex items-center gap-1.5">
+            <span class="h-2 w-2 bg-[var(--algo-magenta,#f43f5e)]"></span> <span data-i18n="home.moyuWeekendTag">双休</span>
           </span>
         </div>
       </div>
@@ -119,28 +122,28 @@ const weekDays = weekdayNames.map((name, i) => {
         {weekDays.map((d) => (
           <div
             class:list={[
-              'moyu-week-day group relative rounded-xl p-2 sm:p-3 text-center transition-all border flex flex-col items-center justify-between min-h-[92px] sm:min-h-[105px]',
+              'moyu-week-day group relative p-2 sm:p-3 text-center transition-all border flex flex-col items-center justify-between min-h-[92px] sm:min-h-[105px]',
               d.isToday
-                ? 'bg-emerald-500/10 border-emerald-500/40 shadow-xs ring-1 ring-emerald-500/30'
+                ? 'bg-[var(--algo-green,#10b981)]/12 border-[var(--algo-green,#10b981)] ring-1 ring-[var(--algo-green,#10b981)]/40'
                 : d.isWeekend
-                ? 'bg-rose-500/5 border-rose-500/20 hover:border-rose-500/40'
+                ? 'bg-[var(--algo-magenta,#f43f5e)]/8 border-[var(--algo-magenta,#f43f5e)]/35 hover:border-[var(--algo-magenta,#f43f5e)]'
                 : d.isPast
-                ? 'bg-[var(--bg-secondary)]/50 border-[var(--border-secondary)] opacity-70 hover:opacity-100'
-                : 'bg-[var(--bg-secondary)] border-[var(--border-primary)] hover:border-[var(--accent)]/40',
+                ? 'bg-[var(--bg-secondary)]/55 border-[var(--border-secondary)]'
+                : 'bg-[var(--bg-secondary)] border-[var(--border-primary)] hover:border-[var(--accent)]/60',
             ]}
             data-day-index={d.index}
           >
             <!-- Today badge banner -->
             {d.isToday && (
-              <span class="absolute -top-2 left-1/2 -translate-x-1/2 bg-emerald-600 text-white text-[9px] font-bold px-1.5 py-0.2 rounded-full shadow-xs uppercase tracking-wider">
-                TODAY
+              <span class="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-[var(--algo-green,#10b981)] text-[var(--algo-on-green,#ffffff)] text-[9px] font-bold px-2 py-0.2 mono uppercase tracking-wider">
+                NOW
               </span>
             )}
 
             <!-- Weekday Title -->
             <div class:list={[
               'text-xs sm:text-sm font-bold',
-              d.isToday ? 'text-emerald-600 dark:text-emerald-400 font-extrabold' : d.isWeekend ? 'text-rose-600 dark:text-rose-400' : 'text-[var(--text-primary)]'
+              d.isToday ? 'text-[var(--algo-green,#10b981)] font-extrabold' : d.isWeekend ? 'text-[var(--algo-magenta,#f43f5e)]' : 'text-[var(--text-primary)]'
             ]} data-i18n={d.nameKey}>
               {d.name}
             </div>
@@ -152,11 +155,11 @@ const weekDays = weekdayNames.map((name, i) => {
 
             <!-- Fun Status Tag -->
             <div class:list={[
-              'text-[10px] sm:text-[11px] px-1 sm:px-1.5 py-0.5 rounded-md font-medium leading-tight truncate w-full',
+              'text-[10px] sm:text-[11px] px-1 sm:px-1.5 py-0.5 font-semibold leading-tight truncate w-full mono',
               d.isToday
-                ? 'bg-emerald-500 text-white font-semibold'
+                ? 'bg-[var(--algo-green,#10b981)] text-[var(--algo-on-green,#ffffff)]'
                 : d.isWeekend
-                ? 'bg-rose-500/15 text-rose-700 dark:text-rose-300'
+                ? 'bg-[var(--algo-magenta,#f43f5e)]/18 text-[var(--algo-magenta,#f43f5e)]'
                 : d.isPast
                 ? 'bg-[var(--bg-primary)] text-[var(--text-tertiary)]'
                 : 'bg-[var(--card-bg)] text-[var(--text-secondary)] border border-[var(--border-secondary)]'
@@ -170,12 +173,12 @@ const weekDays = weekdayNames.map((name, i) => {
 
     <!-- Slacking Philosophy Quote -->
     {moyuQuote && (
-      <div class="relative overflow-hidden rounded-xl bg-gradient-to-r from-emerald-500/10 via-teal-500/5 to-cyan-500/10 border border-emerald-500/20 p-3.5 sm:p-4 text-xs sm:text-sm text-emerald-900 dark:text-emerald-200 leading-relaxed">
+      <div class="border border-[var(--algo-green,var(--border-primary))]/35 bg-[var(--bg-secondary)] p-3.5 sm:p-4 text-xs sm:text-sm text-[var(--text-primary)] leading-relaxed">
         <div class="flex items-start gap-2.5">
-          <img src="/images/icons/thoughts.png" alt="摸鱼哲学" class="h-4 w-4 object-contain rounded-xs mt-0.5 shrink-0 inline-block" />
+          <span class="mono text-[var(--algo-green,var(--accent))] font-bold shrink-0">&gt;_</span>
           <div>
-            <span class="font-bold text-emerald-700 dark:text-emerald-400 mr-1.5" data-i18n="home.moyuPhilosophy">「摸鱼哲学」</span>
-            <span class="font-medium">{moyuQuote}</span>
+            <span class="mono font-bold text-[var(--algo-green,var(--accent))] mr-1.5" data-i18n="home.moyuPhilosophy">「摸鱼哲学」</span>
+            <span class="text-[var(--text-secondary)] font-medium">{moyuQuote}</span>
           </div>
         </div>
       </div>
@@ -187,8 +190,11 @@ const weekDays = weekdayNames.map((name, i) => {
       <!-- Left: Time Progress (7 cols on md) -->
       <div class="md:col-span-7 space-y-3.5">
         <div class="flex items-center justify-between text-xs">
-          <div class="flex items-center gap-1.5 font-bold text-[var(--text-primary)]">
-            <span>⏳</span>
+          <div class="flex items-center gap-1.5 font-bold text-[var(--text-primary)] mono">
+            <svg class="h-3.5 w-3.5 text-[var(--algo-green,var(--accent))]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square">
+              <circle cx="12" cy="12" r="9"></circle>
+              <path d="M12 7v5l3 2"></path>
+            </svg>
             <span data-i18n="home.moyuTimeProgress">时光流逝进度</span>
           </div>
           <span class="mono text-[11px] text-[var(--text-tertiary)]" data-i18n="home.moyuBalance">流年不负 · 劳逸平衡</span>
@@ -198,15 +204,15 @@ const weekDays = weekdayNames.map((name, i) => {
           <!-- Week Progress -->
           <div>
             <div class="flex justify-between text-xs text-[var(--text-secondary)] mb-1">
-              <span class="flex items-center gap-1">
-                <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+              <span class="flex items-center gap-1.5">
+                <span class="h-1.5 w-1.5 bg-[var(--algo-green,#10b981)]"></span>
                 <span data-i18n="moyu.weekWorkProgress">本周工作进度</span>
               </span>
-              <span class="mono font-semibold text-[var(--text-primary)]">{weekPercentage}%</span>
+              <span class="mono font-bold text-[var(--algo-green,var(--text-primary))]">{weekPercentage}%</span>
             </div>
-            <div class="h-2 w-full rounded-full bg-[var(--bg-secondary)] overflow-hidden">
+            <div class="h-2.5 w-full bg-[var(--bg-secondary)] border border-[var(--border-secondary)] overflow-hidden">
               <div
-                class="h-full bg-emerald-500 rounded-full transition-all duration-700"
+                class="h-full bg-[var(--algo-green,#10b981)] transition-all duration-700"
                 style={`width: ${weekPercentage}%`}
               ></div>
             </div>
@@ -215,15 +221,15 @@ const weekDays = weekdayNames.map((name, i) => {
           <!-- Month Progress -->
           <div>
             <div class="flex justify-between text-xs text-[var(--text-secondary)] mb-1">
-              <span class="flex items-center gap-1">
-                <span class="h-1.5 w-1.5 rounded-full bg-blue-500"></span>
+              <span class="flex items-center gap-1.5">
+                <span class="h-1.5 w-1.5 bg-[var(--algo-magenta,#3b82f6)]"></span>
                 <span data-i18n="moyu.monthNaturalProgress">本月自然日进度</span>
               </span>
-              <span class="mono font-semibold text-[var(--text-primary)]">{monthPercentage}%</span>
+              <span class="mono font-bold text-[var(--algo-magenta,var(--text-primary))]">{monthPercentage}%</span>
             </div>
-            <div class="h-2 w-full rounded-full bg-[var(--bg-secondary)] overflow-hidden">
+            <div class="h-2.5 w-full bg-[var(--bg-secondary)] border border-[var(--border-secondary)] overflow-hidden">
               <div
-                class="h-full bg-blue-500 rounded-full transition-all duration-700"
+                class="h-full bg-[var(--algo-magenta,#3b82f6)] transition-all duration-700"
                 style={`width: ${monthPercentage}%`}
               ></div>
             </div>
@@ -232,15 +238,15 @@ const weekDays = weekdayNames.map((name, i) => {
           <!-- Year Progress -->
           <div>
             <div class="flex justify-between text-xs text-[var(--text-secondary)] mb-1">
-              <span class="flex items-center gap-1">
-                <span class="h-1.5 w-1.5 rounded-full bg-orange-500"></span>
+              <span class="flex items-center gap-1.5">
+                <span class="h-1.5 w-1.5 bg-[var(--algo-amber,#f97316)]"></span>
                 <span data-i18n="moyu.yearGoneProgress">今年已逝进度</span>
               </span>
-              <span class="mono font-semibold text-[var(--text-primary)]">{yearPercentage}%</span>
+              <span class="mono font-bold text-[var(--algo-amber,var(--text-primary))]">{yearPercentage}%</span>
             </div>
-            <div class="h-2 w-full rounded-full bg-[var(--bg-secondary)] overflow-hidden">
+            <div class="h-2.5 w-full bg-[var(--bg-secondary)] border border-[var(--border-secondary)] overflow-hidden">
               <div
-                class="h-full bg-orange-500 rounded-full transition-all duration-700"
+                class="h-full bg-[var(--algo-amber,#f97316)] transition-all duration-700"
                 style={`width: ${yearPercentage}%`}
               ></div>
             </div>
@@ -251,8 +257,10 @@ const weekDays = weekdayNames.map((name, i) => {
       <!-- Right: Holiday Countdowns (5 cols on md) -->
       <div class="md:col-span-5 space-y-3">
         <div class="flex items-center justify-between text-xs">
-          <div class="flex items-center gap-1.5 font-bold text-[var(--text-primary)]">
-            <img src="/images/icons/target.png" alt="目标" class="h-4 w-4 object-contain rounded-xs shrink-0 inline-block" />
+          <div class="flex items-center gap-1.5 font-bold text-[var(--text-primary)] mono">
+            <svg class="h-3.5 w-3.5 text-[var(--algo-amber,var(--accent))]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square">
+              <polygon points="12 2 15 9 22 9 16.5 14 18.5 21 12 17 5.5 21 7.5 14 2 9 9 9"></polygon>
+            </svg>
             <span data-i18n="home.moyuFestiveGoals">节日倒计时目标</span>
           </div>
           <span class="text-[11px] text-[var(--text-tertiary)]" data-i18n="home.moyuAnticipation">期待与憧憬</span>
@@ -260,45 +268,33 @@ const weekDays = weekdayNames.map((name, i) => {
 
         <div class="grid grid-cols-2 gap-2">
           <!-- Weekend -->
-          <div class="rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-secondary)] p-2.5 text-center transition-all hover:border-emerald-500/40">
-            <p class="text-[11px] text-[var(--text-tertiary)] flex items-center justify-center gap-1">
-              <img src="/images/icons/coffee.png" alt="周末" class="h-3.5 w-3.5 object-contain rounded-xs shrink-0 inline-block" />
-              <span data-i18n="moyu.weekend">距周末</span>
-            </p>
-            <p class="text-xl font-extrabold mono text-emerald-600 dark:text-emerald-400 mt-0.5">
+          <div class="bg-[var(--bg-secondary)] border border-[var(--border-primary)] p-2.5 text-center transition-colors hover:border-[var(--algo-green,#10b981)]">
+            <p class="text-[11px] text-[var(--text-tertiary)]" data-i18n="moyu.weekend">距周末</p>
+            <p class="text-xl font-extrabold mono text-[var(--algo-green,#10b981)] mt-0.5">
               {daysToWeekend} <span class="text-xs font-normal text-[var(--text-tertiary)]" data-i18n="moyu.daysUnit">天</span>
             </p>
           </div>
 
           <!-- New Year -->
-          <div class="rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-secondary)] p-2.5 text-center transition-all hover:border-blue-500/40">
-            <p class="text-[11px] text-[var(--text-tertiary)] flex items-center justify-center gap-1">
-              <img src="/images/icons/calendar.png" alt="元旦" class="h-3.5 w-3.5 object-contain rounded-xs shrink-0 inline-block" />
-              <span data-i18n="moyu.newYear">距元旦</span>
-            </p>
-            <p class="text-xl font-extrabold mono text-blue-600 dark:text-blue-400 mt-0.5">
+          <div class="bg-[var(--bg-secondary)] border border-[var(--border-primary)] p-2.5 text-center transition-colors hover:border-[var(--algo-amber,#3b82f6)]">
+            <p class="text-[11px] text-[var(--text-tertiary)]" data-i18n="moyu.newYear">距元旦</p>
+            <p class="text-xl font-extrabold mono text-[var(--algo-amber,#3b82f6)] mt-0.5">
               {daysToNewYear} <span class="text-xs font-normal text-[var(--text-tertiary)]" data-i18n="moyu.daysUnit">天</span>
             </p>
           </div>
 
           <!-- Spring Festival -->
-          <div class="rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-secondary)] p-2.5 text-center transition-all hover:border-rose-500/40">
-            <p class="text-[11px] text-[var(--text-tertiary)] flex items-center justify-center gap-1">
-              <img src="/images/icons/moyu.png" alt="春节" class="h-3.5 w-3.5 object-contain rounded-xs shrink-0 inline-block" />
-              <span data-i18n="moyu.springFestival">距春节</span>
-            </p>
-            <p class="text-xl font-extrabold mono text-rose-600 dark:text-rose-400 mt-0.5">
+          <div class="bg-[var(--bg-secondary)] border border-[var(--border-primary)] p-2.5 text-center transition-colors hover:border-[var(--algo-magenta,#f43f5e)]">
+            <p class="text-[11px] text-[var(--text-tertiary)]" data-i18n="moyu.springFestival">距春节</p>
+            <p class="text-xl font-extrabold mono text-[var(--algo-magenta,#f43f5e)] mt-0.5">
               {daysToSpringFestival} <span class="text-xs font-normal text-[var(--text-tertiary)]" data-i18n="moyu.daysUnit">天</span>
             </p>
           </div>
 
-          <!-- Labor Day or National Day -->
-          <div class="rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-secondary)] p-2.5 text-center transition-all hover:border-indigo-500/40">
-            <p class="text-[11px] text-[var(--text-tertiary)] flex items-center justify-center gap-1">
-              <img src="/images/icons/rocket.png" alt="劳动节" class="h-3.5 w-3.5 object-contain rounded-xs shrink-0 inline-block" />
-              <span data-i18n="moyu.laborDay">距劳动节</span>
-            </p>
-            <p class="text-xl font-extrabold mono text-indigo-600 dark:text-indigo-400 mt-0.5">
+          <!-- Labor Day -->
+          <div class="bg-[var(--bg-secondary)] border border-[var(--border-primary)] p-2.5 text-center transition-colors hover:border-[var(--algo-crimson,#6366f1)]">
+            <p class="text-[11px] text-[var(--text-tertiary)]" data-i18n="moyu.laborDay">距劳动节</p>
+            <p class="text-xl font-extrabold mono text-[var(--algo-crimson,#6366f1)] mt-0.5">
               {daysToLaborDay} <span class="text-xs font-normal text-[var(--text-tertiary)]" data-i18n="moyu.daysUnit">天</span>
             </p>
           </div>

@@ -26,27 +26,31 @@ const categories = [
     <!-- Main Content (8 cols on lg) -->
     <div class="lg:col-span-8 min-w-0 space-y-6 pb-12">
       <!-- Header Section -->
-      <div class="border-b border-[var(--border-secondary)] pb-5">
-        <div class="flex items-center gap-2 mb-1.5">
-          <span class="mono text-[11px] font-semibold text-[var(--accent)] tracking-wider uppercase bg-[var(--accent)]/10 px-2 py-0.5 rounded">
-            Curated Toolkit & Apps
-          </span>
-          <span class="mono text-xs text-[var(--text-tertiary)]">
-            共 {recommendedProjects.length} 款自用好物
+      <div class="border-b border-[var(--border-primary)] pb-5">
+        <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2">
+          <div>
+            <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-[var(--text-primary)] flex items-center gap-2.5 mono">
+              <svg class="h-6 w-6 text-[var(--algo-green)] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square">
+                <rect x="3" y="3" width="8" height="8"></rect>
+                <rect x="13" y="3" width="8" height="8"></rect>
+                <rect x="3" y="13" width="8" height="8"></rect>
+                <rect x="13" y="13" width="8" height="8"></rect>
+              </svg>
+              <span data-i18n="home.tools">极客利器 · 推荐项目</span>
+            </h1>
+            <p class="mt-1.5 text-xs sm:text-sm text-[var(--text-secondary)] leading-relaxed max-w-2xl" data-i18n="projects.sub">
+              “工欲善其事，必先利其器。” 暂无个人开源作品，这里真诚记录并分享我日常高频使用、体验极佳的优秀开源项目与生产力工具。
+            </p>
+          </div>
+          <span class="mono text-xs border border-[var(--algo-green)]/40 bg-[var(--algo-green)]/10 px-2.5 py-1 text-[var(--algo-green)] font-semibold self-start sm:self-auto shrink-0">
+            {recommendedProjects.length} APPS
           </span>
         </div>
-        <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-[var(--text-primary)] flex items-center gap-2.5">
-          <img src="/images/icons/tools.png" alt="极客利器" class="h-7 w-7 sm:h-8 sm:w-8 object-contain inline-block shrink-0 rounded-lg shadow-xs" />
-          <span data-i18n="home.tools">极客利器 · 推荐项目</span>
-        </h1>
-        <p class="mt-1 text-xs sm:text-sm text-[var(--text-secondary)] leading-relaxed max-w-2xl" data-i18n="projects.sub">
-          “工欲善其事，必先利其器。” 暂无个人开源作品，这里真诚记录并分享我日常高频使用、体验极佳的优秀开源项目与生产力工具。
-        </p>
 
         <!-- Search & Note banner -->
         <div class="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-3 border-t border-[var(--border-secondary)]">
-          <div class="flex items-center gap-1.5 text-xs text-[var(--text-tertiary)]">
-            <img src="/images/icons/thoughts.png" alt="提示" class="h-3.5 w-3.5 object-contain rounded-xs shrink-0 inline-block" />
+          <div class="flex items-center gap-1.5 text-xs text-[var(--text-tertiary)] mono">
+            <span class="text-[var(--algo-green)] font-bold">&gt;</span>
             <span data-i18n="projects.tip">点击任意卡片可直达官网或 GitHub 源码仓库</span>
           </div>
 
@@ -56,9 +60,9 @@ const categories = [
               type="text"
               placeholder="搜索工具名称或关键词..."
               data-i18n-placeholder="projects.searchPlaceholder"
-              class="w-full rounded-lg border border-[var(--border-primary)] bg-[var(--bg-secondary)] px-3 py-1.5 pl-8 text-xs text-[var(--text-primary)] placeholder-[var(--text-tertiary)] focus:border-[var(--accent)] focus:outline-hidden transition-colors"
+              class="w-full border border-[var(--border-primary)] bg-[var(--bg-secondary)] px-3 py-1.5 pl-8 text-xs text-[var(--text-primary)] placeholder-[var(--text-tertiary)] focus:border-[var(--algo-green)] focus:outline-hidden transition-colors mono"
             />
-            <svg class="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-[var(--text-tertiary)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <svg class="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-[var(--text-tertiary)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square">
               <circle cx="11" cy="11" r="8"></circle>
               <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
             </svg>
@@ -67,20 +71,20 @@ const categories = [
       </div>
 
       <!-- Category Filter Tabs -->
-      <div id="project-category-tabs" class="flex flex-wrap items-center gap-1.5 text-xs font-medium">
+      <div id="project-category-tabs" class="flex flex-wrap items-center gap-1.5 text-xs font-medium mono">
         {categories.map((cat, idx) => (
           <button
             type="button"
             class:list={[
-              'proj-cat-tab rounded-lg px-3 py-1.5 transition-all text-xs cursor-pointer inline-flex items-center gap-1.5',
+              'proj-cat-tab border px-3 py-1.5 transition-all text-xs cursor-pointer inline-flex items-center gap-1.5',
               idx === 0
-                ? 'active bg-[var(--accent)] text-white font-semibold'
-                : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]'
+                ? 'active border-[var(--accent)] bg-[var(--accent)] text-[var(--algo-on-green)] font-semibold'
+                : 'border-[var(--border-primary)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]'
             ]}
             data-category={cat.id}
           >
             {cat.icon && (
-              <img src={cat.icon} alt="" class="h-3.5 w-3.5 object-contain rounded-xs shrink-0" />
+              <img src={cat.icon} alt="" class="h-3.5 w-3.5 object-contain shrink-0" />
             )}
             <span>{cat.label} ({cat.count})</span>
           </button>
@@ -90,7 +94,7 @@ const categories = [
       <!-- Projects Grid -->
       <div id="projects-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {recommendedProjects.map((p) => (
-          <ProjectCard {...p} />
+          <ProjectCard {...p} headingTag="h2" />
         ))}
       </div>
 
@@ -151,11 +155,11 @@ const categories = [
     tabs.forEach((tab) => {
       tab.addEventListener('click', () => {
         tabs.forEach((t) => {
-          t.classList.remove('active', 'bg-[var(--accent)]', 'text-white', 'font-semibold');
-          t.classList.add('text-[var(--text-secondary)]');
+          t.classList.remove('active', 'border-[var(--accent)]', 'bg-[var(--accent)]', 'text-[var(--algo-on-green)]', 'font-semibold');
+          t.classList.add('border-[var(--border-primary)]', 'text-[var(--text-secondary)]');
         });
-        tab.classList.add('active', 'bg-[var(--accent)]', 'text-white', 'font-semibold');
-        tab.classList.remove('text-[var(--text-secondary)]');
+        tab.classList.add('active', 'border-[var(--accent)]', 'bg-[var(--accent)]', 'text-[var(--algo-on-green)]', 'font-semibold');
+        tab.classList.remove('border-[var(--border-primary)]', 'text-[var(--text-secondary)]');
 
         currentCat = (tab as HTMLElement).dataset.category || 'all';
         applyFilters();

@@ -1,7 +1,5 @@
 ---
 // PostCard.astro
-import { formatViewCount } from '../lib/viewsService';
-
 interface Props {
   title: string;
   description: string;
@@ -10,6 +8,7 @@ interface Props {
   readTime?: string;
   words?: string;
   tag?: string;
+  headingTag?: 'h2' | 'h3';
 }
 
 const {
@@ -19,41 +18,43 @@ const {
   slug,
   readTime = '5 分钟',
   words = '2,400',
-  tag = '思考'
+  tag = '思考',
+  headingTag = 'h3'
 } = Astro.props;
 
+const HeadingTag = headingTag;
 const initialViews = '0';
 ---
 
 <article class="group relative py-4 sm:py-5 transition-colors">
-  <div class="flex flex-col gap-1.5">
-    <!-- Top Row: Date & Meta -->
-    <div class="flex items-center gap-2 text-xs text-[var(--text-secondary)]">
-      <time class="mono font-medium text-[var(--accent)] font-semibold">{date}</time>
-      <span>·</span>
-      <span data-i18n="posts.estRead" data-i18n-param-readTime={readTime}>约需 {readTime}</span>
-      <span>·</span>
-      <span data-i18n="posts.wordCount" data-i18n-param-words={words}>{words} 字</span>
-      <span>·</span>
-      <span class="inline-flex items-center gap-1 text-[var(--text-tertiary)]" title="文章阅读量">
-        <svg class="h-3 w-3 opacity-70 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <div class="flex flex-col gap-2">
+    <!-- Top Row: Date & Meta (wraps cleanly between chips on narrow screens, never splits mid-token) -->
+    <div class="flex flex-wrap items-center gap-x-2 gap-y-1.5 text-xs text-[var(--text-secondary)] mono">
+      <time class="font-semibold text-[var(--algo-green,var(--accent))] whitespace-nowrap shrink-0">{date}</time>
+      <span class="text-[var(--text-tertiary)] select-none" aria-hidden="true">/</span>
+      <span class="whitespace-nowrap shrink-0" data-i18n="posts.estRead" data-i18n-param-readTime={readTime}>约需 {readTime}</span>
+      <span class="text-[var(--text-tertiary)] select-none" aria-hidden="true">/</span>
+      <span class="whitespace-nowrap shrink-0" data-i18n="posts.wordCount" data-i18n-param-words={words}>{words} 字</span>
+      <span class="text-[var(--text-tertiary)] select-none" aria-hidden="true">/</span>
+      <span class="inline-flex items-center gap-1 text-[var(--text-tertiary)] whitespace-nowrap shrink-0" title="文章阅读量">
+        <svg class="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square">
           <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
           <circle cx="12" cy="12" r="3"></circle>
         </svg>
-        <span class="post-card-views mono font-medium" data-view-slug={slug}>{initialViews}</span>
+        <span class="post-card-views font-medium text-[var(--text-primary)]" data-view-slug={slug}>{initialViews}</span>
         <span data-i18n="posts.readCount">阅读</span>
       </span>
-      <span class="rounded bg-[var(--bg-secondary)] px-1.5 py-0.5 text-[10px] text-[var(--text-tertiary)] ml-auto">
+      <span class="ml-auto shrink-0 whitespace-nowrap border border-[var(--border-primary)] bg-[var(--bg-secondary)] px-2 py-0.5 text-[11px] font-medium text-[var(--algo-magenta,var(--text-secondary))]">
         {tag}
       </span>
     </div>
 
     <!-- Title -->
-    <h3 class="text-base sm:text-lg font-semibold tracking-tight text-[var(--text-primary)] transition-colors group-hover:text-[var(--accent)]">
+    <HeadingTag class="text-base sm:text-lg font-bold tracking-tight text-[var(--text-primary)] transition-colors group-hover:text-[var(--accent)] leading-snug">
       <a href={`/posts/${slug}`} class="focus:outline-hidden">
         {title}
       </a>
-    </h3>
+    </HeadingTag>
 
     <!-- Summary -->
     <p class="text-xs sm:text-sm text-[var(--text-secondary)] line-clamp-2 leading-relaxed">

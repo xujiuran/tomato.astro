@@ -37,28 +37,28 @@ const safeDescription = (description || content.replace(/<[^>]*>/g, '').replace(
     <div class="lg:col-span-8 min-w-0">
       <article class="space-y-6">
         <!-- Post Header -->
-        <header class="border-b border-[var(--border-secondary)] pb-6 space-y-4">
+        <header class="border-b border-[var(--border-primary)] pb-6 space-y-4">
           <div class="flex flex-wrap items-center justify-between gap-3 text-xs text-[var(--text-secondary)]">
-            <div class="flex flex-wrap items-center gap-2">
-              <a href="/posts" class="inline-flex items-center gap-1 text-[var(--accent)] hover:underline">
-                <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <div class="flex flex-wrap items-center gap-x-2 gap-y-1.5 mono">
+              <a href="/posts" class="inline-flex items-center gap-1 text-[var(--algo-green)] hover:underline font-medium whitespace-nowrap">
+                <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square">
                   <polyline points="15 18 9 12 15 6"></polyline>
                 </svg>
                 <span data-i18n="posts.backToPosts">返回文章列表</span>
               </a>
-              <span>·</span>
-              <time class="mono">{date}</time>
-              <span>·</span>
-              <span data-i18n="posts.estRead" data-i18n-param-readTime={readTime}>约需 {readTime}</span>
-              <span>·</span>
-              <span data-i18n="posts.wordCount" data-i18n-param-words={words}>{words} 字</span>
-              <span>·</span>
-              <span class="inline-flex items-center gap-1 text-[var(--text-secondary)]" title="文章总阅读量">
-                <svg class="h-3.5 w-3.5 text-[var(--accent)] opacity-85 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <span class="text-[var(--text-tertiary)]">/</span>
+              <time class="whitespace-nowrap">{date}</time>
+              <span class="text-[var(--text-tertiary)]">/</span>
+              <span class="whitespace-nowrap" data-i18n="posts.estRead" data-i18n-param-readTime={readTime}>约需 {readTime}</span>
+              <span class="text-[var(--text-tertiary)]">/</span>
+              <span class="whitespace-nowrap" data-i18n="posts.wordCount" data-i18n-param-words={words}>{words} 字</span>
+              <span class="text-[var(--text-tertiary)]">/</span>
+              <span class="inline-flex items-center gap-1 text-[var(--text-secondary)] whitespace-nowrap" title="文章总阅读量">
+                <svg class="h-3.5 w-3.5 text-[var(--algo-green)] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square">
                   <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
                   <circle cx="12" cy="12" r="3"></circle>
                 </svg>
-                <span id="post-view-count" class="mono font-semibold text-[var(--text-primary)]">{initialViews}</span>
+                <span id="post-view-count" class="font-semibold text-[var(--text-primary)]">{initialViews}</span>
                 <span data-i18n="posts.readCount">次阅读</span>
               </span>
             </div>
@@ -66,12 +66,12 @@ const safeDescription = (description || content.replace(/<[^>]*>/g, '').replace(
             <!-- Reading Actions: Font Size Adjuster & Share Poster -->
             <div class="flex items-center gap-2">
               <!-- Font Size Segmented Control -->
-              <div class="flex items-center rounded-lg border border-[var(--border-secondary)] bg-[var(--surface-subtle)] p-0.5 text-xs select-none">
+              <div class="flex items-center border border-[var(--border-primary)] bg-[var(--surface-subtle)] p-0.5 text-xs select-none mono">
                 <button
                   type="button"
                   data-font-size="sm"
                   data-i18n-title="posts.fontSm"
-                  class="font-size-btn px-2 py-0.5 rounded-md text-[11px] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-all cursor-pointer font-medium"
+                  class="font-size-btn px-2 py-0.5 text-[11px] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-all cursor-pointer font-medium"
                   title="紧凑字号 (15px)"
                 >
                   A-
@@ -80,7 +80,7 @@ const safeDescription = (description || content.replace(/<[^>]*>/g, '').replace(
                   type="button"
                   data-font-size="base"
                   data-i18n-title="posts.fontBase"
-                  class="font-size-btn px-2 py-0.5 rounded-md text-[11px] text-[var(--text-primary)] bg-[var(--surface-primary)] shadow-2xs transition-all cursor-pointer font-semibold"
+                  class="font-size-btn px-2 py-0.5 text-[11px] text-[var(--text-primary)] bg-[var(--surface-primary)] transition-all cursor-pointer font-semibold"
                   title="标准字号 (16px)"
                 >
                   A
@@ -89,7 +89,7 @@ const safeDescription = (description || content.replace(/<[^>]*>/g, '').replace(
                   type="button"
                   data-font-size="lg"
                   data-i18n-title="posts.fontLg"
-                  class="font-size-btn px-2 py-0.5 rounded-md text-[11px] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-all cursor-pointer font-medium"
+                  class="font-size-btn px-2 py-0.5 text-[11px] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-all cursor-pointer font-medium"
                   title="舒适大字号 (18px)"
                 >
                   A+
@@ -110,10 +110,10 @@ const safeDescription = (description || content.replace(/<[^>]*>/g, '').replace(
                 data-description={safeDescription}
                 data-toc={JSON.stringify(tocHeadings)}
                 data-i18n-title="posts.sharePoster"
-                class="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border-secondary)] bg-[var(--surface-subtle)] hover:bg-[var(--surface-primary)] hover:border-[var(--accent)] px-2.5 py-1 text-xs text-[var(--text-secondary)] hover:text-[var(--accent)] transition-all cursor-pointer shadow-2xs"
+                class="inline-flex items-center gap-1.5 border border-[var(--border-primary)] bg-[var(--surface-subtle)] hover:bg-[var(--algo-magenta)]/12 hover:border-[var(--algo-magenta)] px-2.5 py-1 text-xs text-[var(--text-secondary)] hover:text-[var(--algo-magenta)] transition-all cursor-pointer mono"
                 title="生成长图分享海报"
               >
-                <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square">
                   <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
                   <polyline points="16 6 12 2 8 6"></polyline>
                   <line x1="12" y1="2" x2="12" y2="15"></line>

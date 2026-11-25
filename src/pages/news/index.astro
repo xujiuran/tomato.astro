@@ -21,52 +21,48 @@ const daily60sData = hubData.digest;
 >
   <div class="space-y-6 pb-12">
     <!-- Header Section -->
-    <div class="border-b border-[var(--border-secondary)] pb-5">
+    <div class="border-b border-[var(--border-primary)] pb-5">
       <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
         <div>
-          <div class="flex items-center gap-2 mb-1.5">
-            <span class="mono text-[11px] font-semibold text-[var(--accent)] tracking-wider uppercase bg-[var(--accent)]/10 px-2 py-0.5 rounded">
-              Daily News Radar
-            </span>
-            <span class="mono text-xs text-[var(--text-tertiary)]">
+          <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-[var(--text-primary)] flex items-center gap-3 flex-wrap mono">
+            <svg class="h-6 w-6 text-[var(--algo-amber)] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square">
+              <path d="M4 12h3l2-6 4 12 2-6h5"></path>
+            </svg>
+            <span data-i18n="news.title">每日早报</span>
+            <span class="text-xs font-semibold text-[var(--algo-green)] border border-[var(--algo-green)]/35 bg-[var(--algo-green)]/10 px-2 py-0.5">
               {daily60sData.date}
             </span>
-          </div>
-          <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-[var(--text-primary)]" data-i18n="news.title">
-            每日早报
           </h1>
-          <p class="mt-1 text-xs sm:text-sm text-[var(--text-secondary)]" data-i18n="news.sub">
+          <p class="mt-1.5 text-xs sm:text-sm text-[var(--text-secondary)]" data-i18n="news.sub">
             晨起 60 秒通读天下事，实时纵览全网极客与科技风向。
           </p>
         </div>
 
         <!-- Main Column Tabs: 60s vs Hot Radar -->
-        <div class="inline-flex rounded-lg border border-[var(--border-primary)] bg-[var(--bg-secondary)] p-1 text-xs font-medium self-start sm:self-auto shadow-xs">
+        <div class="inline-flex border border-[var(--border-primary)] bg-[var(--bg-secondary)] p-1 text-xs font-medium self-start sm:self-auto mono">
           <button
             id="tab-btn-60s"
             type="button"
-            class="main-tab active flex items-center gap-1.5 rounded-md px-3.5 py-1.5 transition-all bg-[var(--card-bg)] text-[var(--text-primary)] font-semibold shadow-xs"
+            class="main-tab active flex items-center gap-1.5 px-3.5 py-1.5 transition-all bg-[var(--card-bg)] text-[var(--algo-green)] font-semibold cursor-pointer"
             data-target="section-60s"
           >
             <span class="flex items-center gap-1.5">
-              <img src="/images/icons/news.png" alt="60秒早报" class="h-4 w-4 object-contain inline-block shrink-0 rounded-xs" />
               <span data-i18n="news.daily60s">60秒早报</span>
             </span>
-            <span class="mono text-[10px] bg-[var(--bg-secondary)] text-[var(--text-tertiary)] px-1.5 py-0.2 rounded">
+            <span class="text-[11px] bg-[var(--bg-secondary)] text-[var(--text-tertiary)] px-1.5 py-0.2">
               {daily60sData.news.length}
             </span>
           </button>
           <button
             id="tab-btn-hot"
             type="button"
-            class="main-tab flex items-center gap-1.5 rounded-md px-3.5 py-1.5 transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+            class="main-tab flex items-center gap-1.5 px-3.5 py-1.5 transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)] cursor-pointer"
             data-target="section-hot"
           >
             <span class="flex items-center gap-1.5">
-              <img src="/images/icons/trending.png" alt="全网风向标" class="h-4 w-4 object-contain inline-block shrink-0 rounded-xs" />
               <span data-i18n="news.hotNews">全网风向标</span>
             </span>
-            <span class="mono text-[10px] bg-[var(--bg-secondary)] text-[var(--text-tertiary)] px-1.5 py-0.2 rounded">
+            <span class="text-[11px] bg-[var(--bg-secondary)] text-[var(--text-tertiary)] px-1.5 py-0.2">
               {hotNewsSources.length}平台
             </span>
           </button>
@@ -75,18 +71,15 @@ const daily60sData = hubData.digest;
     </div>
 
     <!-- Real-time Freshness & Loading Status Bar -->
-    <div id="news-status-bar" class="flex items-center justify-between rounded-xl border border-[var(--border-primary)] bg-[var(--card-bg)]/80 backdrop-blur-sm px-3.5 py-2 shadow-xs text-xs">
+    <div id="news-status-bar" class="flex items-center justify-between border border-[var(--border-primary)] bg-[var(--card-bg)] px-3.5 py-2 text-xs mono">
       <div class="flex items-center gap-2">
-        <span class="relative flex h-2 w-2">
-          <span id="status-pulse-dot" class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-          <span id="status-live-dot" class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-        </span>
+        <span id="status-live-dot" class="inline-flex h-2 w-2 bg-[var(--algo-green)]"></span>
         <span id="status-message" class="text-[var(--text-secondary)] font-medium">
           实时连接中 · 正在聚合今日晨报与全网风向...
         </span>
       </div>
       <div class="flex items-center gap-2">
-        <span id="status-timestamp" class="mono text-[11px] text-[var(--text-tertiary)] hidden sm:inline">
+        <span id="status-timestamp" class="text-[11px] text-[var(--text-tertiary)] hidden sm:inline">
           刚刚同步
         </span>
       </div>
@@ -126,20 +119,20 @@ const daily60sData = hubData.digest;
 
     function switchTab(is60s: boolean) {
       if (is60s) {
-        tab60s?.classList.add('bg-[var(--card-bg)]', 'text-[var(--text-primary)]', 'font-semibold', 'shadow-xs');
+        tab60s?.classList.add('bg-[var(--card-bg)]', 'text-[var(--algo-green)]', 'font-semibold');
         tab60s?.classList.remove('text-[var(--text-secondary)]');
 
-        tabHot?.classList.remove('bg-[var(--card-bg)]', 'text-[var(--text-primary)]', 'font-semibold', 'shadow-xs');
+        tabHot?.classList.remove('bg-[var(--card-bg)]', 'text-[var(--algo-green)]', 'font-semibold');
         tabHot?.classList.add('text-[var(--text-secondary)]');
 
         sec60s?.classList.remove('hidden');
         secHot?.classList.add('hidden');
         history.replaceState(null, '', '#60s');
       } else {
-        tabHot?.classList.add('bg-[var(--card-bg)]', 'text-[var(--text-primary)]', 'font-semibold', 'shadow-xs');
+        tabHot?.classList.add('bg-[var(--card-bg)]', 'text-[var(--algo-green)]', 'font-semibold');
         tabHot?.classList.remove('text-[var(--text-secondary)]');
 
-        tab60s?.classList.remove('bg-[var(--card-bg)]', 'text-[var(--text-primary)]', 'font-semibold', 'shadow-xs');
+        tab60s?.classList.remove('bg-[var(--card-bg)]', 'text-[var(--algo-green)]', 'font-semibold');
         tab60s?.classList.add('text-[var(--text-secondary)]');
 
         secHot?.classList.remove('hidden');

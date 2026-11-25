@@ -25,26 +25,23 @@ RSS订阅：${myBlogrollInfo.feed}`;
     <!-- Main Content (8 cols on lg) -->
     <div class="lg:col-span-8 min-w-0 space-y-8 pb-12">
       <!-- Header Section -->
-      <div class="border-b border-[var(--border-secondary)] pb-5">
-        <div class="flex items-center gap-2 mb-1.5">
-          <span class="mono text-[11px] font-semibold text-[var(--accent)] tracking-wider uppercase bg-[var(--accent)]/10 px-2 py-0.5 rounded">
-            Blogroll & Friends
-          </span>
-          <span class="mono text-xs text-[var(--text-tertiary)]">
-            共 {friends.length} 位伙伴
-          </span>
+      <div class="border-b border-[var(--border-primary)] pb-5 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2">
+        <div>
+          <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-[var(--text-primary)] flex items-center gap-2.5 mono">
+            <svg class="h-6 w-6 text-[var(--algo-green)] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square">
+              <circle cx="12" cy="12" r="9"></circle>
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <path d="M12 3a14 14 0 0 1 0 18 14 14 0 0 1 0-18z"></path>
+            </svg>
+            <span data-i18n="links.title">友情链接 · 伙伴们</span>
+          </h1>
+          <p class="mt-1.5 text-xs sm:text-sm text-[var(--text-secondary)] leading-relaxed max-w-2xl" data-i18n="links.sub">
+            “海内存知己，天涯若比邻。” 在去中心化与算法推荐横行的时代，独立博客是数字世界里最真实纯净的避风港。记录彼此，互为连接。
+          </p>
         </div>
-        <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-[var(--text-primary)] flex items-center gap-2.5">
-          <img
-            src="/images/icons/globe.png"
-            alt="友情链接"
-            class="h-7 w-7 sm:h-8 sm:w-8 object-contain inline-block shrink-0 rounded-lg shadow-xs"
-          />
-          <span data-i18n="links.title">友情链接 · 伙伴们</span>
-        </h1>
-        <p class="mt-1 text-xs sm:text-sm text-[var(--text-secondary)] leading-relaxed max-w-2xl" data-i18n="links.sub">
-          “海内存知己，天涯若比邻。” 在去中心化与算法推荐横行的时代，独立博客是数字世界里最真实纯净的避风港。记录彼此，互为连接。
-        </p>
+        <span class="mono text-xs border border-[var(--algo-green)]/40 bg-[var(--algo-green)]/10 px-2.5 py-1 text-[var(--algo-green)] font-semibold self-start sm:self-auto shrink-0">
+          {friends.length} PEERS
+        </span>
       </div>
 
       <!-- Friends Grid -->
@@ -125,8 +122,9 @@ RSS订阅：${myBlogrollInfo.feed}`;
 
         <!-- Exchange Guideline Notes -->
         <div class="text-xs text-[var(--text-secondary)] space-y-2 leading-relaxed pt-2 border-t border-[var(--border-secondary)]">
-          <h3 class="font-bold text-[var(--text-primary)] flex items-center gap-1.5">
-            <span>💡 友链申请原则：</span>
+          <h3 class="font-bold text-[var(--text-primary)] flex items-center gap-1.5 mono">
+            <span class="text-[var(--algo-green)]">&gt;</span>
+            <span>友链申请原则：</span>
           </h3>
           <ul class="list-disc pl-5 space-y-1 text-[var(--text-tertiary)]">
             <li>站点内容以<strong>原创技术实战、设计美学、思考随笔或生活沉淀</strong>为主；</li>

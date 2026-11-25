@@ -21,10 +21,12 @@ const {
   currentPath = '/',
   containerClass = 'max-w-6xl',
 } = Astro.props;
+
+const isAlgoraveHome = true;
 ---
 
 <!doctype html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-algorave="true">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -35,6 +37,7 @@ const {
     <link rel="alternate" type="application/rss+xml" title="TomatoX 随笔 RSS" href="/rss.xml" />
     <link rel="preconnect" href="https://news.xujiuran.top" crossorigin />
     <link rel="dns-prefetch" href="https://news.xujiuran.top" />
+    <link rel="preload" href="/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin />
     <ClientRouter />
 
     <!-- Anti-flicker & persistent theme and language script across View Transitions -->
@@ -43,8 +46,7 @@ const {
         try {
           const doc = targetDoc || document;
           const stored = localStorage.getItem('theme');
-          const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-          const isDark = stored === 'dark' || (!stored && systemDark);
+          const isDark = stored === 'dark' || !stored;
           if (isDark) {
             doc.documentElement.classList.add('dark');
           } else {
@@ -53,23 +55,35 @@ const {
         } catch (_) {}
       }
 
+      function applyStageMode(targetDoc) {
+        try {
+          const doc = targetDoc || document;
+          doc.documentElement.setAttribute('data-algorave', 'true');
+        } catch (_) {}
+      }
+
       function applyLang(targetDoc) {
         try {
           const doc = targetDoc || document;
           const stored = localStorage.getItem('tomatox_lang');
-          if (stored && ['zh-CN', 'en', 'ja', 'ko'].includes(stored)) {
+          if (stored && ['zh-CN', 'en'].includes(stored)) {
             doc.documentElement.setAttribute('lang', stored);
+          } else {
+            doc.documentElement.setAttribute('lang', 'zh-CN');
           }
         } catch (_) {}
       }
 
       // 1. Initial execution on page load/refresh
+      applyStageMode(document, window.location.pathname);
       applyTheme();
       applyLang();
 
-      // 2. Before ClientRouter swaps documents, carry over theme and lang to the incoming document
+      // 2. Before ClientRouter swaps documents, carry over theme, stage mode, and lang
       document.addEventListener('astro:before-swap', function (ev) {
         if (ev && ev.newDocument) {
+          const nextPath = (ev.to && ev.to.pathname) || (ev.newDocument.location && ev.newDocument.location.pathname) || window.location.pathname;
+          applyStageMode(ev.newDocument, nextPath);
           applyTheme(ev.newDocument);
           applyLang(ev.newDocument);
         }
@@ -77,6 +91,7 @@ const {
 
       // 3. Immediately after DOM swap fallback
       document.addEventListener('astro:after-swap', function () {
+        applyStageMode(document, window.location.pathname);
         applyTheme(document);
         applyLang(document);
       });
@@ -102,7 +117,7 @@ const {
       id="route-progress-bar"
       transition:persist="route-progress"
       aria-hidden="true"
-      class="pointer-events-none fixed top-0 left-0 z-[200] h-[2px] w-0 bg-gradient-to-r from-red-500 via-orange-500 to-amber-400 opacity-0 transition-[width,opacity] duration-200 ease-out"
+      class="pointer-events-none fixed top-0 left-0 z-[200] h-[2px] w-0 bg-[var(--accent)] opacity-0 transition-[width,opacity] duration-200 ease-out"
     ></div>
 
     <!-- Generative Zen Canvas Background (Persisted across page transitions) -->

@@ -11,20 +11,28 @@ const moyu = await getMoyuData();
 <BaseLayout title="全部文章 · TomatoX 随笔" currentPath="/posts" containerClass="max-w-6xl">
   <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
     <!-- Main Content (8 cols on lg) -->
-    <div class="lg:col-span-8 min-w-0 space-y-6">
-      <div class="border-b border-[var(--border-secondary)] pb-4">
-        <h1 class="text-2xl font-bold tracking-tight text-[var(--text-primary)] flex items-center gap-2.5">
-          <img src="/images/icons/posts.png" alt="全部文章" class="h-7 w-7 object-contain inline-block shrink-0 rounded-lg shadow-xs" />
-          <span data-i18n="posts.allPosts">全部文章</span>
-        </h1>
-        <p class="mt-1 text-xs sm:text-sm text-[var(--text-secondary)]">
-          <span data-i18n="posts.allPostsSub">技术探究、工具打造与思考沉淀</span>，<span data-i18n="posts.articlesCount" data-i18n-param-count={allPosts.length}>共 {allPosts.length} 篇</span>。
-        </p>
+    <div class="lg:col-span-8 min-w-0 space-y-6 pb-12">
+      <div class="border-b border-[var(--border-primary)] pb-4 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2">
+        <div>
+          <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-[var(--text-primary)] flex items-center gap-2.5 mono">
+            <svg class="h-6 w-6 text-[var(--algo-green)] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square">
+              <path d="M4 17l6-6-6-6"></path>
+              <path d="M12 19h8"></path>
+            </svg>
+            <span data-i18n="posts.allPosts">全部文章</span>
+          </h1>
+          <p class="mt-1.5 text-xs sm:text-sm text-[var(--text-secondary)]">
+            <span data-i18n="posts.allPostsSub">技术探究、工具打造与思考沉淀</span>
+          </p>
+        </div>
+        <span class="mono text-xs border border-[var(--algo-green)]/40 bg-[var(--algo-green)]/10 px-2.5 py-1 text-[var(--algo-green)] font-semibold self-start sm:self-auto" data-i18n="posts.articlesCount" data-i18n-param-count={allPosts.length}>
+          共 {allPosts.length} 篇
+        </span>
       </div>
 
-      <div class="divide-y divide-[var(--border-secondary)]">
+      <div class="border border-[var(--border-primary)] bg-[var(--card-bg)] divide-y divide-[var(--border-secondary)] px-4 sm:px-5">
         {allPosts.map((post) => (
-          <PostCard {...post} />
+          <PostCard {...post} headingTag="h2" />
         ))}
       </div>
     </div>

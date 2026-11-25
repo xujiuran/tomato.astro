@@ -13,11 +13,11 @@
   <!-- Palette Window -->
   <div
     id="command-palette-modal"
-    class="relative w-full max-w-xl rounded-2xl border border-zinc-200/90 dark:border-zinc-800 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-xl shadow-2xl shadow-zinc-950/20 dark:shadow-black/70 overflow-hidden flex flex-col transform transition-all duration-150 scale-95 opacity-0"
+    class="relative w-full max-w-xl rounded-[3px] border border-[var(--border-primary)] bg-[var(--surface-primary)] backdrop-blur-xl shadow-2xl shadow-zinc-950/30 dark:shadow-black/80 overflow-hidden flex flex-col transform transition-all duration-150 scale-95 opacity-0"
   >
     <!-- Top Search Input Bar -->
-    <div class="relative flex items-center px-4 py-3.5 border-b border-zinc-200/80 dark:border-zinc-800">
-      <div class="flex h-5 w-5 shrink-0 items-center justify-center text-red-500">
+    <div class="relative flex items-center px-4 py-3.5 border-b border-[var(--border-primary)]">
+      <div class="flex h-5 w-5 shrink-0 items-center justify-center text-[var(--algo-green)]">
         <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="11" cy="11" r="8"></circle>
           <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
@@ -78,8 +78,8 @@
           <span data-i18n="search.selectHint">执行 / 打开</span>
         </span>
       </div>
-      <div class="flex items-center gap-1.5 mono text-[10px]">
-        <span class="inline-block h-1.5 w-1.5 rounded-full bg-red-500 animate-pulse"></span>
+      <div class="flex items-center gap-1.5 mono text-[11px]">
+        <span class="inline-block h-1.5 w-1.5 bg-[var(--algo-green)]"></span>
         <span>TomatoX 随笔</span>
       </div>
     </div>

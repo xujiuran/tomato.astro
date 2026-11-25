@@ -11,14 +11,13 @@ const {
 } = Astro.props;
 ---
 
-<div class="relative overflow-hidden rounded-2xl border border-[var(--border-primary)] bg-[var(--bg-secondary)] px-6 py-6 sm:py-8 my-6 text-center shadow-xs">
-  <div class="pointer-events-none absolute -right-12 -top-12 h-36 w-36 rounded-full bg-[var(--accent)]/5 blur-2xl"></div>
-  <div class="pointer-events-none absolute -left-12 -bottom-12 h-36 w-36 rounded-full bg-[var(--accent)]/5 blur-2xl"></div>
-  
-  <p class="serif-title text-base sm:text-xl font-medium tracking-wider text-[var(--text-primary)]">
-    “ {enMotto} ”
-  </p>
-  <p class="mt-2 text-xs sm:text-sm text-[var(--text-secondary)] tracking-wide" data-i18n="home.mottoZh">
-    {zhMotto}
-  </p>
+<div class="algo-motto relative overflow-hidden border border-[var(--border-primary)] bg-[var(--bg-secondary)] px-5 py-5 sm:py-6 my-7">
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+    <p class="mono text-sm sm:text-base font-bold tracking-wide text-[var(--text-primary)]">
+      <span class="text-[var(--algo-green,var(--accent))] mr-2">//</span>“ {enMotto} ”
+    </p>
+    <p class="text-xs sm:text-sm text-[var(--text-secondary)]" data-i18n="home.mottoZh">
+      {zhMotto}
+    </p>
+  </div>
 </div>

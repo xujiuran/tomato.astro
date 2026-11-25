@@ -1,6 +1,6 @@
 ---
 // LanguageToggle.astro
-// Compact, elegant multi-language selector dropdown (zh-CN, en, ja, ko)
+// Compact, elegant bilingual selector dropdown (zh-CN, en)
 import { LANGUAGES } from '../i18n/translations';
 
 interface Props {
@@ -18,7 +18,7 @@ const popoverId = `${id}-popover`;
     type="button"
     id={id}
     aria-label="切换语言 / Switch Language"
-    title="切换语言 (中 / EN / 日 / 한)"
+    title="切换语言 (中 / EN)"
     aria-haspopup="true"
     aria-expanded="false"
     class:list={[
@@ -82,8 +82,6 @@ const popoverId = `${id}-popover`;
   const LANG_LABELS: Record<Lang, string> = {
     'zh-CN': '中',
     'en': 'EN',
-    'ja': '日',
-    'ko': '한',
   };
 
   function updateAllToggleUI(lang: Lang) {

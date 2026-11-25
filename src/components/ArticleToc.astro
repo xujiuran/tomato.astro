@@ -12,11 +12,11 @@ const { toc, title = '目录' } = Astro.props;
 <div class="space-y-4">
   <!-- Article Table of Contents Card -->
   {toc.length > 0 && (
-    <div class="rounded-2xl border border-[var(--border-primary)] bg-[var(--surface-primary)] p-4 shadow-sm backdrop-blur-md">
+    <div class="border border-[var(--border-primary)] bg-[var(--surface-primary)] p-4">
       <!-- TOC Header with Progress -->
       <div class="flex items-center justify-between border-b border-[var(--border-secondary)] pb-3 mb-3">
-        <div class="flex items-center gap-2 text-xs font-semibold text-[var(--text-primary)]">
-          <svg class="h-4 w-4 text-[var(--accent)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <div class="flex items-center gap-2 text-xs font-semibold text-[var(--text-primary)] mono">
+          <svg class="h-4 w-4 text-[var(--algo-green)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square">
             <line x1="8" y1="6" x2="21" y2="6"></line>
             <line x1="8" y1="12" x2="21" y2="12"></line>
             <line x1="8" y1="18" x2="21" y2="18"></line>
@@ -29,26 +29,25 @@ const { toc, title = '目录' } = Astro.props;
         <!-- Reading Progress Badge -->
         <span
           id="toc-progress-badge"
-          class="mono rounded-full border border-red-200 dark:border-red-900/60 bg-red-50 dark:bg-red-950/40 px-2 py-0.5 text-[10px] font-semibold text-[var(--accent)] transition-all"
+          class="mono border border-[var(--algo-green)]/40 bg-[var(--algo-green)]/10 px-2 py-0.5 text-[11px] font-semibold text-[var(--algo-green)] transition-all"
         >
           0%
         </span>
       </div>
 
       <!-- TOC Heading Links -->
-      <nav class="max-h-[60vh] overflow-y-auto space-y-1 text-xs scrollbar-thin scrollbar-thumb-zinc-300 dark:scrollbar-thumb-zinc-700">
+      <nav class="max-h-[60vh] overflow-y-auto space-y-1 text-xs">
         {toc.map((item, idx) => (
           <a
             href={`#${item.id}`}
             data-toc-id={item.id}
             class:list={[
-              'toc-link block rounded-lg px-2.5 py-1.5 transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-subtle)] truncate relative',
-              item.level === 3 ? 'pl-6 text-[11px] opacity-85' : 'font-medium',
+              'toc-link block px-2.5 py-1.5 transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-subtle)] truncate relative',
+              item.level === 3 ? 'pl-6 text-[11px]' : 'font-medium',
               idx === 0 ? 'active' : ''
             ]}
             title={item.text}
           >
-            <span class="toc-indicator absolute left-0 top-1/2 -translate-y-1/2 w-1 h-3 rounded-r-full bg-[var(--accent)] opacity-0 transition-opacity"></span>
             <span class="truncate">{item.text}</span>
           </a>
         ))}
@@ -109,7 +108,7 @@ const { toc, title = '目录' } = Astro.props;
 >
   <div
     id="article-reading-progress"
-    class="h-full w-0 bg-gradient-to-r from-red-500 via-orange-500 to-amber-500 shadow-[0_0_8px_rgba(239,68,68,0.7)] transition-[width] duration-75 ease-out"
+    class="h-full w-0 bg-[var(--algo-green)] transition-[width] duration-75 ease-out"
   ></div>
 </div>
 

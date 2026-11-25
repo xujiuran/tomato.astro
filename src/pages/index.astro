@@ -9,6 +9,7 @@ import MoyuWeeklySection from '../components/MoyuWeeklySection.astro';
 import HomeDailyNewsSection from '../components/HomeDailyNewsSection.astro';
 import { fetch60sHubData, fetchHotNews } from '../lib/newsService';
 import { posts } from '../data/posts';
+import { recommendedProjects } from '../data/projects';
 
 const [hubData, hotNewsSources] = await Promise.all([
   fetch60sHubData(),
@@ -30,73 +31,306 @@ const recentThoughts = [
   }
 ];
 
-import { recommendedProjects } from '../data/projects';
-
-// Featured tools displayed on homepage (2x2 grid)
 const featuredProjects = recommendedProjects.slice(0, 4);
+
+const getPct = (val: any, fallback: number): number => {
+  if (typeof val === 'number') return val;
+  if (typeof val === 'string') return parseInt(val, 10) || fallback;
+  if (val && typeof val.percentage === 'number') return val.percentage;
+  return fallback;
+};
+
+const weekPercentage = getPct(hubData?.moyu?.progress?.week, 43);
+const daysToWeekend = hubData?.moyu?.countdown?.weekend ?? 2;
+const leadPost = recentPosts[0];
+const leadTool = featuredProjects[0];
 ---
 
 <BaseLayout currentPath="/">
-  <!-- Hero Section -->
-  <section class="space-y-4">
-    <div class="flex items-center gap-4">
-      <div class="relative flex h-16 w-16 items-center justify-center rounded-2xl bg-zinc-900 border border-zinc-700 shadow-md p-2 overflow-hidden">
-        <svg class="h-full w-full" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <linearGradient id="avatar-masc" x1="15" y1="20" x2="105" y2="105" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stop-color="#EF4444"/>
-              <stop offset="60%" stop-color="#DC2626"/>
-              <stop offset="100%" stop-color="#991B1B"/>
-            </linearGradient>
-          </defs>
-          <path d="M40 26H80L104 48V78L80 102H40L16 78V48L40 26Z" fill="url(#avatar-masc)"/>
-          <polygon points="40,26 80,26 60,46" fill="#FCA5A5" fill-opacity="0.25"/>
-          <path d="M36 14L84 46M84 14L36 46" stroke="#10B981" stroke-width="8" stroke-linecap="square"/>
-          <rect x="55" y="25" width="10" height="10" fill="#34D399" transform="rotate(45 60 30)"/>
-        </svg>
-        <span class="absolute bottom-1 right-1 h-3.5 w-3.5 rounded-full border-2 border-[var(--bg-primary)] bg-emerald-500" title="在线"></span>
+  <!-- Algorave Live Source Floor: Split Stage Hero -->
+  <section class="algo-stage space-y-6">
+    <!-- Top Live Stage Status Rail -->
+    <div class="flex flex-wrap items-center justify-between gap-3 border-b border-[var(--border-primary)] pb-3 text-xs mono">
+      <div class="flex items-center gap-3 min-w-0">
+        <div class="relative flex h-9 w-9 shrink-0 items-center justify-center border border-[var(--border-primary)] bg-[var(--algo-buffer)] p-1.5">
+          <svg class="h-full w-full" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="avatar-masc" x1="15" y1="20" x2="105" y2="105" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#FF2E54"/>
+                <stop offset="65%" stop-color="#DC2626"/>
+                <stop offset="100%" stop-color="#991B1B"/>
+              </linearGradient>
+            </defs>
+            <path d="M40 26H80L104 48V78L80 102H40L16 78V48L40 26Z" fill="url(#avatar-masc)"/>
+            <polygon points="40,26 80,26 60,46" fill="#FCA5A5" fill-opacity="0.25"/>
+            <path d="M36 14L84 46M84 14L36 46" stroke="#39FF14" stroke-width="8" stroke-linecap="square"/>
+            <rect x="55" y="25" width="10" height="10" fill="#39FF14" transform="rotate(45 60 30)"/>
+          </svg>
+        </div>
+        <div class="flex items-center gap-2.5 flex-wrap">
+          <span class="inline-flex items-center gap-1.5 font-bold tracking-wider uppercase text-[var(--algo-green)]">
+            <span class="h-2 w-2 bg-[var(--algo-green)]"></span>
+            <span>NOW LIVE</span>
+          </span>
+          <span class="text-[var(--text-tertiary)]">/</span>
+          <span class="text-[var(--text-secondary)] truncate" data-i18n="home.developer">
+            全栈工程师 · 独立创作者 · xujiuran.top
+          </span>
+        </div>
       </div>
-      <div>
-        <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-[var(--text-primary)] flex items-center gap-2 flex-wrap">
-          <span data-i18n="home.greeting">你好，我是</span>
-          <TomatoXWordmark size="md" />
-        </h1>
-        <p class="text-xs sm:text-sm text-[var(--text-secondary)] mt-1" data-i18n="home.developer">
-          全栈工程师 · 独立创作者 · <a href="https://xujiuran.top" class="text-[var(--accent)] hover:underline mono font-medium">xujiuran.top</a>
-        </p>
+
+      <div class="flex items-center gap-3 text-[11px] text-[var(--text-tertiary)]">
+        <span class="hidden sm:inline border border-[var(--border-primary)] bg-[var(--algo-buffer)] px-2 py-0.5 text-[var(--text-secondary)]">
+          BPM <strong class="text-[var(--algo-green)]">128</strong> · BJS UTC+8
+        </span>
+        <span class="border border-[var(--algo-amber)]/40 bg-[var(--algo-amber)]/10 px-2 py-0.5 text-[var(--algo-amber)] font-semibold">
+          CYCLE 4/4
+        </span>
       </div>
     </div>
 
-    <!-- Bio Prose -->
-    <p class="text-sm sm:text-base text-[var(--text-secondary)] leading-relaxed" data-i18n="home.bio">
-      喜欢用代码将审美与构想变为现实。专注于 <span class="font-medium text-[var(--text-primary)]">前端技术</span>、<span class="font-medium text-[var(--text-primary)]">AI Coding</span> 与轻量级开源工具。保持敏锐与好奇，在 <span class="font-medium text-[var(--text-primary)]">xujiuran.top</span> 记录深度长文与即时随想。
-    </p>
+    <!-- Split Hero Grid: Left Display & Actions | Right Live Source Buffer -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-stretch">
+      <!-- Left Stage Column (6 cols) -->
+      <div class="lg:col-span-6 flex flex-col justify-between gap-6 py-1">
+        <div class="space-y-5">
+          <div class="flex items-center gap-2.5 flex-wrap">
+            <span class="text-sm text-[var(--text-secondary)] mono" data-i18n="home.greeting">你好，我是</span>
+            <TomatoXWordmark size="md" />
+          </div>
 
-    <!-- Status pill -->
-    <div class="inline-flex items-center gap-2 rounded-full border border-[var(--border-primary)] bg-[var(--bg-secondary)] px-3 py-1 text-xs text-[var(--text-secondary)]">
-      <span class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
-      <span data-i18n="home.currentStatus">当前状态：正在迭代 Astro 极简博客主题与 AI 工具链</span>
+          <!-- Dual-tone High-Contrast Stage Display (no gradients) -->
+          <h1 class="mono text-[2.35rem] sm:text-[3.1rem] xl:text-[3.55rem] font-extrabold leading-[1.06] tracking-[-0.035em]">
+            <span class="block text-[var(--algo-green)]" data-i18n="home.stageDisplay1">写代码 · 做工具。</span>
+            <span class="block text-[var(--algo-magenta)] mt-1" data-i18n="home.stageDisplay2">活在当下节拍。</span>
+          </h1>
+
+          <p class="text-sm sm:text-base text-[var(--text-secondary)] leading-relaxed max-w-[60ch]" data-i18n="home.bio">
+            喜欢用代码将审美与构想变为现实。专注于前端技术、AI Coding 与轻量级开源工具。保持敏锐与好奇，在 xujiuran.top 记录深度长文与即时随想。
+          </p>
+
+          <!-- Live Console Status Line -->
+          <div class="inline-flex items-center gap-2.5 border border-[var(--border-primary)] bg-[var(--algo-buffer)] px-3 py-1.5 text-xs mono text-[var(--text-secondary)]">
+            <span class="h-2 w-2 bg-[var(--algo-green)]"></span>
+            <span data-i18n="home.currentStatus">当前状态：正在迭代 Astro 极简博客主题与 AI 工具链</span>
+          </div>
+        </div>
+
+        <!-- Primary & Secondary Execution Actions -->
+        <div class="flex flex-wrap items-center gap-3 pt-1">
+          <a
+            href="/posts"
+            class="inline-flex items-center justify-between gap-4 border border-[var(--algo-green)] bg-[var(--algo-green)] px-5 py-2.5 text-xs sm:text-sm font-bold tracking-wider uppercase mono text-[var(--algo-on-green)] transition-transform hover:-translate-y-0.5 active:translate-y-0"
+          >
+            <span data-i18n="home.stagePrimaryCta">执行 · 进入文章库</span>
+            <span aria-hidden="true">→</span>
+          </a>
+
+          <a
+            href="/news"
+            class="inline-flex items-center justify-between gap-3 border border-[var(--algo-magenta)] bg-transparent px-4 py-2.5 text-xs sm:text-sm font-bold tracking-wider uppercase mono text-[var(--algo-magenta)] transition-colors hover:bg-[var(--algo-magenta)] hover:text-[var(--algo-on-magenta)]"
+          >
+            <span data-i18n="home.stageSecondaryCta">60S_RADAR · 早报</span>
+            <span aria-hidden="true">↗</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Right Stage Column (6 cols): Interactive Live Source Code Buffer -->
+      <div class="lg:col-span-6 border border-[var(--border-primary)] bg-[var(--algo-buffer)] flex flex-col justify-between">
+        <!-- Buffer Tab Header -->
+        <div class="flex items-center justify-between gap-2 border-b border-[var(--border-primary)] bg-[var(--bg-secondary)] px-3.5 py-2 text-[11px] mono">
+          <div class="flex items-center gap-2 text-[var(--text-primary)] font-semibold">
+            <span class="h-2 w-2 bg-[var(--algo-green)]"></span>
+            <span>live.tomatox</span>
+            <span class="text-[var(--text-tertiary)] hidden sm:inline">// index.ts</span>
+          </div>
+          <div id="algo-lane-tabs" class="flex items-center gap-1" role="tablist" aria-label="Buffer lanes">
+            <button type="button" data-lane="all" class="algo-lane-btn px-2 py-0.5 border border-[var(--algo-green)] bg-[var(--algo-green)]/15 text-[var(--algo-green)] font-bold cursor-pointer">ALL</button>
+            <button type="button" data-lane="essays" class="algo-lane-btn px-2 py-0.5 border border-transparent text-[var(--text-tertiary)] hover:text-[var(--text-primary)] cursor-pointer">ESSAY</button>
+            <button type="button" data-lane="radar" class="algo-lane-btn px-2 py-0.5 border border-transparent text-[var(--text-tertiary)] hover:text-[var(--text-primary)] cursor-pointer">60S</button>
+            <button type="button" data-lane="moyu" class="algo-lane-btn px-2 py-0.5 border border-transparent text-[var(--text-tertiary)] hover:text-[var(--text-primary)] cursor-pointer">MOYU</button>
+          </div>
+        </div>
+
+        <!-- Numbered Executable Code Lines -->
+        <div id="algo-code-buffer" class="p-3.5 sm:p-4 text-[12px] sm:text-[13px] leading-[1.7] mono overflow-x-auto space-y-0.5">
+          <div class="algo-code-line grid grid-cols-[2rem_1fr] gap-2 px-1.5" data-line-lane="all">
+            <span class="text-[var(--text-tertiary)] select-none text-right">01</span>
+            <div><span class="text-[var(--algo-magenta)] font-semibold">init</span>() {'{'}</div>
+          </div>
+          <div class="algo-code-line grid grid-cols-[2rem_1fr] gap-2 px-1.5" data-line-lane="all">
+            <span class="text-[var(--text-tertiary)] select-none text-right">02</span>
+            <div class="pl-4 text-[var(--text-secondary)]">author = <span class="text-[var(--text-primary)]">"TomatoX · xujiuran.top"</span>;</div>
+          </div>
+          <div class="algo-code-line grid grid-cols-[2rem_1fr] gap-2 px-1.5" data-line-lane="all">
+            <span class="text-[var(--text-tertiary)] select-none text-right">03</span>
+            <div class="pl-4 text-[var(--text-secondary)]">langs = [<span class="text-[var(--algo-green)]">"zh-CN"</span>, <span class="text-[var(--algo-green)]">"en"</span>];</div>
+          </div>
+          <div class="algo-code-line grid grid-cols-[2rem_1fr] gap-2 px-1.5" data-line-lane="all">
+            <span class="text-[var(--text-tertiary)] select-none text-right">04</span>
+            <div>{'}'}</div>
+          </div>
+          <div class="algo-code-line grid grid-cols-[2rem_1fr] gap-2 px-1.5" data-line-lane="all">
+            <span class="text-[var(--text-tertiary)] select-none text-right">05</span>
+            <div>&nbsp;</div>
+          </div>
+          <div class="algo-code-line grid grid-cols-[2rem_1fr] gap-2 px-1.5" data-line-lane="all">
+            <span class="text-[var(--text-tertiary)] select-none text-right">06</span>
+            <div><span class="text-[var(--algo-green)] font-semibold">live.loop</span> {'{'}</div>
+          </div>
+          <a href={leadPost ? `/posts/${leadPost.slug}` : '/posts'} class="algo-code-line group grid grid-cols-[2rem_1fr] gap-2 px-1.5 py-0.5 hover:bg-[var(--algo-green)]/10 transition-colors" data-line-lane="essays">
+            <span class="text-[var(--text-tertiary)] group-hover:text-[var(--algo-green)] select-none text-right">07</span>
+            <div class="pl-4 truncate">
+              <span class="text-[var(--algo-green)]">essay</span>(<span class="text-[var(--text-primary)] group-hover:underline">"{leadPost?.title || 'Harness Engineering'}"</span>);
+            </div>
+          </a>
+          <a href="/news" class="algo-code-line group grid grid-cols-[2rem_1fr] gap-2 px-1.5 py-0.5 hover:bg-[var(--algo-magenta)]/10 transition-colors" data-line-lane="radar">
+            <span class="text-[var(--text-tertiary)] group-hover:text-[var(--algo-magenta)] select-none text-right">08</span>
+            <div class="pl-4 truncate">
+              <span class="text-[var(--algo-magenta)]">radar</span>({'{'} sources: <span class="text-[var(--algo-amber)]">15</span>, briefs: <span class="text-[var(--algo-amber)]">{hubData.digest.news.length}</span> {'}'});
+            </div>
+          </a>
+          <a href="#moyu-weekly-section" class="algo-code-line group grid grid-cols-[2rem_1fr] gap-2 px-1.5 py-0.5 bg-[var(--algo-amber)]/10 hover:bg-[var(--algo-amber)]/18 transition-colors" data-line-lane="moyu">
+            <span class="text-[var(--algo-amber)] select-none text-right font-bold">09</span>
+            <div class="pl-4 truncate">
+              <span class="text-[var(--algo-amber)] font-semibold">next.moyu</span>({'{'} week: <span class="text-[var(--text-primary)]">{weekPercentage}%</span>, weekend: <span class="text-[var(--algo-amber)]">"{daysToWeekend}d"</span> {'}'});
+            </div>
+          </a>
+          <a href="/projects" class="algo-code-line group grid grid-cols-[2rem_1fr] gap-2 px-1.5 py-0.5 hover:bg-[var(--algo-green)]/10 transition-colors" data-line-lane="essays">
+            <span class="text-[var(--text-tertiary)] group-hover:text-[var(--algo-green)] select-none text-right">10</span>
+            <div class="pl-4 truncate">
+              <span class="text-[var(--algo-green)]">tools</span>({recommendedProjects.length}).<span class="text-[var(--algo-magenta)]">mount</span>(<span class="text-[var(--text-primary)] group-hover:underline">"{leadTool?.name || 'Toolkit'}"</span>);
+            </div>
+          </a>
+          <div class="algo-code-line grid grid-cols-[2rem_1fr] gap-2 px-1.5" data-line-lane="all">
+            <span class="text-[var(--text-tertiary)] select-none text-right">11</span>
+            <div>{'}'}</div>
+          </div>
+          <div class="algo-code-line grid grid-cols-[2rem_1fr] gap-2 px-1.5 py-0.5 bg-[var(--algo-green)]/12 text-[var(--text-primary)]" data-line-lane="all">
+            <span class="text-[var(--algo-green)] font-bold select-none text-right">&gt; 12</span>
+            <div>
+              <span class="text-[var(--algo-green)] font-bold">live.cycle</span>(); <span class="algo-cursor" aria-hidden="true"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Buffer Footer Status -->
+        <div class="flex items-center justify-between border-t border-[var(--border-primary)] bg-[var(--bg-secondary)] px-3.5 py-2 text-[11px] mono text-[var(--text-tertiary)]">
+          <div class="flex items-center gap-3">
+            <span class="text-[var(--algo-green)] font-semibold">RUNNING</span>
+            <span>BPM 128</span>
+            <span class="hidden sm:inline">0MS SWAP</span>
+          </div>
+          <div class="flex items-center gap-1" aria-hidden="true">
+            <span>LOAD</span>
+            <span class="inline-block h-2.5 w-1.5 bg-[var(--algo-green)]"></span>
+            <span class="inline-block h-2.5 w-1.5 bg-[var(--algo-green)]"></span>
+            <span class="inline-block h-2.5 w-1.5 bg-[var(--algo-magenta)]"></span>
+            <span class="inline-block h-2.5 w-1.5 bg-[var(--algo-amber)]"></span>
+            <span class="inline-block h-2.5 w-1.5 bg-[var(--border-primary)]"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5-Cell Full-Width Stage Telemetry Strip (from algorave-hero.png) -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 border border-[var(--border-primary)] divide-y sm:divide-y-0 sm:divide-x divide-[var(--border-primary)] bg-[var(--card-bg)] mono">
+      <a href="/posts" class="group p-4 flex flex-col justify-between gap-2.5 hover:bg-[var(--bg-secondary)] transition-colors">
+        <div class="flex items-center justify-between text-[11px] text-[var(--text-tertiary)] uppercase tracking-wider">
+          <span data-i18n="nav.posts">文章</span>
+          <span class="text-[var(--algo-green)]">LOG</span>
+        </div>
+        <div class="text-2xl sm:text-3xl font-extrabold text-[var(--algo-green)]">{posts.length}</div>
+        <div class="flex gap-1" aria-hidden="true">
+          <span class="h-1.5 flex-1 bg-[var(--algo-green)]"></span>
+          <span class="h-1.5 flex-1 bg-[var(--algo-green)]"></span>
+          <span class="h-1.5 flex-1 bg-[var(--algo-green)]/40"></span>
+          <span class="h-1.5 flex-1 bg-[var(--algo-green)]"></span>
+          <span class="h-1.5 flex-1 bg-[var(--border-primary)]"></span>
+        </div>
+      </a>
+
+      <a href="/thoughts" class="group p-4 flex flex-col justify-between gap-2.5 hover:bg-[var(--bg-secondary)] transition-colors">
+        <div class="flex items-center justify-between text-[11px] text-[var(--text-tertiary)] uppercase tracking-wider">
+          <span data-i18n="nav.thoughts">碎碎念</span>
+          <span class="text-[var(--algo-magenta)]">NOTES</span>
+        </div>
+        <div class="text-2xl sm:text-3xl font-extrabold text-[var(--algo-magenta)]">128</div>
+        <div class="flex gap-1" aria-hidden="true">
+          <span class="h-1.5 flex-1 bg-[var(--algo-magenta)]"></span>
+          <span class="h-1.5 flex-1 bg-[var(--border-primary)]"></span>
+          <span class="h-1.5 flex-1 bg-[var(--algo-magenta)]"></span>
+          <span class="h-1.5 flex-1 bg-[var(--algo-magenta)]/50"></span>
+          <span class="h-1.5 flex-1 bg-[var(--algo-magenta)]"></span>
+        </div>
+      </a>
+
+      <a href="/news" class="group p-4 flex flex-col justify-between gap-2.5 hover:bg-[var(--bg-secondary)] transition-colors">
+        <div class="flex items-center justify-between text-[11px] text-[var(--text-tertiary)] uppercase tracking-wider">
+          <span data-i18n="nav.news">早报</span>
+          <span class="text-[var(--algo-amber)]">15 SRC</span>
+        </div>
+        <div class="text-2xl sm:text-3xl font-extrabold text-[var(--algo-amber)]">{hubData.digest.news.length}</div>
+        <div class="flex gap-1" aria-hidden="true">
+          <span class="h-1.5 flex-1 bg-[var(--algo-amber)]"></span>
+          <span class="h-1.5 flex-1 bg-[var(--algo-amber)]"></span>
+          <span class="h-1.5 flex-1 bg-[var(--algo-amber)]"></span>
+          <span class="h-1.5 flex-1 bg-[var(--border-primary)]"></span>
+          <span class="h-1.5 flex-1 bg-[var(--algo-amber)]/60"></span>
+        </div>
+      </a>
+
+      <a href="/projects" class="group p-4 flex flex-col justify-between gap-2.5 hover:bg-[var(--bg-secondary)] transition-colors">
+        <div class="flex items-center justify-between text-[11px] text-[var(--text-tertiary)] uppercase tracking-wider">
+          <span data-i18n="nav.projects">项目</span>
+          <span class="text-[var(--algo-green)]">MOUNT</span>
+        </div>
+        <div class="text-2xl sm:text-3xl font-extrabold text-[var(--algo-green)]">{recommendedProjects.length}</div>
+        <div class="flex gap-1" aria-hidden="true">
+          <span class="h-1.5 flex-1 bg-[var(--algo-green)]/50"></span>
+          <span class="h-1.5 flex-1 bg-[var(--algo-green)]"></span>
+          <span class="h-1.5 flex-1 bg-[var(--border-primary)]"></span>
+          <span class="h-1.5 flex-1 bg-[var(--algo-green)]"></span>
+          <span class="h-1.5 flex-1 bg-[var(--algo-green)]"></span>
+        </div>
+      </a>
+
+      <a href="#moyu-weekly-section" class="col-span-2 sm:col-span-3 lg:col-span-1 p-4 flex flex-col justify-between gap-2 bg-[var(--algo-buffer)] hover:bg-[var(--algo-green)]/10 transition-colors">
+        <div class="flex items-center justify-between text-[11px] uppercase tracking-wider">
+          <span class="text-[var(--algo-amber)] font-bold" data-i18n="moyu.weekend">距周末</span>
+          <span class="text-[var(--text-tertiary)]">{weekPercentage}%</span>
+        </div>
+        <div class="text-xl font-extrabold text-[var(--text-primary)]">{daysToWeekend} <span class="text-xs font-normal text-[var(--text-secondary)]" data-i18n="moyu.daysUnit">天</span></div>
+        <span class="inline-flex items-center justify-between border border-[var(--algo-green)] px-2.5 py-1 text-[11px] font-bold text-[var(--algo-green)]">
+          <span data-i18n="home.stageEnterMatrix">进入节律矩阵</span>
+          <span aria-hidden="true">→</span>
+        </span>
+      </a>
     </div>
   </section>
 
-  <!-- Aesthetic Motto Banner -->
+  <!-- Motto Console Strip -->
   <MottoBanner />
 
   <hr class="my-8 border-[var(--border-secondary)]" />
 
-  <!-- Recent Posts -->
+  <!-- Recent Posts Log -->
   <section class="space-y-4">
-    <div class="flex items-center justify-between">
+    <div class="flex items-center justify-between gap-2 border-b border-[var(--border-primary)] pb-3">
       <h2 class="text-lg sm:text-xl font-bold text-[var(--text-primary)] flex items-center gap-2.5">
-        <img src="/images/icons/posts.png" alt="最近文章" class="h-6 w-6 sm:h-7 sm:w-7 object-contain inline-block shrink-0 rounded-lg shadow-xs" />
-        <span data-i18n="home.recentPosts">最近文章</span>
+        <svg class="h-5 w-5 text-[var(--algo-green)] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square">
+          <path d="M4 17l6-6-6-6"></path>
+          <path d="M12 19h8"></path>
+        </svg>
+        <span data-i18n="home.recentPosts">最新文章</span>
       </h2>
-      <a href="/posts" class="text-xs sm:text-sm text-[var(--accent)] hover:underline flex items-center gap-1" data-i18n="home.viewAllPostsCount">
+      <a href="/posts" class="mono text-xs sm:text-sm text-[var(--accent)] hover:underline flex items-center gap-1" data-i18n="home.viewAllPostsCount">
         查看全部 (38) →
       </a>
     </div>
 
-    <div class="divide-y divide-[var(--border-secondary)]">
+    <div class="border border-[var(--border-primary)] bg-[var(--card-bg)] divide-y divide-[var(--border-secondary)] px-4 sm:px-5">
       {recentPosts.map((post) => (
         <PostCard {...post} />
       ))}
@@ -110,51 +344,97 @@ const featuredProjects = recommendedProjects.slice(0, 4);
 
   <hr class="my-8 border-[var(--border-secondary)]" />
 
-  <!-- Micro-thoughts / Memos -->
-  <section class="space-y-4">
-    <div class="flex items-center justify-between">
-      <h2 class="text-lg sm:text-xl font-bold text-[var(--text-primary)] flex items-center gap-2.5">
-        <img src="/images/icons/thoughts.png" alt="碎碎念" class="h-6 w-6 sm:h-7 sm:w-7 object-contain inline-block shrink-0 rounded-lg shadow-xs" />
-        <span data-i18n="home.thoughts">碎碎念</span>
-      </h2>
-      <a href="/thoughts" class="text-xs sm:text-sm text-[var(--accent)] hover:underline flex items-center gap-1" data-i18n="home.moreThoughtsCount">
-        更多随笔 (128) →
-      </a>
-    </div>
-
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-      {recentThoughts.map((t) => (
-        <ThoughtCard {...t} />
-      ))}
-    </div>
-  </section>
-
-  <hr class="my-8 border-[var(--border-secondary)]" />
-
-  <!-- Recommended Tools / Open Source (Curated) -->
-  <section class="space-y-4">
-    <div class="flex items-center justify-between">
-      <div class="flex items-baseline gap-2">
+  <!-- Asymmetric Stage Split: Thoughts Transcript (5 cols) + Toolkit Sequencer (7 cols) -->
+  <section class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+    <!-- Micro-thoughts / Memos -->
+    <div class="lg:col-span-5 space-y-4">
+      <div class="flex items-center justify-between gap-2 border-b border-[var(--border-primary)] pb-3">
         <h2 class="text-lg sm:text-xl font-bold text-[var(--text-primary)] flex items-center gap-2.5">
-          <img src="/images/icons/tools.png" alt="极客利器" class="h-6 w-6 sm:h-7 sm:w-7 object-contain inline-block shrink-0 rounded-lg shadow-xs" />
-          <span data-i18n="home.tools">极客利器 · 推荐项目</span>
+          <svg class="h-5 w-5 text-[var(--algo-magenta)] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square">
+            <rect x="3" y="4" width="18" height="14"></rect>
+            <path d="M7 20l4-2h6"></path>
+          </svg>
+          <span data-i18n="home.thoughts">碎碎念</span>
         </h2>
-        <span class="text-xs text-[var(--text-tertiary)] hidden sm:inline" data-i18n="home.toolsSub">自用常驻与高频利器</span>
+        <a href="/thoughts" class="mono text-xs text-[var(--algo-magenta)] hover:underline flex items-center gap-1" data-i18n="home.moreThoughtsCount">
+          更多随笔 (128) →
+        </a>
       </div>
-      <a href="/projects" class="text-xs sm:text-sm text-[var(--accent)] hover:underline flex items-center gap-1" data-i18n="home.viewAllToolsCount">
-        查看全部 ({recommendedProjects.length}) →
-      </a>
+
+      <div class="space-y-3">
+        {recentThoughts.map((t) => (
+          <ThoughtCard {...t} />
+        ))}
+      </div>
     </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-      {featuredProjects.map((p) => (
-        <ProjectCard {...p} />
-      ))}
+    <!-- Recommended Tools / Open Source -->
+    <div class="lg:col-span-7 space-y-4">
+      <div class="flex items-center justify-between gap-2 border-b border-[var(--border-primary)] pb-3">
+        <div class="flex items-baseline gap-2.5">
+          <h2 class="text-lg sm:text-xl font-bold text-[var(--text-primary)] flex items-center gap-2.5">
+            <svg class="h-5 w-5 text-[var(--algo-green)] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square">
+              <rect x="3" y="3" width="8" height="8"></rect>
+              <rect x="13" y="3" width="8" height="8"></rect>
+              <rect x="3" y="13" width="8" height="8"></rect>
+              <rect x="13" y="13" width="8" height="8"></rect>
+            </svg>
+            <span data-i18n="home.tools">极客利器 · 推荐项目</span>
+          </h2>
+          <span class="text-xs text-[var(--text-tertiary)] hidden sm:inline" data-i18n="home.toolsSub">自用常驻与高频利器</span>
+        </div>
+        <a href="/projects" class="mono text-xs text-[var(--accent)] hover:underline flex items-center gap-1" data-i18n="home.viewAllToolsCount">
+          查看全部 ({recommendedProjects.length}) →
+        </a>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {featuredProjects.map((p) => (
+          <ProjectCard {...p} />
+        ))}
+      </div>
     </div>
   </section>
 
   <hr class="my-8 border-[var(--border-secondary)]" />
 
-  <!-- Moyu Weekly Calendar & Slacking Dashboard -->
+  <!-- Moyu Weekly Calendar & Pattern Sequencer -->
   <MoyuWeeklySection moyu={hubData.moyu} />
 </BaseLayout>
+
+<script>
+  function setupAlgoraveBuffer() {
+    const tabsWrap = document.getElementById('algo-lane-tabs');
+    const bufferEl = document.getElementById('algo-code-buffer');
+    if (!tabsWrap || !bufferEl) return;
+    if ((tabsWrap as any)._hasAlgoHandler) return;
+    (tabsWrap as any)._hasAlgoHandler = true;
+
+    const buttons = tabsWrap.querySelectorAll<HTMLButtonElement>('.algo-lane-btn');
+    const lines = bufferEl.querySelectorAll<HTMLElement>('.algo-code-line');
+
+    buttons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const selected = btn.getAttribute('data-lane') || 'all';
+        buttons.forEach((b) => {
+          const isCurrent = b === btn;
+          b.className = isCurrent
+            ? 'algo-lane-btn px-2 py-0.5 border border-[var(--algo-green)] bg-[var(--algo-green)]/15 text-[var(--algo-green)] font-bold cursor-pointer'
+            : 'algo-lane-btn px-2 py-0.5 border border-transparent text-[var(--text-tertiary)] hover:text-[var(--text-primary)] cursor-pointer';
+        });
+
+        lines.forEach((line) => {
+          const lane = line.getAttribute('data-line-lane') || 'all';
+          if (selected === 'all' || lane === selected) {
+            line.style.opacity = '1';
+          } else {
+            line.style.opacity = '0.32';
+          }
+        });
+      });
+    });
+  }
+
+  setupAlgoraveBuffer();
+  document.addEventListener('astro:page-load', setupAlgoraveBuffer);
+</script>
