@@ -170,6 +170,28 @@ export const searchIndex: SearchItem[] = [
 
   // ── 3. 深度长文 (Articles) ──
   {
+    id: 'post-overseas-sim',
+    title: '常见境外手机号全景整理与保号避坑指南：从接码生态到最优“三持”搭配',
+    description: '系统梳理境外手机号核心用途、运营商等级鄙视链、英国 VOXI、香港 Club Sim 实操与 Wi-Fi Calling 调试。',
+    category: 'post',
+    categoryLabel: '文章',
+    url: '/posts/overseas-sim-cards-guide',
+    iconType: 'post',
+    badge: '数字游民',
+    keywords: ['sim', 'esim', 'voxi', 'club sim', '境外手机号', '接码', 'wifi calling', '保号', '出海'],
+  },
+  {
+    id: 'post-overseas-cards',
+    title: '低门槛海外支付卡与数字银行应急指南：从野生卡到合规实体账户',
+    description: '梳理低门槛海外支付卡全景，涵盖 Bybit 虚拟卡、菲律宾 Maya、PayPal UK/Krak 组合与避坑法则。',
+    category: 'post',
+    categoryLabel: '文章',
+    url: '/posts/overseas-payment-cards-guide',
+    iconType: 'post',
+    badge: '出海支付',
+    keywords: ['payment', 'bybit', 'maya', 'paypal', '海外支付', '信用卡', '数字银行', 'wise', '出海'],
+  },
+  {
     id: 'post-minimal-web',
     title: '你本不需要那么多复杂的依赖：现代 Web 工程的极简法则',
     description: '审视过度工程化与臃肿工具链，现代浏览器与 Astro 零 JS 默认出水哲学。',
