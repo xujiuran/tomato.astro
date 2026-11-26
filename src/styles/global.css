@@ -416,7 +416,6 @@ html:not(.dark) .theme-toggle-btn .moon-icon {
 
 .article-content blockquote {
   border: 1px solid var(--border-primary);
-  border-left: 3px solid var(--algo-green);
   padding: 0.875rem 1.15rem;
   margin: 1.5rem 0;
   background-color: color-mix(in oklab, var(--bg-secondary) 75%, var(--surface-primary));
@@ -436,7 +435,6 @@ html:not(.dark) .theme-toggle-btn .moon-icon {
 /* GitHub-style Markdown Alerts */
 .article-content .article-alert {
   border: 1px solid var(--border-primary);
-  border-left-width: 3px;
   padding: 0.875rem 1.15rem;
   margin: 1.5rem 0;
   border-radius: 2px;
@@ -466,7 +464,7 @@ html:not(.dark) .theme-toggle-btn .moon-icon {
 
 .article-content .article-alert-note,
 .article-content .article-alert-tip {
-  border-left-color: var(--algo-green);
+  border-color: color-mix(in oklab, var(--algo-green) 42%, var(--border-primary));
   background-color: color-mix(in oklab, var(--algo-green) 6%, var(--surface-primary));
 }
 .article-content .article-alert-note .article-alert-title,
@@ -475,7 +473,7 @@ html:not(.dark) .theme-toggle-btn .moon-icon {
 }
 
 .article-content .article-alert-important {
-  border-left-color: var(--algo-magenta);
+  border-color: color-mix(in oklab, var(--algo-magenta) 42%, var(--border-primary));
   background-color: color-mix(in oklab, var(--algo-magenta) 6%, var(--surface-primary));
 }
 .article-content .article-alert-important .article-alert-title {
@@ -483,7 +481,7 @@ html:not(.dark) .theme-toggle-btn .moon-icon {
 }
 
 .article-content .article-alert-warning {
-  border-left-color: var(--algo-amber);
+  border-color: color-mix(in oklab, var(--algo-amber) 45%, var(--border-primary));
   background-color: color-mix(in oklab, var(--algo-amber) 7%, var(--surface-primary));
 }
 .article-content .article-alert-warning .article-alert-title {
@@ -491,7 +489,7 @@ html:not(.dark) .theme-toggle-btn .moon-icon {
 }
 
 .article-content .article-alert-caution {
-  border-left-color: var(--algo-crimson);
+  border-color: color-mix(in oklab, var(--algo-crimson) 45%, var(--border-primary));
   background-color: color-mix(in oklab, var(--algo-crimson) 7%, var(--surface-primary));
 }
 .article-content .article-alert-caution .article-alert-title {
