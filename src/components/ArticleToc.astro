@@ -36,7 +36,7 @@ const { toc, title = '目录' } = Astro.props;
       </div>
 
       <!-- TOC Heading Links -->
-      <nav class="max-h-[60vh] overflow-y-auto space-y-1 text-xs">
+      <nav class="max-h-[42vh] overflow-y-auto space-y-1 text-xs">
         {toc.map((item, idx) => (
           <a
             href={`#${item.id}`}

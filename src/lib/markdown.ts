@@ -56,7 +56,7 @@ export function renderArticleMarkdown(markdownContent: string): { html: string; 
 
   // Custom code block renderer with Mac-style window controls
   renderer.code = function ({ text, lang }: { text: string; lang?: string }) {
-    const language = (lang || 'code').trim();
+    const language = (lang || 'text').trim();
     const escapedCode = text
       .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')
@@ -114,6 +114,11 @@ export function renderArticleMarkdown(markdownContent: string): { html: string; 
   html = html
     .replace(/<table>/g, '<div class="article-table-wrap"><table>')
     .replace(/<\/table>/g, '</table></div>');
+
+  // Open external http(s) links in a new tab safely and lazy-load article images
+  html = html
+    .replace(/<a href="(https?:\/\/[^"]+)"(?![^>]*target=)/g, '<a href="$1" target="_blank" rel="noopener noreferrer"')
+    .replace(/<img(?![^>]*loading=) /g, '<img loading="lazy" decoding="async" ');
 
   // Transform GitHub-style alerts (> [!WARNING] ...) into structured callouts
   html = html.replace(

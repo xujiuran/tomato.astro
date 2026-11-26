@@ -129,7 +129,7 @@ const safeDescription = (description || content.replace(/<[^>]*>/g, '').replace(
         </header>
 
         <!-- Post Body (Rendered with Mac Codeblocks & Markdown) -->
-        <div class="article-content space-y-4" set:html={html} />
+        <div class="article-content" set:html={html} />
 
         <!-- Previous & Next Post Navigation -->
         {(prevPost || nextPost) && (
