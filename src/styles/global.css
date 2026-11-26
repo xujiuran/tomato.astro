@@ -368,6 +368,48 @@ html:not(.dark) .theme-toggle-btn .moon-icon {
   margin-bottom: 0;
 }
 
+.article-content h2 {
+  font-size: 1.35rem;
+  line-height: 1.35;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  color: var(--text-primary);
+  margin-top: 2.25rem;
+  margin-bottom: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-secondary);
+  scroll-margin-top: 6rem;
+}
+
+.article-content h3 {
+  font-size: 1.15rem;
+  line-height: 1.45;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+  margin-top: 1.6rem;
+  margin-bottom: 0.75rem;
+  scroll-margin-top: 6rem;
+}
+
+.article-content h2 + h3 {
+  margin-top: 0.85rem;
+}
+
+.article-content h4 {
+  font-size: 1.02rem;
+  line-height: 1.5;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-top: 1.25rem;
+  margin-bottom: 0.5rem;
+  scroll-margin-top: 6rem;
+}
+
+.article-content a.heading-anchor {
+  text-decoration: none;
+}
+
 .article-content[data-font-size="sm"] {
   font-size: 0.9375rem;
   line-height: 1.75;

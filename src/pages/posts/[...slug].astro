@@ -3,11 +3,11 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import MoyuCalendarSidebar from '../../components/MoyuCalendarSidebar.astro';
 import ArticleToc from '../../components/ArticleToc.astro';
 import { getMoyuData } from '../../lib/newsService';
-import { renderArticleMarkdown } from '../../lib/markdown';
 import { formatViewCount } from '../../lib/viewsService';
-import { posts } from '../../data/posts';
+import { getAllPosts } from '../../lib/posts';
 
-export function getStaticPaths() {
+export async function getStaticPaths() {
+  const posts = await getAllPosts();
   return posts.map((post, idx) => ({
     params: { slug: post.slug },
     props: {
@@ -19,14 +19,13 @@ export function getStaticPaths() {
 }
 
 const moyu = await getMoyuData();
-const { title, description, tag, date, readTime, words, content, prevPost, nextPost } = Astro.props;
-const { html, toc } = renderArticleMarkdown(content);
+const { title, description, tag, date, readTime, words, html, toc, prevPost, nextPost } = Astro.props;
 const slug = Astro.params.slug as string;
 const tocHeadings = toc.slice(0, 4).map((t) => t.text);
 const initialViews = '0';
 
 // Curated or auto-generated clean plain excerpt for share poster
-const safeDescription = (description || content.replace(/<[^>]*>/g, '').replace(/[#*`>\[\]\(\)\-\_]/g, '').trim())
+const safeDescription = (description || html.replace(/<[^>]*>/g, '').trim())
   .replace(/\s+/g, ' ')
   .slice(0, 130) + '...';
 ---

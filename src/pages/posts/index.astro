@@ -3,9 +3,12 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import PostCard from '../../components/PostCard.astro';
 import MoyuCalendarSidebar from '../../components/MoyuCalendarSidebar.astro';
 import { getMoyuData } from '../../lib/newsService';
-import { posts as allPosts } from '../../data/posts';
+import { getAllPosts } from '../../lib/posts';
 
-const moyu = await getMoyuData();
+const [moyu, allPosts] = await Promise.all([
+  getMoyuData(),
+  getAllPosts(),
+]);
 ---
 
 <BaseLayout title="全部文章 · TomatoX 随笔" currentPath="/posts" containerClass="max-w-6xl">

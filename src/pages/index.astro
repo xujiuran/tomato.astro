@@ -8,12 +8,13 @@ import TomatoXWordmark from '../components/TomatoXWordmark.astro';
 import MoyuWeeklySection from '../components/MoyuWeeklySection.astro';
 import HomeDailyNewsSection from '../components/HomeDailyNewsSection.astro';
 import { fetch60sHubData, fetchHotNews } from '../lib/newsService';
-import { posts } from '../data/posts';
+import { getAllPosts } from '../lib/posts';
 import { recommendedProjects } from '../data/projects';
 
-const [hubData, hotNewsSources] = await Promise.all([
+const [hubData, hotNewsSources, posts] = await Promise.all([
   fetch60sHubData(),
   fetchHotNews(),
+  getAllPosts(),
 ]);
 
 const recentPosts = posts.slice(0, 3);
