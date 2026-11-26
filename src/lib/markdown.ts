@@ -10,12 +10,16 @@ export function renderArticleMarkdown(markdownContent: string): { html: string; 
   const toc: TocItem[] = [];
   let headingCount = 0;
 
+  // Strip a leading top-level H1 if present, since the post layout header already renders <h1>{title}</h1>
+  const normalizedMarkdown = markdownContent.trimStart().replace(/^#\s+[^\n]+\n+/, '');
+
   const renderer = new marked.Renderer();
 
   // Custom heading renderer
-  renderer.heading = function ({ text, depth }: { text: string; depth: number }) {
+  renderer.heading = function ({ tokens, text, depth }: { tokens?: unknown[]; text: string; depth: number }) {
     headingCount++;
-    const rawText = text.replace(/<[^>]*>/g, '').trim();
+    const inlineHtml = tokens && this.parser ? this.parser.parseInline(tokens as never) : text;
+    const rawText = inlineHtml.replace(/<[^>]*>/g, '').trim();
     const slug =
       rawText
         .toLowerCase()
@@ -31,15 +35,18 @@ export function renderArticleMarkdown(markdownContent: string): { html: string; 
       });
     }
 
+    const sizeClass =
+      depth === 2
+        ? 'text-xl sm:text-2xl mt-8 mb-4 pt-4 border-t border-[var(--border-secondary)]'
+        : depth === 3
+          ? 'text-lg sm:text-xl mt-6 mb-3 text-[var(--text-primary)]'
+          : 'text-base sm:text-lg mt-5 mb-2.5 text-[var(--text-primary)]';
+
     const anchorSvg = `<svg class="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity text-[var(--accent)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>`;
 
     return `
-      <h${depth} id="${slug}" class="scroll-mt-24 group relative flex items-center gap-2 font-bold tracking-tight text-[var(--text-primary)] ${
-        depth === 2
-          ? 'text-xl sm:text-2xl mt-8 mb-4 pt-4 border-t border-[var(--border-secondary)]'
-          : 'text-lg sm:text-xl mt-6 mb-3 text-[var(--text-primary)]'
-      }">
-        <span class="group-hover:text-[var(--accent)] transition-colors">${rawText}</span>
+      <h${depth} id="${slug}" class="scroll-mt-24 group relative flex items-center gap-2 font-bold tracking-tight text-[var(--text-primary)] ${sizeClass}">
+        <span class="group-hover:text-[var(--accent)] transition-colors">${inlineHtml}</span>
         <a href="#${slug}" class="hidden sm:inline-flex items-center text-[var(--text-tertiary)] hover:text-[var(--accent)]" aria-label="锚点跳转">
           ${anchorSvg}
         </a>
@@ -93,6 +100,32 @@ export function renderArticleMarkdown(markdownContent: string): { html: string; 
     `;
   };
 
-  const html = marked.parse(markdownContent, { renderer }) as string;
+  const ALERT_LABELS: Record<string, string> = {
+    note: 'NOTE · 说明',
+    tip: 'TIP · 提示',
+    important: 'IMPORTANT · 重要',
+    warning: 'WARNING · 避坑提示',
+    caution: 'CAUTION · 风险警示',
+  };
+
+  let html = marked.parse(normalizedMarkdown, { renderer }) as string;
+
+  // Wrap Markdown tables in a responsive bordered scroll container
+  html = html
+    .replace(/<table>/g, '<div class="article-table-wrap"><table>')
+    .replace(/<\/table>/g, '</table></div>');
+
+  // Transform GitHub-style alerts (> [!WARNING] ...) into structured callouts
+  html = html.replace(
+    /<blockquote>\s*<p>\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\](?:\s*<br\s*\/?>|\s*\n)?([\s\S]*?)<\/blockquote>/gi,
+    (_match, rawType: string, rest: string) => {
+      const type = rawType.toLowerCase();
+      const label = ALERT_LABELS[type] || rawType.toUpperCase();
+      const trimmed = rest.trim();
+      const body = trimmed.startsWith('</p>') ? trimmed.slice(4).trim() : `<p>${trimmed}`;
+      return `<div class="article-alert article-alert-${type}" role="note"><div class="article-alert-title">${label}</div>${body}</div>`;
+    }
+  );
+
   return { html, toc };
 }

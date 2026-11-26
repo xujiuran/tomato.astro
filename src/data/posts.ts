@@ -19,8 +19,6 @@ export const posts: Post[] = [
     words: '4,200',
     tag: '数字游民',
     content: `
-# 常见境外手机号全景整理与保号避坑指南：从接码生态到最优“三持”搭配
-
 > **出处声明**  
 > - **原始帖子**：[Linux.do - 常见境外手机号的简单整理](https://linux.do/t/topic/3216176)  
 > - **原作者**：SuperDAJB ([@zzzdajb](https://linux.do/t/u/zzzdajb))  
@@ -166,8 +164,6 @@ export const posts: Post[] = [
     words: '4,850',
     tag: '出海支付',
     content: `
-# 低门槛海外支付卡与数字银行应急指南：从野生卡到合规实体账户
-
 > **本文基于 Linux.do 社区技术贴整理总结，仅作技术学习与境外合规支付知识参考。**  
 > **原文出处**：[记录一些相对容易获得的国外野生卡](https://linux.do/t/topic/3106413)  
 > **原作者**：SuperDAJB（\`@zzzdajb\`）｜ **发布时间**：2026-11-01 ｜ **社区来源**：LINUX DO

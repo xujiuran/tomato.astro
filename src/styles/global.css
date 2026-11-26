@@ -403,14 +403,173 @@ html:not(.dark) .theme-toggle-btn .moon-icon {
   margin-bottom: 0.4rem;
 }
 
+.article-content hr {
+  border: 0;
+  border-top: 1px solid var(--border-secondary);
+  margin: 1.75rem 0;
+}
+
+/* Collapse redundant <hr> directly preceding <h2> since <h2> carries its own top divider */
+.article-content hr:has(+ h2) {
+  display: none;
+}
+
 .article-content blockquote {
   border: 1px solid var(--border-primary);
-  padding: 0.85rem 1.25rem;
+  border-left: 3px solid var(--algo-green);
+  padding: 0.875rem 1.15rem;
   margin: 1.5rem 0;
-  background-color: var(--bg-secondary);
+  background-color: color-mix(in oklab, var(--bg-secondary) 75%, var(--surface-primary));
   border-radius: 2px;
   color: var(--text-secondary);
-  font-style: italic;
+  font-style: normal;
+}
+
+.article-content blockquote > :first-child {
+  margin-top: 0;
+}
+
+.article-content blockquote > :last-child {
+  margin-bottom: 0;
+}
+
+/* GitHub-style Markdown Alerts */
+.article-content .article-alert {
+  border: 1px solid var(--border-primary);
+  border-left-width: 3px;
+  padding: 0.875rem 1.15rem;
+  margin: 1.5rem 0;
+  border-radius: 2px;
+  background-color: var(--surface-primary);
+}
+
+.article-content .article-alert-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-bottom: 0.4rem;
+}
+
+.article-content .article-alert > :last-child {
+  margin-bottom: 0;
+}
+
+.article-content .article-alert p {
+  margin-top: 0.35rem;
+  margin-bottom: 0.35rem;
+}
+
+.article-content .article-alert-note,
+.article-content .article-alert-tip {
+  border-left-color: var(--algo-green);
+  background-color: color-mix(in oklab, var(--algo-green) 6%, var(--surface-primary));
+}
+.article-content .article-alert-note .article-alert-title,
+.article-content .article-alert-tip .article-alert-title {
+  color: var(--algo-green);
+}
+
+.article-content .article-alert-important {
+  border-left-color: var(--algo-magenta);
+  background-color: color-mix(in oklab, var(--algo-magenta) 6%, var(--surface-primary));
+}
+.article-content .article-alert-important .article-alert-title {
+  color: var(--algo-magenta);
+}
+
+.article-content .article-alert-warning {
+  border-left-color: var(--algo-amber);
+  background-color: color-mix(in oklab, var(--algo-amber) 7%, var(--surface-primary));
+}
+.article-content .article-alert-warning .article-alert-title {
+  color: var(--algo-amber);
+}
+
+.article-content .article-alert-caution {
+  border-left-color: var(--algo-crimson);
+  background-color: color-mix(in oklab, var(--algo-crimson) 7%, var(--surface-primary));
+}
+.article-content .article-alert-caution .article-alert-title {
+  color: var(--algo-crimson);
+}
+
+/* ===================================================
+   Structured Editorial Tables (Algorave Grid Spec)
+   =================================================== */
+.article-content .article-table-wrap {
+  margin: 1.5rem 0;
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border: 1px solid var(--border-primary);
+  border-radius: 2px;
+  background-color: var(--surface-primary);
+}
+
+.article-content table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88em;
+  line-height: 1.65;
+  text-align: left;
+}
+
+.article-content thead {
+  background-color: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-primary);
+}
+
+.article-content th {
+  padding: 0.7rem 0.95rem;
+  font-weight: 700;
+  font-size: 0.92em;
+  letter-spacing: 0.02em;
+  color: var(--text-primary);
+  white-space: nowrap;
+  vertical-align: middle;
+  border-right: 1px solid var(--border-secondary);
+}
+
+.article-content th:last-child {
+  border-right: none;
+}
+
+.article-content td {
+  padding: 0.75rem 0.95rem;
+  vertical-align: top;
+  color: var(--text-secondary);
+  border-top: 1px solid var(--border-secondary);
+  border-right: 1px solid var(--border-secondary);
+  min-width: 5rem;
+  overflow-wrap: break-word;
+}
+
+.article-content td:last-child {
+  border-right: none;
+}
+
+.article-content td:first-child {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+/* Give 2-to-4 column comparison tables a balanced lead column so titles don't wrap awkwardly */
+.article-content table:not(:has(th:nth-child(5))) td:first-child {
+  width: 21%;
+  min-width: 8.75rem;
+}
+
+.article-content tbody tr:nth-child(even) {
+  background-color: color-mix(in oklab, var(--bg-secondary) 36%, var(--surface-primary));
+}
+
+.article-content tbody tr:hover {
+  background-color: color-mix(in oklab, var(--algo-green) 6%, var(--surface-primary));
 }
 
 .article-content :not(pre) > code {
@@ -419,7 +578,7 @@ html:not(.dark) .theme-toggle-btn .moon-icon {
   background-color: var(--bg-secondary);
   color: var(--accent);
   padding: 0.15rem 0.4rem;
-  border-radius: 0.375rem;
+  border-radius: 2px;
   border: 1px solid var(--border-primary);
 }
 
