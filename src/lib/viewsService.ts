@@ -2,6 +2,20 @@
 
 // Base URL for self-hosted Hono API (tomato.news)
 const API_BASE_URL = 'https://news.xujiuran.top';
+const REQUEST_TIMEOUT_MS = 8000;
+
+let batchViewsMemCache: { data: Record<string, number>; ts: number } | null = null;
+let batchViewsInflight: Promise<Record<string, number>> | null = null;
+const VIEWS_TTL_MS = 60 * 1000;
+
+function syncCacheEntry(slug: string, views: number) {
+  try {
+    localStorage.setItem(`tomatox_views_${slug}`, String(views));
+  } catch {}
+  if (batchViewsMemCache) {
+    batchViewsMemCache.data[slug] = views;
+  }
+}
 
 /**
  * Format view numbers nicely (e.g. 0, 12, 1,234 or 1.2w)
@@ -15,7 +29,7 @@ export function formatViewCount(views: number): string {
 }
 
 /**
- * Fetch real views for a single article with local fallback
+ * Fetch real views for a single article with cached fallback
  */
 export async function fetchViewsForSlug(slug: string): Promise<number> {
   const fallback = getLocalViewsFallback(slug);
@@ -23,8 +37,9 @@ export async function fetchViewsForSlug(slug: string): Promise<number> {
 
   try {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 3000);
+    const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
     const res = await fetch(`${API_BASE_URL}/api/views/${encodeURIComponent(slug)}`, {
+      cache: 'no-store',
       signal: controller.signal,
     });
     clearTimeout(timeout);
@@ -33,19 +48,19 @@ export async function fetchViewsForSlug(slug: string): Promise<number> {
       const json = await res.json();
       if (json && json.data && typeof json.data.views === 'number') {
         const remoteViews = json.data.views;
-        localStorage.setItem(`tomatox_views_${slug}`, String(remoteViews));
+        syncCacheEntry(slug, remoteViews);
         return remoteViews;
       }
     }
   } catch (_e) {
-    // API not reachable or timeout, silently use local fallback
+    // API not reachable or timeout, silently keep last known server count
   }
 
   return fallback;
 }
 
 /**
- * Increment and get real views for an article (session-deduplicated)
+ * Increment and get real views for an article (session-deduplicated; never fabricates fake local counts)
  */
 export async function incrementAndGetViews(slug: string): Promise<number> {
   if (typeof window === 'undefined') return 0;
@@ -56,22 +71,18 @@ export async function incrementAndGetViews(slug: string): Promise<number> {
     hasViewedThisSession = !!sessionStorage.getItem(sessionKey);
   } catch {}
 
-  // If already viewed in current browser session, fetch latest count without incrementing
+  // If already counted in current browser session, fetch latest count without incrementing
   if (hasViewedThisSession) {
     return fetchViewsForSlug(slug);
   }
 
-  // Mark as viewed in this session
-  try {
-    sessionStorage.setItem(sessionKey, '1');
-  } catch {}
-
   // Attempt server increment
   try {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 3000);
+    const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
     const res = await fetch(`${API_BASE_URL}/api/views/${encodeURIComponent(slug)}`, {
       method: 'POST',
+      cache: 'no-store',
       signal: controller.signal,
     });
     clearTimeout(timeout);
@@ -80,27 +91,19 @@ export async function incrementAndGetViews(slug: string): Promise<number> {
       const json = await res.json();
       if (json && json.data && typeof json.data.views === 'number') {
         const nextViews = json.data.views;
-        localStorage.setItem(`tomatox_views_${slug}`, String(nextViews));
-        if (batchViewsMemCache) batchViewsMemCache.data[slug] = nextViews;
+        try {
+          sessionStorage.setItem(sessionKey, '1');
+        } catch {}
+        syncCacheEntry(slug, nextViews);
         return nextViews;
       }
     }
   } catch (_e) {
-    // Network or server error fallback
+    // Network or server error: return last cached server count without faking +1 locally
   }
 
-  // Fallback: local increment from actual history
-  const current = getLocalViewsFallback(slug);
-  const next = current + 1;
-  try {
-    localStorage.setItem(`tomatox_views_${slug}`, String(next));
-  } catch {}
-  return next;
+  return getLocalViewsFallback(slug);
 }
-
-let batchViewsMemCache: { data: Record<string, number>; ts: number } | null = null;
-let batchViewsInflight: Promise<Record<string, number>> | null = null;
-const VIEWS_TTL_MS = 60 * 1000;
 
 /**
  * Synchronously read cached article views from memory or localStorage (0ms)
@@ -140,8 +143,9 @@ export async function fetchBatchViews(): Promise<Record<string, number>> {
     if (typeof window !== 'undefined') {
       try {
         const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 3000);
+        const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
         const res = await fetch(`${API_BASE_URL}/api/views`, {
+          cache: 'no-store',
           signal: controller.signal,
         });
         clearTimeout(timeout);
